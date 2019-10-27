@@ -1,4 +1,21 @@
 .welcome-card img {
-  max-height: 35vh;
-  overflow: hidden;
+    max-height: 35vh;
+    overflow: hidden;
+}
+
+ion-content {
+    --ion-background-color: rgb(241, 238, 246);
+}
+
+.colorbutton {
+    background-color: rgb(97, 171, 0);
+}
+
+.ion-color-vibrant {
+    --ion-color-base: #61abe6;
+    --ion-color-base-rgb: rgb(97, 171, 230);
+    --ion-color-contrast: #ffffff;
+    --ion-color-contrast-rgb: rgb(97, 171, 230);
+    --ion-color-shade: #f2863f;
+    --ion-color-tint: #f2863f;
 }
