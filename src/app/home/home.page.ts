@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from "@angular/router";
+import { ModalController } from '@ionic/angular';
+import { LegalPage } from '../legal/legal.page'
 
 @Component({
   selector: 'app-home',
@@ -7,6 +10,16 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  constructor(private router: Router, public modalController: ModalController) { }
 
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: LegalPage
+    });
+    return await modal.present();
+  }
+
+  showLegalText(){
+    this.router.navigateByUrl('/legal');
+  }
 }

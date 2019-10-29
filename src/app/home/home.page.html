@@ -10,20 +10,32 @@
 </ion-header>
 
 <ion-content>
-    <ion-card class="welcome-card">
-        <img src="/assets/shapes.svg" alt="" />
-        <ion-card-header>
-            <ion-card-subtitle>Get Started</ion-card-subtitle>
-            <ion-card-title>Welcome to Ionic</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-            <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
-        </ion-card-content>
-    </ion-card>
 
-    <ion-avatar>
-        <img src="/assets/logoapp.png">
-    </ion-avatar>
-    <ion-button color="vibrant">Comencemos!</ion-button>
+
+    <section>
+
+        <div text-center class="home-container">
+
+            <div class="col">
+                <h1 class="text-white text-center colortext1">Apptibiograma</h1>
+                <!-- <h5 class="text-white text-center colortext2">Un diagnóstico eficaz</h5> -->
+            </div>
+
+
+            <ion-avatar class="avatar">
+                <img src="/assets/logoapp.png">
+            </ion-avatar>
+
+            <br />
+            <label class="colortext2"> Antes de comenzar por favor lea los terminos y condiciones. </label>
+            <label class="colortext1" (click)="showLegalText()"> Si continúa, estaría<br />aceptando los términos.</label>
+            <br />
+            <br />
+
+            <ion-button color="vibrant" (click)="presentModal()">Comencemos!</ion-button>
+        </div>
+    </section>
+
+
 
 </ion-content>

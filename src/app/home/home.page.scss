@@ -7,8 +7,12 @@ ion-content {
     --ion-background-color: rgb(241, 238, 246);
 }
 
-.colorbutton {
-    background-color: rgb(97, 171, 0);
+.colortext1 {
+    color: #f2863f;
+}
+
+.colortext2 {
+    color: #a0a3a5;
 }
 
 .ion-color-vibrant {
@@ -18,4 +22,24 @@ ion-content {
     --ion-color-contrast-rgb: rgb(97, 171, 230);
     --ion-color-shade: #f2863f;
     --ion-color-tint: #f2863f;
+}
+
+.home-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.imglogo {
+    width: 50%;
+    height: 50%;
+}
+
+.avatar {
+    margin: auto;
+    width: 50%;
+    height: 50%;
 }

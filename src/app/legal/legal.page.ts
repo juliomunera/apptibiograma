@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-legal',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LegalPage implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
+  }
+
+  goBack() {
+    this.router.navigateByUrl('/home');
   }
 
 }
