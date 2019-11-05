@@ -1,0 +1,35 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+
+        </ion-buttons>
+        <ion-title>
+            Selección infección:
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content text-center>
+
+    <br />
+    <img src="../../assets/body.svg" width="80%" height="80%" usemap="#image-map" />
+    <map name="image-map">
+                <area (click) = "selectRegion('Boca, senos, paranasales y cuello')" target="" alt="P1.5" title="P1.5" coords="190,70,50" shape="circle">
+                <area (click) = "selectRegion('Abdomen')" target="" alt="P1.5" title="P1.5" coords="190,160,50" shape="circle">
+            </map>
+    <br /><br />
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <div *ngIf="isSelected">
+                    <ion-button expand="block" color="select" (click)="continue()">{{selectedText}}</ion-button>
+                </div>
+                <div *ngIf="!isSelected">
+                    <ion-button expand="block" color="select" (click)="continue()">Continuar</ion-button>
+                </div>
+
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+</ion-content>

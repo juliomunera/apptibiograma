@@ -12,4 +12,7 @@ export class BacteriumPage implements OnInit {
   ngOnInit() {
   }
 
+  selectOption(text){
+    alert(text);
+  }
 }

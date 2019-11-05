@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from "@angular/router";
 import { ModalController } from '@ionic/angular';
-import { LegalPage } from '../legal/legal.page'
+import { CodePage } from '../code/code.page';
 
 @Component({
   selector: 'app-home',
@@ -10,16 +10,33 @@ import { LegalPage } from '../legal/legal.page'
 })
 export class HomePage {
 
+  dataReturned:any;
+
   constructor(private router: Router, public modalController: ModalController) { }
 
   async presentModal() {
     const modal = await this.modalController.create({
-      component: LegalPage
+      component: CodePage,
+      componentProps: {
+        "isHomeCall": true
+      }
     });
+ 
+    modal.onDidDismiss().then((dataReturned) => {
+      if (dataReturned !== null) {
+        this.dataReturned = dataReturned.data;
+        
+        if(this.dataReturned !== undefined && this.dataReturned.length > 0) {
+          this.router.navigateByUrl('/general');
+        }
+      }
+    });
+ 
     return await modal.present();
   }
 
   showLegalText(){
     this.router.navigateByUrl('/legal');
   }
+
 }

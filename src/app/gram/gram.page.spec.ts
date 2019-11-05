@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BodyPage } from './body.page';
+import { GramPage } from './gram.page';
 
-describe('BodyPage', () => {
-  let component: BodyPage;
-  let fixture: ComponentFixture<BodyPage>;
+describe('GramPage', () => {
+  let component: GramPage;
+  let fixture: ComponentFixture<GramPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BodyPage ],
+      declarations: [ GramPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BodyPage);
+    fixture = TestBed.createComponent(GramPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

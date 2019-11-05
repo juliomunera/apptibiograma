@@ -1,0 +1,30 @@
+.gram-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ion-color-grampositive {
+    --ion-color-base: #61abe6;
+    --ion-color-base-rgb: rgb(97, 171, 230);
+    --ion-color-contrast: #ffffff;
+    --ion-color-contrast-rgb: rgb(97, 171, 230);
+    --ion-color-shade: #f2863f;
+    --ion-color-tint: #f2863f;
+}
+
+.ion-color-gramnegative {
+    --ion-color-base: #f2863f;
+    --ion-color-base-rgb: rgb(97, 171, 230);
+    --ion-color-contrast: #ffffff;
+    --ion-color-contrast-rgb: rgb(97, 171, 230);
+    --ion-color-shade: #f2863f;
+    --ion-color-tint: #f2863f;
+}
+
+ion-content {
+    --ion-background-color: rgb(241, 238, 246);
+}

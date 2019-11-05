@@ -7,6 +7,39 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+
+    <ion-card class="tableblank">
+        <ion-card-header>
+            <label class="colortext3">Entre el código de acceso:</label>
+        </ion-card-header>
+
+        <ion-card-content>
+            <p>&nbsp;</p>
+
+            <ion-input class="enterCodeBackground" name="" placeholder="Código" type="tel" text-center maxlength=5></ion-input>
+
+            <p>&nbsp;</p>
+            <ion-row center>
+                <ion-col text-center>
+                    <ion-button color="vibrant" (click)="validCode()">
+                        Validar
+                    </ion-button>
+
+                    <ion-button color="vibrant" (click)="closeModal()">
+                        Cerrar
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+            <ion-row>&nbsp;</ion-row>
+            <ion-row center>
+                <br />
+                <label class="colortext2"> Si no has comprado tu código de acceso, presiona </label>
+                <label class="colortext1" (click)="payAccessCode()"> ...click en este link para obtenerlo.</label>
+                <br /><br />
+            </ion-row>
+
+        </ion-card-content>
+    </ion-card>
 
 </ion-content>

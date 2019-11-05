@@ -22,11 +22,6 @@ export class AppComponent {
       icon: 'book'
     }
     ,{
-      title: 'Código acceso',
-      url: '/code',
-      icon: 'unlock'
-    }
-    ,{
       title: 'Acerca de',
       url: '/about',
       icon: 'person'
