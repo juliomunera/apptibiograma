@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-bacterium',
@@ -7,12 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BacteriumPage implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
 
-  selectOption(text){
-    alert(text);
+  selectOption(_id){
+    this.router.navigate(['/input', { id: _id }]);
+  }
+
+  continue(){
+    alert('In construction...')
   }
 }

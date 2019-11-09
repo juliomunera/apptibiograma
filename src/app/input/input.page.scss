@@ -2,8 +2,8 @@ ion-content {
     --ion-background-color: rgb(241, 238, 246);
 }
 
-.ion-color-vibrant {
-    --ion-color-base: #61abe6;
+.ion-color-select {
+    --ion-color-base: #f2863f;
     --ion-color-base-rgb: rgb(97, 171, 230);
     --ion-color-contrast: #ffffff;
     --ion-color-contrast-rgb: rgb(97, 171, 230);
@@ -11,10 +11,10 @@ ion-content {
     --ion-color-tint: #f2863f;
 }
 
-.fontprincipal {
-    font-style: italic;
+.divider {
+    background-color: #ffffff;
 }
 
-.fonttitle {
-    font-style: normal;
+.inputcolor {
+    background-color: #faf6f6;
 }
