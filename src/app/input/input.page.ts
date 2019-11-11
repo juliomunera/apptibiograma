@@ -17,7 +17,7 @@ export class InputPage implements OnInit {
   }
 
   continue(){
-    this.router.navigateByUrl('/bacterium');
+    this.router.navigateByUrl('/summary');
   }
 
   comeBack(){

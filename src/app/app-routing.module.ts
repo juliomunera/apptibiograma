@@ -19,7 +19,8 @@ const routes: Routes = [
   { path: 'bacterium', loadChildren: './bacterium/bacterium.module#BacteriumPageModule' },
   { path: 'gram', loadChildren: './gram/gram.module#GramPageModule' },
   { path: 'infection', loadChildren: './infection/infection.module#InfectionPageModule' },
-  { path: 'input', loadChildren: './input/input.module#InputPageModule' }
+  { path: 'input', loadChildren: './input/input.module#InputPageModule' },
+  { path: 'summary', loadChildren: './summary/summary.module#SummaryPageModule' }
 ];
 
 @NgModule({

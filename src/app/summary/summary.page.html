@@ -1,0 +1,82 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+        </ion-buttons>
+        <ion-title>
+            Resumen
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="cardcolor">
+        <ion-card-header>
+            <ion-card-title>Resultado del cálculo</ion-card-title>
+            <ion-card-subtitle>Bacteria: <b><ion-label class="labelcolor2">Enterococcus faecalis</ion-label></b></ion-card-subtitle>
+
+        </ion-card-header>
+
+        <ion-card-content>
+            <ul>
+                <li>Germen con resistencia a Clindamycin mediado por MLSB</li>
+                <li>Germen con sensibilidad disminuida a Rifampicin</li>
+                <li>Germen resistente a Nitrofurantoin</li>
+            </ul>
+
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        <ion-label class="labelcolor1"> Cefotaxima:</ion-label>
+                    </ion-col>
+                    <ion-col>
+                        1 gm al dia (utilizar en caso de albumina serica
+                        < 3.5) </ion-col>
+                </ion-row>
+                <!-- <ion-row>
+                    <ion-col>
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        Ceftriaxone:
+                    </ion-col>
+                    <ion-col>
+                        1 gm cada 12 horas Cefazolin: 1 gm cada 12 horas </ion-col>
+                </ion-row> -->
+                <ion-row>
+                    <ion-col>
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        <ion-label class="labelcolor1"> Cefazolin:</ion-label>
+                    </ion-col>
+                    <ion-col>
+                        2 gm cada 12 horas Trimethoprim/Sulfa: No se recomienda, pero si no hay otra opcion, utilizar 5-10 mg/kg/dia </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        <ion-label class="labelcolor1"> Trimethoprim/Sulfa:</ion-label>
+                    </ion-col>
+                    <ion-col>
+                        5 mg/kg cada 8 horas </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        <ion-label class="labelcolor1"> Clindamycin:</ion-label>
+                    </ion-col>
+                    <ion-col>
+                        600 a 900 mg IV/VO cada 8 horas Gentamicin: 2 mg/kg/dia</ion-col>
+                </ion-row>
+            </ion-grid>
+
+        </ion-card-content>
+    </ion-card>
+
+    <ion-grid text-center>
+        <ion-row>
+            <ion-col>
+                <ion-button (click)="finish()" color="vibrant">Finalizar</ion-button>
+                <ion-button (click)="comeBack()" color="vibrant">Regresar</ion-button>
+            </ion-col>
+
+        </ion-row>
+    </ion-grid>
+</ion-content>
