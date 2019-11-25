@@ -19,3 +19,20 @@ ion-content {
     --ion-color-shade: #f2863f;
     --ion-color-tint: #f2863f;
 }
+
+.item-input-has-focus .label-md[floating],
+.input-has-focus .label-md[floating] {
+    color: black; //label color when focusing
+}
+
+.item-input .label-md {
+    color: black; //label color
+}
+
+.item-input .label-md {
+    color: red; //label color
+}
+
+.floating {
+    color: blue !important;
+}

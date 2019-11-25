@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { ModalController } from '@ionic/angular';
 
+import { ContextModel }  from '../../models/context.model';
+
 @Component({
   selector: 'app-infection',
   templateUrl: './infection.page.html',
@@ -12,7 +14,10 @@ export class InfectionPage implements OnInit {
   isSelected : boolean = false;
   selectedText : any = '';
 
-  constructor(private router: Router, public modalController: ModalController) { }
+  constructor(
+    private router: Router, 
+    public modalController: ModalController,
+    private contextModel : ContextModel) { }
 
   ngOnInit() {
   }
@@ -23,12 +28,12 @@ export class InfectionPage implements OnInit {
   }
 
   async continue() {
-    let onClosedData: string = this.selectedText;
+    this.contextModel.name = this.selectedText;
 
-    if (onClosedData === ""){
-      onClosedData = "Seleccionar";
+    if (this.contextModel.name === ""){
+      this.contextModel.name = "Seleccionar";
     }
 
-    await this.modalController.dismiss(onClosedData);
+    await this.modalController.dismiss(this.contextModel.name);
   }
 }

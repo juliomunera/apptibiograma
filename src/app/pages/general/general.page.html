@@ -9,50 +9,52 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
+<ion-content class="ion-padding">
+
     <ion-list>
         <ion-item>
             <ion-label>Sexo</ion-label>
-            <ion-select interface="popover" cancelText="Cancelar">
-                <ion-select-option value="Masculino">Masculino</ion-select-option>
-                <ion-select-option value="Femenino">Femenino</ion-select-option>
+            <ion-select class="floating" interface="popover" cancelText="Cancelar" [(ngModel)]="contextModel.sexType">
+                <ion-select-option value="M">Masculino</ion-select-option>
+                <ion-select-option value="F">Femenino</ion-select-option>
             </ion-select>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Edad</ion-label>
-            <ion-input></ion-input>
+            <!-- (ionInput)="getMax()" -->
+            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.yearsOld" maxlength="3"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Peso</ion-label>
-            <ion-input></ion-input>
+            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.weight" maxlength="5"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Creatinina</ion-label>
-            <ion-input></ion-input>
+            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.creatinina" maxlength="5"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label>Alergia penicilina</ion-label>
-            <ion-toggle checked="false"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.alergiaPenicilina"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>Hemodialisis</ion-label>
-            <ion-toggle checked="false"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.hemodialisis"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>CAPD</ion-label>
-            <ion-toggle checked="false"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.capd"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>CRRT</ion-label>
-            <ion-toggle checked="false"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.crrt"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>Ubicación infección</ion-label>
-            <ion-button color="select" (click)="presentModal()">{{dataReturned}}</ion-button>
+            <ion-button class="floating" color="select" (click)="presentModal()">{{contextModel.name}}</ion-button>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Depuración creatinina</ion-label>
-            <ion-input></ion-input>
+            <ion-input class="floating" [(ngModel)]="contextModel.depuracionCreatinina" readonly></ion-input>
         </ion-item>
     </ion-list>
 

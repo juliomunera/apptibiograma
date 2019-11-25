@@ -9,18 +9,16 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
   },
-  { path: 'about', loadChildren: './about/about.module#AboutPageModule' },
-  { path: 'legal', loadChildren: './legal/legal.module#LegalPageModule' },
-  // { path: 'code', loadChildren: './code/code.module#CodePageModule' },
-  { path: 'general', loadChildren: './general/general.module#GeneralPageModule' },
-  // { path: 'body', loadChildren: './body/body.module#BodyPageModule' },
-  { path: 'bacterium', loadChildren: './bacterium/bacterium.module#BacteriumPageModule' },
-  { path: 'gram', loadChildren: './gram/gram.module#GramPageModule' },
-  { path: 'infection', loadChildren: './infection/infection.module#InfectionPageModule' },
-  { path: 'input', loadChildren: './input/input.module#InputPageModule' },
-  { path: 'summary', loadChildren: './summary/summary.module#SummaryPageModule' }
+  { path: 'about', loadChildren: './pages/about/about.module#AboutPageModule' },
+  { path: 'legal', loadChildren: './pages/legal/legal.module#LegalPageModule' },
+  { path: 'general', loadChildren: './pages/general/general.module#GeneralPageModule' },
+  { path: 'bacterium', loadChildren: './pages/bacterium/bacterium.module#BacteriumPageModule' },
+  { path: 'gram', loadChildren: './pages/gram/gram.module#GramPageModule' },
+  { path: 'infection', loadChildren: './pages/infection/infection.module#InfectionPageModule' },
+  { path: 'input', loadChildren: './pages/input/input.module#InputPageModule' },
+  { path: 'summary', loadChildren: './pages/summary/summary.module#SummaryPageModule' }
 ];
 
 @NgModule({
