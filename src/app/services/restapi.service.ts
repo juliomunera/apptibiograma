@@ -13,7 +13,7 @@ export class RestapiService {
 
   constructor(private http: HttpClient) { }
 
-  addUser() {
+  callRestApi() {
     let data = {
         "id": 15232,
         "name": "Julio Munera",
