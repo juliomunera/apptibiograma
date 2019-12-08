@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { stringify } from 'querystring';
 // import 'rxjs/add/operator/retry';
 // import 'rxjs/add/operator/timeout';
 // import 'rxjs/add/operator/delay';
@@ -10,6 +11,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 export class RestapiService {
 
   apiUrl : any = 'https://jsonplaceholder.typicode.com';
+  validateCodeUrl : any = 'http://apptibiograma.analyticsmodels.com/validecode.php?token=zTa5RzNLKQQDp8XBMdKu2Vu7Xp3dDYuP&codigo=';
 
   constructor(private http: HttpClient) { }
 
@@ -39,10 +41,28 @@ export class RestapiService {
         .subscribe(res => {
             resolve(res);
         }, (err) => {
-            alert(err);
             reject(err);
         });
     });
-
   }
+
+  validateAccessCode(code : any) {
+    // let data = {
+    //     "token": "zTa5RzNLKQQDp8XBMdKu2Vu7Xp3dDYuP",
+    //     "codigo": code
+    //   }
+
+    return new Promise((resolve, reject) => {
+
+      this.http.post(this.validateCodeUrl + code, null)
+        .subscribe(res => { 
+          console.log(res);
+            resolve(res);
+        }, (err) => {
+          console.log(err);
+            reject(err);
+        });
+    });
+  }
+
 }

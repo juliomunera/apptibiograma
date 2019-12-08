@@ -46,6 +46,9 @@ export class DatabaseService {
               this.insertAntibioData();
               alert('Inserto datos bacterias.')
             });
+          })
+          .then(() => {
+            this.createAllowAccess();
           });
           
           this.dbReady.next(true);
@@ -74,7 +77,7 @@ export class DatabaseService {
     createBacterias(){
       return this.database.executeSql(
         `
-        CREATE TABLE Bacterias (
+        CREATE TABLE IF NOT EXISTS Bacterias (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           nombre VARCHAR(100) NOT NULL
       );`
@@ -122,6 +125,18 @@ export class DatabaseService {
     //   , null)
     //   .catch((err)=>console.log("error detected creating tables", err));
     // }
+
+    createAllowAccess(){
+      return this.database.executeSql(
+        `
+        CREATE TABLE IF NOT EXISTS TokenSeguridad (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          fechaRegistro DATETIME,
+          dias INTEGER
+          );`
+      , null)
+      .catch((err)=>console.log("error detected creating tables", err));
+    }
 
     insertGeneralData(data : any){
     
@@ -220,6 +235,48 @@ export class DatabaseService {
           alert(error.message);
         });
       });
+    }
+
+    getDaysAccess(){
+
+      return this.isReady()
+      .then(()=> {
+
+        return this.database.executeSql("SELECT id, fechaRegistro, dias from TokenSeguridad ORDER BY ROWID ASC LIMIT 1", [])
+        .then((data)=>{
+
+          let lists = [];
+          if (data === undefined)
+            return lists;
+
+          if (data !== undefined && data !== null) {
+            for(let i=0; i<data.rows.length; i++){
+              lists.push(data.rows.item(i));
+            }
+          }
+          return lists;
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+      });
+    }
+
+    insertAllowAccess(data : any){
+
+      if (data[1] < 0){
+        data[1] = 0;
+      }
+
+      return this.isReady()
+      .then(()=>{
+        return this.database.executeSql(`DELETE FROM TokenSeguridad;`, null)
+        .catch(err => alert('Error: ' + err.message));
+      })
+      .then(()=>{
+        return this.database.executeSql(`INSERT INTO TokenSeguridad (fechaRegistro, dias) VALUES (?, ?);`, data)
+        .catch((err)=>alert('Error: ' + err.message));
+      });    
     }
 
     addList(name:string){
