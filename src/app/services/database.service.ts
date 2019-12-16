@@ -15,6 +15,10 @@ export class DatabaseService {
 
     // export JAVA_HOME=$(/usr/libexec/java_home)
     // echo $JAVA_HOME
+    // export PATH=$ANDROID_HOME/platform-tools:$PATH 
+    // export PATH=$ANDROID_HOME/tools:$PATH
+
+
     // http://blog.enriqueoriol.com/2017/06/ionic-3-sqlite.html
     // https://devdactic.com/ionic-4-sqlite-queries/
     
@@ -36,20 +40,16 @@ export class DatabaseService {
         .then((db:SQLiteObject)=>{
           this.database = db;
         
-          // this.createDatabaseObject();
-
           this.createDatosDelPaciente()
           .then(()=>{
-          })
-          .then(()=> {
             this.createBacterias().then(()=>{
-              this.insertAntibioData();
-              alert('Inserto datos bacterias.')
-            });
-          })
-          .then(() => {
-            this.createAllowAccess();
-          });
+            })
+            .then(()=> {
+              this.createAllowAccess().then(()=> {
+                console.log('Tables are created.')
+              })
+            })
+          }).catch(e=>alert(e.message));
           
           this.dbReady.next(true);
   
@@ -60,8 +60,6 @@ export class DatabaseService {
       });
 
     }
-
-
 
     createDatabaseObject() {
       this.http.get('assets/database.sql', { responseType: 'text'})
@@ -139,16 +137,18 @@ export class DatabaseService {
     }
 
     insertGeneralData(data : any){
-    
+      
       return this.isReady()
-      .then(()=> {
-        return this.database.executeSql(
-          `INSERT INTO DatosDelPaciente (idParteDelCuerpo, fechaRegistro, genero, 
-            edad, peso, creatinina, esAlergicoAPenicilina, 
-            requiereHemodialisis, CAPD, CRRT, depuracionCreatinina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        , data)
-        .catch((err)=>alert('Error: ' + err.message));
-      });
+        .then(()=> {
+
+          return this.database.executeSql(
+            `INSERT INTO DatosDelPaciente (idParteDelCuerpo, fechaRegistro, genero, 
+              edad, peso, creatinina, esAlergicoAPenicilina, 
+              requiereHemodialisis, CAPD, CRRT, depuracionCreatinina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          , data)
+          .catch((err)=>alert(err.message));
+        })
+        .catch(e=> alert(e.message));
     }
   
     // private createTables(){
@@ -187,7 +187,6 @@ export class DatabaseService {
     }
   
     getLists(){
-
       return this.isReady()
       .then(()=> {
 
@@ -212,12 +211,12 @@ export class DatabaseService {
       });
     }
 
-    getBacterias(){
+    getBacteriums(){
 
       return this.isReady()
       .then(()=> {
 
-        return this.database.executeSql("SELECT * from Bacterias", [])
+        return this.database.executeSql("SELECT id, nombre from Bacterias", [])
         .then((data)=>{
 
           let lists = [];
@@ -290,32 +289,63 @@ export class DatabaseService {
       });    
     }
 
-    insertAntibioData(){
+    // insertAntibiotic(){
+    //   return this.isReady()
+    //   .then(()=>{
+    //     return this.database.executeSql(`DROP TABLE IF EXISTS Antibioticos;`, null)
+    //     .catch(err => alert('Error: ' + err.message));
+    //   })
+    //   .then(()=>{
+
+    //     let items = ['Staphylococcus aureus', 'Staphylococcus epidermidis', 'Staphylococcus haemolyticus',
+    //                  'Staphylococcus warneri', 'Staphylococcus lugdunensis', 'Enterococcus faecalis',
+    //                  'Enterococcus faecium', 'Enterococcus gallinarum', 'Enterococcus casseliflavus',
+    //                  'Streptococcus viridans', 'Streptococcus mitis', 'Streptococcus mutans',
+    //                  'Streptococcus salivarius', 'Streptococcus pyogenes', 'Streptococcus agalactiae',
+    //                  'Streptococcus dysgalactiae', 'Streptococcus pneumoniae'];
+
+    //     let insertRows = [];
+    //     items.forEach(item => {
+    //         insertRows.push([
+    //             "INSERT INTO Bacterias (nombre) VALUES (?)", [item.toString()]                
+    //         ]);
+    //     });
+
+    //     return this.database.sqlBatch(insertRows).then(() => {
+    //         console.log('Save all bacteriums records.')
+    //     });  
+
+    //   });   
+      
+    // }
+
+    insertBacterium(){
+
       return this.isReady()
       .then(()=>{
-        return this.database.executeSql(` 
-        INSERT INTO Bacterias(nombre) VALUES ('Staphylococcus aureus');  
-        INSERT INTO Bacterias(nombre) VALUES ('Staphylococcus epidermidis');
-        INSERT INTO Bacterias(nombre) VALUES ('Staphylococcus haemolyticus');
-        INSERT INTO Bacterias(nombre) VALUES ('Staphylococcus warneri');
-        INSERT INTO Bacterias(nombre) VALUES ('Staphylococcus lugdunensis');
-        INSERT INTO Bacterias(nombre) VALUES ('Enterococcus faecalis');
-        INSERT INTO Bacterias(nombre) VALUES ('Enterococcus faecium');
-        INSERT INTO Bacterias(nombre) VALUES ('Enterococcus gallinarum');
-        INSERT INTO Bacterias(nombre) VALUES ('Enterococcus casseliflavus');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus viridans');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus mitis');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus mutans');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus salivarius');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus pyogenes');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus agalactiae');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus dysgalactiae');
-        INSERT INTO Bacterias(nombre) VALUES ('Streptococcus pneumoniae');
-        `, null).then((result)=>{
-          if(result.insertId){
-            return this.getList(result.insertId);
-          }
-        })
+        return this.database.executeSql(`DROP TABLE IF EXISTS Bacterias;`, null)
+        .catch(err => alert('Error: ' + err.message));
+      })
+      .then(()=>{
+
+        let items = ['Staphylococcus aureus', 'Staphylococcus epidermidis', 'Staphylococcus haemolyticus',
+                     'Staphylococcus warneri', 'Staphylococcus lugdunensis', 'Enterococcus faecalis',
+                     'Enterococcus faecium', 'Enterococcus gallinarum', 'Enterococcus casseliflavus',
+                     'Streptococcus viridans', 'Streptococcus mitis', 'Streptococcus mutans',
+                     'Streptococcus salivarius', 'Streptococcus pyogenes', 'Streptococcus agalactiae',
+                     'Streptococcus dysgalactiae', 'Streptococcus pneumoniae'];
+
+        let insertRows = [];
+        items.forEach(item => {
+            insertRows.push([
+                "INSERT INTO Bacterias (nombre) VALUES (?)", [item.toString()]                
+            ]);
+        });
+
+        return this.database.sqlBatch(insertRows).then(() => {
+            console.log('Save all bacteriums records.')
+        });  
+
       });    
     }
 
