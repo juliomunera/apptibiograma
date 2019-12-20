@@ -48,7 +48,9 @@ export class ImportdbService {
           this.createTrigger_TRAI_DDP_CalculoDepuracionCreatininaHombre().then(() => {
             this.createTrigger_TRAI_DDP_CalculoDepuracionCreatininaMujer().then(() => {
               console.log('Created triggers.');
-              alert('Triggers creados!')
+
+              // TODO: Create UNIQUE:
+              // https://www.tutorialspoint.com/sqlite/sqlite_unique.htm
             })
           })
         })

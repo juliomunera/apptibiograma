@@ -43,7 +43,7 @@ export class HomedbService {
         return lists;
       })
       .catch(error => {
-        alert(error.message);
+        console.log(error.message);
       });
     });
   }

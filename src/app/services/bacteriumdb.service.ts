@@ -54,7 +54,6 @@ export class BacteriumdbService {
     return this.isReady()
     .then(()=>{
       this.database.executeSql('SELECT id, nombre from Bacterias', []).then(data => { 
-        alert('Ejecuto sentencia=> ');
 
           let lists = [];
           if (data === undefined)
@@ -65,79 +64,10 @@ export class BacteriumdbService {
               lists.push(data.rows.item(i));
             }
           }
-
-          alert(lists.length);
           return lists;
         })
     }).catch(e=>alert(e.message));
  
   }
-
-  
-
-  // getBacteriums(gramTypeParam){
-  //   this.gramType = gramTypeParam;
-
-
-  // }
-
-
-  // getBacteriasAntibioticos(): Observable<BacteriasAntibioticos[]> {
-  //   return this.bacteriasAntibioticos.asObservable();
-  // }
-
-  // loadBateriasAntibioticos(){
-
-  //   return this.database.executeSql('SELECT * FROM CBxA', []).then(data => {
-  //     let bactantibioticos: BacteriasAntibioticos[] = [];
- 
-  //     if (data.rows.length > 0) {
-  //       for (var i = 0; i < data.rows.length; i++) {
-  //         bactantibioticos.push({ 
-  //           id: data.rows.item(i).id,
-  //           idBacteria: data.rows.item(i).idBacteria,
-  //           idAntibiotico: data.rows.item(i).idAntibiotico,
-  //           idPrueba: data.rows.item(i).idPrueba,
-  //           tipoControl: data.rows.item(i).tipoControl,
-  //           tipoGRAM: data.rows.item(i).tipoGRAM
-  //          });
-  //       }
-
-  //     }
-  //     this.bacteriasAntibioticos.next(bactantibioticos);
-  //   });
-
-  // }
-
-  // return this.database.executeSql("SELECT id, nombre from Bacterias ", [])
-  // async loadBacteriums(){
-  //   return this.plt.ready()
-  //   .then(()=>{
-
-      
-  //       return this.database.executeSql('SELECT id, nombre from Bacterias', []).then(data => {
-
-  //         alert('Consulto las bacterias');
-
-  //         let lists = [];
-  //         // if (data === undefined)
-  //         //   return lists;
-
-  //         // if (data !== undefined && data !== null) {
-  //         //   for(let i=0; i<data.rows.length; i++){
-  //         //     lists.push(data.rows.item(i));
-  //         //   }
-  //         // }
-  //         return lists;
-
-  //     }).catch(error=> alert(error.message));
-
-  //   }).catch(e=>alert(e.message));
-  // }
-
-  // retrieveAllBacteriums() : Promise{
-
-  // }
-
 
 }

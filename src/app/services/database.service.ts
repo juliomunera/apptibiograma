@@ -15,9 +15,7 @@ export class DatabaseService {
 
     // export JAVA_HOME=$(/usr/libexec/java_home)
     // echo $JAVA_HOME
-    // export PATH=$ANDROID_HOME/platform-tools:$PATH 
-    // export PATH=$ANDROID_HOME/tools:$PATH
-
+    // export ANDROID_HOME=~/Library/Android/sdk && export PATH=${PATH}:${ANDROID_HOME}/tools && export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 
     // http://blog.enriqueoriol.com/2017/06/ionic-3-sqlite.html
     // https://devdactic.com/ionic-4-sqlite-queries/
