@@ -1,0 +1,25 @@
+ion-content {
+    --ion-background-color: rgb(241, 238, 246);
+}
+
+.ion-color-select {
+    --ion-color-base: #f2863f;
+    --ion-color-base-rgb: rgb(97, 171, 230);
+    --ion-color-contrast: #ffffff;
+    --ion-color-contrast-rgb: rgb(97, 171, 230);
+    --ion-color-shade: #f2863f;
+    --ion-color-tint: #f2863f;
+}
+
+.divider {
+    background-color: #ffffff;
+}
+
+.inputcolor {
+    background-color: #faf6f6;
+}
+
+.sizeoperator {
+    font-size: x-large;
+    border-color: red;
+}

@@ -1,0 +1,105 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Información Guardada</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-list>
+        <ion-item>
+            <b>Datos generales:</b>
+        </ion-item>
+
+        <ion-item ion-item *ngFor="let item of general">
+            <ion-grid>
+                <ion-row>
+                    <ion-col>Parte del cuerpo:</ion-col>
+                    <ion-col>{{ item.idParteDelCuerpo }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Fecha registro:</ion-col>
+                    <ion-col>{{ item.fechaRegistro }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Genero:</ion-col>
+                    <ion-col>{{ item.genero }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Edad:</ion-col>
+                    <ion-col>{{ item.edad }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Peso:</ion-col>
+                    <ion-col>{{ item.peso }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Creatinina:</ion-col>
+                    <ion-col>{{ item.creatinina }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Es alergico penicilina:</ion-col>
+                    <ion-col>{{ item.esAlergicoAPenicilina }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Requiere hemodialisis:</ion-col>
+                    <ion-col>{{ item.requiereHemodialisis }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>CAPD:</ion-col>
+                    <ion-col>{{ item.CAPD }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>CRRT:</ion-col>
+                    <ion-col>{{ item.CRRT }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Depuracion creatinina:</ion-col>
+                    <ion-col>{{ item.depuracionCreatinina }} </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+
+        <ion-item>
+            <b>Datos Antibióticos:</b>
+        </ion-item>
+        <ion-item ion-item *ngFor="let item of dataList">
+            <ion-grid>
+                <ion-row>
+                    <ion-col>Clave primaria: </ion-col>
+                    <ion-col>{{ item.id }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Id Bacteria: </ion-col>
+                    <ion-col>{{ item.idBacteria }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Id Antibiótico: </ion-col>
+                    <ion-col>{{ item.idAntibiotico }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Id Prueba: </ion-col>
+                    <ion-col>{{ item.idPrueba }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Operador: </ion-col>
+                    <ion-col>{{ item.operador }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Valor: </ion-col>
+                    <ion-col>{{ item.valor }} </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>Tipo Gram: </ion-col>
+                    <ion-col>{{ item.tipoGRAM }} </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+
+        <ion-item>
+            <br /><br />
+        </ion-item>
+
+    </ion-list>
+
+</ion-content>
