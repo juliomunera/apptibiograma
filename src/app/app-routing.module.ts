@@ -18,7 +18,8 @@ const routes: Routes = [
   { path: 'gram', loadChildren: './pages/gram/gram.module#GramPageModule' },
   { path: 'infection', loadChildren: './pages/infection/infection.module#InfectionPageModule' },
   { path: 'input', loadChildren: './pages/input/input.module#InputPageModule' },
-  { path: 'summary', loadChildren: './pages/summary/summary.module#SummaryPageModule' }
+  { path: 'summary', loadChildren: './pages/summary/summary.module#SummaryPageModule' },
+  { path: 'test', loadChildren: './pages/test/test.module#TestPageModule' }
 ];
 
 @NgModule({

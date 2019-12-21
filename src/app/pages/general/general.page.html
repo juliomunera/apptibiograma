@@ -14,23 +14,23 @@
     <ion-list>
         <ion-item>
             <ion-label>Sexo</ion-label>
-            <ion-select class="floating" interface="popover" cancelText="Cancelar" [(ngModel)]="contextModel.sexType">
+            <ion-select class="floating" (ionChange)="getCreatinineDebug()" interface="popover" cancelText="Cancelar" [(ngModel)]="contextModel.sexType">
                 <ion-select-option value="M">Masculino</ion-select-option>
                 <ion-select-option value="F">Femenino</ion-select-option>
             </ion-select>
         </ion-item>
         <ion-item>
-            <ion-label position="floating">Edad</ion-label>
+            <ion-label position="floating">Edad (Años)</ion-label>
             <!-- (ionInput)="getMax()" -->
-            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.yearsOld" maxlength="3"></ion-input>
+            <ion-input type="tel" (change)="getCreatinineDebug()" class="floating" [(ngModel)]="contextModel.yearsOld" maxlength="3"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label position="floating">Peso</ion-label>
-            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.weight" maxlength="5"></ion-input>
+            <ion-label position="floating">Peso (kg)</ion-label>
+            <ion-input type="tel" (change)="getCreatinineDebug()" class="floating" [(ngModel)]="contextModel.weight" maxlength="5"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Creatinina</ion-label>
-            <ion-input type="tel" class="floating" [(ngModel)]="contextModel.creatinina" maxlength="5"></ion-input>
+            <ion-input type="tel" (change)="getCreatinineDebug()" class="floating" [(ngModel)]="contextModel.creatinina" maxlength="5"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label>Alergia penicilina</ion-label>

@@ -11,6 +11,8 @@ export class ContextModel {
   capd : boolean;
   crrt : boolean;
   depuracionCreatinina : number;
+  infectionLocation : number;
+  code: String;
 }
 
 export interface Deserializable {

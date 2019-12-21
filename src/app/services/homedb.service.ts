@@ -57,11 +57,11 @@ export class HomedbService {
     return this.plt.ready()
     .then(()=>{
       return this.database.executeSql(`DELETE FROM TokenSeguridad;`, null)
-      .catch(err => alert('Error: ' + err.message));
+      .catch(err => console.log('Error: ' + err.message));
     })
     .then(()=>{
       return this.database.executeSql(`INSERT INTO TokenSeguridad (fechaRegistro, dias) VALUES (?, ?);`, data)
-      .catch((err)=>alert('Error: ' + err.message));
+      .catch((err)=>console.log('Error: ' + err.message));
     });    
   }
 

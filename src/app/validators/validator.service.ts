@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isNumber } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +23,25 @@ export class ValidatorService {
     return result;
   }
 
-  validateIsDecimal(itemValue : any){
-      let result : Number;
+  validateIsInteger(itemValue : any){
+      if (itemValue === undefined && itemValue === null)
+        return false;
 
-      if (((Number.parseInt(itemValue.toString())) % itemValue) === 0)
+      if (((Number.parseInt(itemValue)) % itemValue) === 0)
         return false;
       else
         return true;
+  }
+
+  validateIsDecimal(itemValue : any){
+
+    if ((undefined === itemValue) || (null === itemValue)) {
+      return false;
+    }
+    if (typeof itemValue == 'number') {
+        return true;
+    }
+    return !isNaN(itemValue - 0);
   }
 
 }

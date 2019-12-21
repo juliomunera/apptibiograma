@@ -43,19 +43,7 @@ export class ImportdbService {
           this.database = db;
           this.seedDatabase();
       }
-      ).then(() => {
-        this.createTrigger_TRAI_CPDCxA_CalcularCodigoReferencia().then(() => {
-          this.createTrigger_TRAI_DDP_CalculoDepuracionCreatininaHombre().then(() => {
-            this.createTrigger_TRAI_DDP_CalculoDepuracionCreatininaMujer().then(() => {
-              console.log('Created triggers.');
-
-              // TODO: Create UNIQUE:
-              // https://www.tutorialspoint.com/sqlite/sqlite_unique.htm
-            })
-          })
-        })
-      })
-      ;
+      )
     });
   }
 
@@ -89,77 +77,6 @@ export class ImportdbService {
       return this.database.executeSql(`INSERT INTO TokenSeguridad (fechaRegistro, dias) VALUES (?, ?);`, data)
       .catch((err)=>alert('Error: ' + err.message));
     });    
-  }
-
-  // getBacteriasAntibioticos(): Observable<BacteriasAntibioticos[]> {
-  //   return this.bacteriasAntibioticos.asObservable();
-  // }
-
-  // loadBateriasAntibioticos(){
-
-  //   return this.database.executeSql('SELECT * FROM CBxA', []).then(data => {
-  //     let bactantibioticos: BacteriasAntibioticos[] = [];
- 
-  //     if (data.rows.length > 0) {
-  //       for (var i = 0; i < data.rows.length; i++) {
-  //         bactantibioticos.push({ 
-  //           id: data.rows.item(i).id,
-  //           idBacteria: data.rows.item(i).idBacteria,
-  //           idAntibiotico: data.rows.item(i).idAntibiotico,
-  //           idPrueba: data.rows.item(i).idPrueba,
-  //           tipoControl: data.rows.item(i).tipoControl,
-  //           tipoGRAM: data.rows.item(i).tipoGRAM
-  //          });
-  //       }
-
-  //     }
-  //     this.bacteriasAntibioticos.next(bactantibioticos);
-  //   });
-
-  // }
-
-      
-  createTrigger_TRAI_CPDCxA_CalcularCodigoReferencia(){
-    return this.database.executeSql(
-      `
-      CREATE TRIGGER TRAI_CPDCxA_CalcularCodigoReferencia AFTER INSERT 
-      ON CPDCxA 
-      BEGIN
-        UPDATE CPDCxA
-        SET codigoReferencia = NEW.idGrupo || NEW.idAntibiotico || NEW.idParteDelCuerpo || NEW.esSensible || NEW.esResistente || NEW.enEquilibrio
-        WHERE id = NEW.id;
-      END;`
-    , null)
-    .catch((err)=>{ alert(err.message)});
-  }
-
-  createTrigger_TRAI_DDP_CalculoDepuracionCreatininaMujer(){
-    return this.database.executeSql(
-      `
-      CREATE TRIGGER TRAI_DDP_CalculoDepuracionCreatininaMujer AFTER INSERT ON DatosDelPaciente 
-      WHEN NEW.genero = 'F'
-      BEGIN
-        UPDATE DatosDelPaciente
-        SET depuracionCreatinina = ROUND(((0.85)*(140-NEW.edad)*NEW.peso)/(72*NEW.creatinina),2)
-        WHERE id = NEW.id;
-      END;`
-    , null)
-    .catch((err)=>{ alert(err.message)});
-  }
-
-  createTrigger_TRAI_DDP_CalculoDepuracionCreatininaHombre(){
-    return this.database.executeSql(
-      `
-      CREATE TRIGGER TRAI_DDP_CalculoDepuracionCreatininaHombre AFTER INSERT 
-      ON DatosDelPaciente 
-      WHEN NEW.genero = 'M'
-      BEGIN
-        UPDATE DatosDelPaciente
-        SET depuracionCreatinina = ROUND(((1)*(140-NEW.edad)*NEW.peso)/(72*NEW.creatinina),2)
-        WHERE id = NEW.id;
-      END;`
-    , null)
-    .catch((err)=>{ alert(err.message)});
   }
 
 }

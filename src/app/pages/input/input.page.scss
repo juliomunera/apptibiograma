@@ -18,3 +18,20 @@ ion-content {
 .inputcolor {
     background-color: #faf6f6;
 }
+
+.sizeoperator {
+    min-width: 70%;
+    font-size: 16px;
+}
+
+ion-col.col1-thin-col {
+    // flex: 0 0 4px;
+    // padding: 0;
+    // margin-right: 10px;
+    background-color: rgb(190, 248, 252);
+}
+
+em,
+i {
+    font-style: italic;
+}

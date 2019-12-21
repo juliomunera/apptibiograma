@@ -17,7 +17,7 @@
         <ion-card-content>
             <p>&nbsp;</p>
 
-            <ion-input class="enterCodeBackground" name="" placeholder="Código" type="tel" text-center maxlength=5></ion-input>
+            <ion-input class="enterCodeBackground" [(ngModel)]="contextModel.code" name="accessCode" placeholder="Código" type="text" text-center maxlength=16></ion-input>
 
             <p>&nbsp;</p>
             <ion-row center>

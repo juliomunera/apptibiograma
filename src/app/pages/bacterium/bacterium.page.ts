@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Platform } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { BehaviorSubject } from 'rxjs';
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 
 @Component({
   selector: 'app-bacterium',
@@ -8,16 +12,74 @@ import { Router } from "@angular/router";
 })
 export class BacteriumPage implements OnInit {
 
-  constructor(private router: Router) { }
+  private database: SQLiteObject;
+  public bacteriumsList : any[] = [];
+  private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  ngOnInit() {
+  constructor(private plt: Platform, 
+    private activatedRoute: ActivatedRoute, private sqlite: SQLite,
+    private router: Router) { 
+
+    this.plt.ready().then(() => {
+      this.sqlite.create({
+        name: 'fai.db',
+        location: 'default'
+      })
+      .then((db: SQLiteObject) => {
+          this.database = db;
+          this.dbReady.next(true);
+          
+          let type = this.activatedRoute.snapshot.paramMap.get('gramType');
+
+          this.plt.ready().then(() => {
+            this.isReady()
+            .then(()=>{
+              this.database.executeSql(`SELECT id, nombre from Bacterias WHERE nombre <> 'NA'`, []).then(data => { 
+
+                  if (data === undefined)
+                    return;
+        
+                  if (data !== undefined && data !== null) {
+                    for(let i=0; i<data.rows.length; i++){
+                      this.bacteriumsList.push(data.rows.item(i));
+                    }
+                  }
+        
+                }).catch(e=>alert(e.message));
+            }) 
+            
+          });
+     
+      });
+    });
+
   }
 
-  selectOption(_id){
-    this.router.navigate(['/input', { id: _id }]);
+  ngOnInit() {
+    // 
+  }
+
+  private isReady(){
+    return new Promise((resolve, reject) =>{
+      if(this.dbReady.getValue()){
+        resolve();
+      }
+      else{
+        this.dbReady.subscribe((ready)=>{
+          if(ready){ 
+            resolve(); 
+          }
+        });
+      }  
+    });
+  }
+
+  itemSelected(itemSelected){
+
+    this.router.navigate(['/input', { id: itemSelected.id, name : itemSelected.nombre }]);
   }
 
   continue(){
-    alert('In construction...')
+    alert('En construcción!')
   }
 }

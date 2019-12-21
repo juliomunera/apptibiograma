@@ -10,20 +10,25 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { CodePageModule } from './pages/code/code.module';
 import { InfectionPageModule } from './pages/infection/infection.module'
-
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-
 import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
- 
 import { HttpClientModule } from '@angular/common/http';
-import { DatabaseService } from './services/database.service';
+
+import { BacteriumdbService } from './services/bacteriumdb.service';
+import { GeneraldbService } from './services/generaldb.service';
+import { HomedbService } from './services/homedb.service';
+import { ImportdbService } from './services/importdb.service';
+
 import { RestapiService } from './services/restapi.service';
 import { ValidatorService } from './validators/validator.service';
-
+import { HelperService } from './services/helper.service';
 import { ContextModel } from '../app/models/context.model';
+import { AntibioticsService } from './services/antibiotics.service';
 
-// https://github.com/AndrewJBateman/ionic-angular-sqlite/tree/master/src/app
+import { OperatorsModel, CustomControl } from '../app/models/operators.model';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,7 +39,8 @@ import { ContextModel } from '../app/models/context.model';
     AppRoutingModule,
     CodePageModule,
     InfectionPageModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [
     StatusBar,
@@ -42,11 +48,20 @@ import { ContextModel } from '../app/models/context.model';
     SQLite,
     SQLitePorter,
     InAppBrowser,
-    DatabaseService,
+    BacteriumdbService,
+    GeneraldbService,
+    HomedbService,
+    ImportdbService,
     RestapiService,
     ValidatorService,
+    HelperService,
     ContextModel,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    OperatorsModel,
+    CustomControl,
+    AntibioticsService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    SQLite,
+    SQLitePorter
   ],
   bootstrap: [AppComponent]
 })

@@ -10,14 +10,20 @@
 </ion-header>
 
 <ion-content text-center>
-    <br />
-    <img src="../../assets/body.svg" width="80%" height="80%" usemap="#image-map" />
+    <img src="../../assets/body.svg" usemap="#image-map" />
     <map name="image-map">
-                <area (click) = "selectRegion('Boca, senos, paranasales y cuello')" target="" alt="P1.5" title="P1.5" coords="190,70,50" shape="circle">
-                <area (click) = "selectRegion('Abdomen')" target="" alt="P1.5" title="P1.5" coords="190,160,50" shape="circle">
-            </map>
+            <area coords="0, 40, 145, 100" title="Sistema nervioso" (click) = "selectRegion('Sistema nervioso')" target="" alt="Sistema nervioso" shape="rect">
+            <area coords="265, 85, 410, 135" title="Boca, senos, paranasales y cuello"  (click) = "selectRegion('Boca, senos, paranasales y cuello')" target="" alt="Boca, senos, paranasales y cuello" shape="rect">
+            <area coords="0, 190, 145, 240" title="Pulmones y vía aérea" (click) = "selectRegion('Pulmones y vía aérea')" target="" alt="Pulmones y vía aérea" shape="rect">
+            <area coords="0, 300, 145, 360" title="Abdomen" (click) = "selectRegion('Abdomen')" target="" alt="Abdomen" shape="rect">
+            <area coords="0, 440, 145, 490" title="Tracto genito urinario" (click) = "selectRegion('Tracto genito urinario')" target="" alt="racto genito urinario" shape="rect">
+            <area coords="0, 595, 145, 645" title="Huesos" (click) = "selectRegion('Huesos')" target="" alt="Huesos" shape="rect">
+            <area coords="265, 323, 410, 378" title="Prostata"  (click) = "selectRegion('Prostata')" target="" alt="Prostata" shape="rect">
+            <area coords="265, 451, 410, 503" title="Tejidos blandos"  (click) = "selectRegion('Tejidos blandos')" target="" alt="Tejidos blandos" shape="rect">
+            <area coords="265, 565, 410, 625" title="Sangre"  (click) = "selectRegion('Sangre')" target="" alt="Sangre" shape="rect">
+    </map>
     <br /><br />
-    <ion-grid>
+    <!-- <ion-grid>
         <ion-row>
             <ion-col>
                 <div *ngIf="isSelected">
@@ -29,5 +35,6 @@
 
             </ion-col>
         </ion-row>
-    </ion-grid>
+    </ion-grid> -->
+    <br /><br />
 </ion-content>

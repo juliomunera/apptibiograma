@@ -6,6 +6,8 @@ import { InfectionPage } from '../infection/infection.page'
 import { ContextModel }  from '../../models/context.model';
 
 import { ValidatorService } from '../../validators/validator.service';
+import { GeneraldbService } from '../../services/generaldb.service';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-general',
@@ -13,29 +15,20 @@ import { ValidatorService } from '../../validators/validator.service';
   styleUrls: ['./general.page.scss'],
 })
 export class GeneralPage implements OnInit {
+  
   dataReturned : any = "Seleccionar";
-
-  // https://www.joshmorony.com/advanced-forms-validation-in-ionic-2/
 
   constructor(private router: Router, 
               private modalController: ModalController,
               private validatorService: ValidatorService,
               private alertController: AlertController,
-              private contextModel : ContextModel) {
-
-    // this.contextModel.sexType = 'F';
-    // this.contextModel.yearsOld = 3;
-    // this.contextModel.weight = 20.3;
-    // this.contextModel.creatinina = 1.7;
-    // this.contextModel.alergiaPenicilina = true;
-    // this.contextModel.hemodialisis = false;
-    // this.contextModel.capd = true;
-    // this.contextModel.crrt = true;
-    // this.contextModel.depuracionCreatinina = 4.5;
+              private db : GeneraldbService,
+              private helperService : HelperService,
+              public contextModel : ContextModel) {
 
     this.contextModel.name = 'Seleccionar';
+    this.contextModel.depuracionCreatinina = this.getCreatinineDebug();
 
-    console.log(this.contextModel);
   }
 
   ngOnInit() {
@@ -54,7 +47,7 @@ export class GeneralPage implements OnInit {
     modal.onDidDismiss().then((dataReturned) => {
       if (dataReturned !== null) {
         this.contextModel.name = dataReturned.data;
-        // this.dataReturned = dataReturned.data;
+        this.contextModel.infectionLocation = dataReturned.data;
       }
     });
  
@@ -68,7 +61,7 @@ export class GeneralPage implements OnInit {
       return;
     }
 
-    if(this.validatorService.validateIsDecimal(this.contextModel.yearsOld) === true){
+    if(this.validatorService.validateIsInteger(this.contextModel.yearsOld) === true){
       this.presentAlertMultipleButtons('El valor de la edad debe ser entero');
       return;
     }
@@ -78,17 +71,55 @@ export class GeneralPage implements OnInit {
       return;
     }
 
-    // if(this.validatorService.validateIsDecimal(this.contextModel.weight) === true){
-    //   this.presentAlertMultipleButtons('El valor del peso debe ser entero');
-    //   return;
-    // }
+    if(!this.validatorService.validateLimit(this.contextModel.weight, 0, 10000)){
+      this.presentAlertMultipleButtons('El valor del peso debe ser mayor o igual a cero');
+      return;
+    }
 
-    // if(Number.isInteger(this.contextModel.creatinina) === true){
-    //   this.presentAlertMultipleButtons('El valor de la creatinina es incorrecto');
-    //   return;
-    // }
+    if(!this.validatorService.validateLimit(this.contextModel.creatinina, 0, 10000)){
+      this.presentAlertMultipleButtons('El valor de la creatinina debe ser mayor o igual a cero');
+      return;
+    }
 
-    this.router.navigateByUrl('/gram');
+    if(this.contextModel.infectionLocation === undefined || this.contextModel.infectionLocation.toString().trim().length === 0){
+      this.presentAlertMultipleButtons('Debe seleccionar la ubicación de la infección');
+      return;
+    }
+
+    var dateNow = new Date();
+
+    let params = [this.helperService.infectionLocationType(this.contextModel.name), this.helperService.formatDate(dateNow), 
+                  this.contextModel.sexType, this.contextModel.yearsOld, this.contextModel.weight, this.contextModel.creatinina,
+                (this.contextModel.alergiaPenicilina?1:0), (this.contextModel.hemodialisis?1:0), (this.contextModel.capd?1:0),
+                (this.contextModel.crrt?1:0), this.contextModel.depuracionCreatinina];
+
+    this.db.insertGeneralData(params).then(()=> {
+      this.router.navigateByUrl('/gram');
+    })
+    .catch(e => {
+      alert(e.message);
+    });
+  }
+
+  getCreatinineDebug(){
+    let debugCreatinine = 0;
+
+    if(this.contextModel.sexType === undefined || this.contextModel.sexType === '')
+      return 0;
+
+    if(this.contextModel.yearsOld === undefined || this.contextModel.yearsOld === 0)
+      return 0;  
+   
+    if(this.contextModel.weight === undefined || this.contextModel.weight === 0)
+      return 0;
+
+    if(this.contextModel.creatinina === undefined || this.contextModel.creatinina === 0)
+      return 0;
+
+    debugCreatinine = (((this.contextModel.sexType === 'F')?0.85:1) * (140 - this.contextModel.yearsOld)*this.contextModel.weight)/(72*this.contextModel.creatinina);
+    this.contextModel.depuracionCreatinina = Number(debugCreatinine.toFixed(2));
+
+    return debugCreatinine;
   }
 
   async presentAlertMultipleButtons(description: any) {

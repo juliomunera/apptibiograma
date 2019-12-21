@@ -14,94 +14,9 @@
                 <ion-label class="fonttitle">Listado de bacterias</ion-label>
             </ion-list-header>
 
-            <ion-item>
-                <ion-label>Staphylococcus aureus</ion-label>
-                <ion-radio slot="start" value="aureus" (click)="selectOption('Staphylococcus aureus')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Staphylococcus epidermidis</ion-label>
-                <ion-radio slot="start" value="epidermidis" (click)="selectOption('Staphylococcus epidermidis')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Staphylococcus haemolyticus</ion-label>
-                <ion-radio slot="start" value="haemolyticus" (click)="selectOption('Staphylococcus haemolyticus')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Staphylococcus warneri</ion-label>
-                <ion-radio slot="start" value="warneri" (click)="selectOption('Staphylococcus warneri')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Staphylococcus lugdunensis</ion-label>
-                <ion-radio slot="start" value="lugdunensis" (click)="selectOption('Staphylococcus lugdunensis')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Staphylococcus haemolyticus</ion-label>
-                <ion-radio slot="start" value="haemolyticus" (click)="selectOption('Staphylococcus haemolyticus')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Enterococcus faecalis</ion-label>
-                <ion-radio slot="start" value="faecalis" (click)="selectOption('Enterococcus faecalis')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Enterococcus faecium</ion-label>
-                <ion-radio slot="start" value="faecium" (click)="selectOption('Enterococcus faecium')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Enterococcus gallinarum</ion-label>
-                <ion-radio slot="start" value="gallinarum" (click)="selectOption('Enterococcus gallinarum')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Enterococcus casseliflavus</ion-label>
-                <ion-radio slot="start" value="casseliflavus" (click)="selectOption('Enterococcus casseliflavus')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus viridans</ion-label>
-                <ion-radio slot="start" value="viridans" (click)="selectOption('Streptococcus viridans')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus mitis</ion-label>
-                <ion-radio slot="start" value="mitis" (click)="selectOption('Streptococcus mitis')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus mutans</ion-label>
-                <ion-radio slot="start" value="mutans" (click)="selectOption('Streptococcus mutans')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus salivarius</ion-label>
-                <ion-radio slot="start" value="salivarius" (click)="selectOption('Streptococcus salivarius')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus pyogenes</ion-label>
-                <ion-radio slot="start" value="pyogenes" (click)="selectOption('Streptococcus pyogenes')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus agalactiae</ion-label>
-                <ion-radio slot="start" value="agalactiae" (click)="selectOption('Streptococcus agalactiae')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus dysgalactiae</ion-label>
-                <ion-radio slot="start" value="dysgalactiae" (click)="selectOption('Streptococcus dysgalactiae')"></ion-radio>
-            </ion-item>
-
-            <ion-item>
-                <ion-label>Streptococcus pneumoniae</ion-label>
-                <ion-radio slot="start" value="pneumoniae" (click)="selectOption('Streptococcus pneumoniae')"></ion-radio>
+            <ion-item ion-item *ngFor="let item of bacteriumsList" (click)="itemSelected(item)">
+                <ion-label>{{ item.nombre }}</ion-label>
+                <ion-radio slot="start" value="{{ item.id }}"></ion-radio>
             </ion-item>
 
         </ion-radio-group>

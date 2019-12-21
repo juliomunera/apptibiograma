@@ -22,9 +22,17 @@ export class InfectionPage implements OnInit {
   ngOnInit() {
   }
 
-    selectRegion(area){
+  async selectRegion(area){
     this.isSelected = true;
     this.selectedText = area;
+
+    this.contextModel.name = this.selectedText;
+    if (this.contextModel.name === ""){
+      this.contextModel.name = "Seleccionar";
+    }
+
+    await this.modalController.dismiss(this.contextModel.name);
+
   }
 
   async continue() {

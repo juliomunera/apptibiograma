@@ -27,6 +27,10 @@ export class GeneraldbService {
       
     return this.plt.ready()
       .then(()=> {
+        return this.database.executeSql(`DELETE FROM DatosDelPaciente;`, null)
+        .catch(err => alert('Error: ' + err.message));
+      })
+      .then(()=> {
 
         return this.database.executeSql(
           `INSERT INTO DatosDelPaciente (idParteDelCuerpo, fechaRegistro, genero, 
