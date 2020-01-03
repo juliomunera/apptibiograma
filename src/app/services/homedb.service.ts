@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 export class HomedbService {
 
   private database: SQLiteObject;
-  private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(private plt: Platform, private sqlite: SQLite) { 
     this.plt.ready().then(() => {

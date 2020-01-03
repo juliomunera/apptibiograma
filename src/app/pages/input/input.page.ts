@@ -8,6 +8,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { OperatorsModel, CustomControl } from '../../models/operators.model';
 import { ValidatorService } from '../../validators/validator.service';
 import { AntibioticsService } from '../../services/antibiotics.service';
+import { AnalyzeService } from '../../services/analyze.service';
 
 @Component({
   selector: 'app-input',
@@ -24,11 +25,13 @@ export class InputPage implements OnInit {
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
   
   constructor(private plt: Platform, 
-    private activatedRoute: ActivatedRoute, private sqlite: SQLite,
+    private activatedRoute: ActivatedRoute, 
+    private sqlite: SQLite,
     private alertController: AlertController,
     private validatorService: ValidatorService,
     private antibioticsService : AntibioticsService,
     public context : OperatorsModel, public controlModel : CustomControl,
+    public analyzeService : AnalyzeService,
     private router: Router) { 
       this.count = 0;
   }
@@ -113,9 +116,18 @@ export class InputPage implements OnInit {
     }
 
     this.antibioticsService.insertData(this.context).then(() => {
-      this.presentAlertMultipleButtons('Datos almacenados correctamente.');
-      this.router.navigateByUrl('test');
-      // this.router.navigateByUrl('/summary');
+
+      this.analyzeService.executeGramScript(this.bacteriumId, '+')
+          .then(_ => {
+            this.presentAlertMultipleButtons('Análisis realizado satisfactoriamente.');
+
+            this.router.navigate(['/summary', { name : this.textDescription }]);
+            // this.router.navigateByUrl('/summary');
+          })
+          .catch(e => {
+            alert(e.message);
+          });
+
     });
 
   }

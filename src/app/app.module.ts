@@ -25,6 +25,7 @@ import { ValidatorService } from './validators/validator.service';
 import { HelperService } from './services/helper.service';
 import { ContextModel } from '../app/models/context.model';
 import { AntibioticsService } from './services/antibiotics.service';
+import { AnalyzeService } from './services/analyze.service';
 
 import { OperatorsModel, CustomControl } from '../app/models/operators.model';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -59,6 +60,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     OperatorsModel,
     CustomControl,
     AntibioticsService,
+    AnalyzeService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     SQLite,
     SQLitePorter

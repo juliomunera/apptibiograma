@@ -11,7 +11,8 @@ DROP TABLE IF EXISTS Bacterias;
 
 CREATE TABLE Bacterias (
     id INTEGER PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
+    nombre VARCHAR(100) NOT NULL,
+	tipoGRAM CHAR(1) DEFAULT ('+') CHECK (tipoGRAM = '+' OR tipoGRAM = '-') NOT NULL
 );	
 
 /*
@@ -56,7 +57,7 @@ DROP TABLE IF EXISTS Asignaciones;
 
 CREATE TABLE Asignaciones (
     id INTEGER PRIMARY KEY,
-	comentariosTratamiento  VARCHAR2(250) NOT NULL
+	comentariosTratamiento VARCHAR2(250) NOT NULL
 );
 
 /*
@@ -72,7 +73,7 @@ CREATE TABLE CBxA (
 	idAntibiotico INTEGER NOT NULL,
 	idPrueba INTEGER NOT NULL,
 	tipoControl VARCHAR(20) NOT NULL,
-	tipoGRAM CHAR(1) NOT NULL,
+	tipoGRAM CHAR(1) CHECK (tipoGRAM = '+' OR tipoGRAM = '-') NOT NULL,
 	
 	FOREIGN KEY(idBacteria) REFERENCES Bacterias(id)
 	FOREIGN KEY(idAntibiotico) REFERENCES Antibioticos(id)
@@ -81,34 +82,6 @@ CREATE TABLE CBxA (
 
 CREATE INDEX IF NOT EXISTS IDX_CBxA_idBacteria_idAntibiotico ON CBxA (idBacteria,idAntibiotico);
 
-/*
-	Entidad usada para 
-*/
-DROP TABLE IF EXISTS CPDCxA;
-
-CREATE TABLE CPDCxA (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-	idGrupo INTEGER NOT NULL,
-	idParteDelCuerpo INTEGER NOT NULL,
-	idAntibiotico INTEGER NOT NULL,
-	esSensible SMALLINT NOT NULL,
-	esResistente SMALLINT NOT NULL,
-	enEquilibrio SMALLINT NOT NULL,
-	idAsignacion INTEGER NOT NULL,
-	codigoReferencia VARCHAR2(5),
-	
-	FOREIGN KEY(idParteDelCuerpo) REFERENCES PartesDelCuerpo(id)
-	FOREIGN KEY(idAntibiotico) REFERENCES Antibioticos(id)
-	FOREIGN KEY(idAsignacion) REFERENCES Asignaciones(id)
-);	
-
-CREATE INDEX IF NOT EXISTS IDX_CPDCxA_codigoReferencia ON CPDCxA (codigoReferencia);
-
-/*
-	Desencadenador activo después de ingresar un registro y usado para calcular  el  campo depuracionCreatinina  cuando  el  genero  del 
-	paciente es masculino.
-*/
-DROP TRIGGER IF EXISTS TRAI_CPDCxA_CalcularCodigoReferencia;
 
 /*
 	Entidad usada para almacenar la información básica del paciente en evaluación.
@@ -119,30 +92,18 @@ CREATE TABLE DatosDelPaciente (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	idParteDelCuerpo INTEGER,
 	fechaRegistro DATETIME DEFAULT (DATETIME('now')),
-	genero CHAR(1),
-	edad INTEGER,	
+	genero CHAR(1) CHECK (genero = 'F' OR  genero = 'M') NOT NULL,
+	edad INTEGER CHECK (edad > 0 AND edad < 140) NOT NULL,	
 	peso REAL,	
 	creatinina REAL,
 	esAlergicoAPenicilina BOOLEAN,
 	requiereHemodialisis BOOLEAN,
 	CAPD BOOLEAN,
 	CRRT BOOLEAN,	
-	depuracionCreatinina DECIMAL(10,2),
+	depuracionCreatinina DECIMAL(10,2) DEFAULT (0.0),
 	
 	FOREIGN KEY(idParteDelCuerpo) REFERENCES PartesDelCuerpo(id)
 );
-
-/*
-	Desencadenador activo después de ingresar un registro y usado para calcular  el  campo depuracionCreatinina  cuando  el  genero  del 
-	paciente es femenino.
-*/
-DROP TRIGGER IF EXISTS TRAI_DDP_CalculoDepuracionCreatininaMujer;	
-
-/*
-	Desencadenador activo después de ingresar un registro y usado para calcular  el  campo depuracionCreatinina  cuando  el  genero  del 
-	paciente es masculino.
-*/
-DROP TRIGGER IF EXISTS TRAI_DDP_CalculoDepuracionCreatininaHombre;
 
 /*
 	Entidad usada para almacenar la combinación de los antibioticos y pruebas que pueden usarse para el tratamiento de cada  una  de las  
@@ -158,16 +119,36 @@ CREATE TABLE GRAM (
 	idPrueba INTEGER NOT NULL,
 	operador VARCHAR(2),
 	valor DECIMAL(10,5),
-	tipoGRAM CHAR(1) NOT NULL,
+	tipoGRAM CHAR(1) CHECK(tipoGRAM = "+" OR tipoGRAM = "-") NOT NULL,
 
 	FOREIGN KEY(idBacteria) REFERENCES Bacterias(id)
 	FOREIGN KEY(idAntibiotico) REFERENCES Antibioticos(id)
 	FOREIGN KEY(idPrueba) REFERENCES Pruebas(id)
 );
 
+CREATE INDEX IF NOT EXISTS IDX_GRAM_tipoGRAM ON GRAM( tipoGRAM );
 CREATE INDEX IF NOT EXISTS IDX_GRAM_operador ON GRAM( operador );
 CREATE INDEX IF NOT EXISTS IDX_GRAM_idBacteria_idPrueba ON GRAM( idBacteria, idPrueba );
 CREATE INDEX IF NOT EXISTS IDX_GRAM_idBacteria_idAntibiotico_operador ON GRAM( idBacteria, idAntibiotico, operador );
+
+
+DROP TABLE IF EXISTS TMP_GRAM;
+
+CREATE TABLE TMP_GRAM (
+	id INTEGER,		
+	idBacteria INTEGER,		
+	idAntibiotico INTEGER,
+	idPrueba INTEGER,
+	operador VARCHAR(2),
+	valor DECIMAL(10,5),
+	tipoGRAM CHAR(1)
+);
+
+CREATE INDEX IF NOT EXISTS IDX_TMP_GRAM_tipoGRAM ON TMP_GRAM( tipoGRAM );
+CREATE INDEX IF NOT EXISTS IDX_TMP_GRAM_operador ON TMP_GRAM( operador );
+CREATE INDEX IF NOT EXISTS IDX_TMP_GRAM_idBacteria_idPrueba ON TMP_GRAM( idBacteria, idPrueba );
+CREATE INDEX IF NOT EXISTS IDX_TMP_GRAM_idBacteria_idAntibiotico_operador ON TMP_GRAM( idBacteria, idAntibiotico, operador );
+
 
 /*
 	Entidad donde se persiste los resultados generados en la 1era. etapa del análisis GRAM (interpretación de los valores  de referencia
@@ -207,77 +188,42 @@ CREATE TABLE InterpretacionGRAMEtapa2 (
 	FOREIGN KEY(idBacteria) REFERENCES Bacterias(id)
 );
 
-DROP TABLE IF EXISTS TokenSeguridad;
+/*
+	Entidad donde se persiste los resultados generados en la 3da. etapa del analisis GRAM.
+*/
+DROP TABLE IF EXISTS InterpretacionGRAMEtapa3;
 
-CREATE TABLE IF NOT EXISTS TokenSeguridad (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	fechaRegistro DATETIME,
-	dias INTEGER
+CREATE TABLE InterpretacionGRAMEtapa3 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	idAsignacion INTEGER NOT NULL,
+	mensaje VARCHAR2(250) NOT NULL,
+	
+	FOREIGN KEY(idAsignacion) REFERENCES Asignaciones(id)
 );
 
 /*
-	Las siguientes son algunas de las vistas que hacen parte del conjunto de mecanismos usados para ejecutar las etapas del análisis GRAM.
+	Entidad donde se almacena el token otorgado para el acceder a la funciones expuestas por la APP.
 */
-DROP VIEW IF EXISTS GermenesSensibles;
+DROP TABLE IF EXISTS TokenSeguridad;
 
-CREATE VIEW GermenesSensibles AS
-	SELECT g.*, a.nombre
-	FROM GRAM AS g
-	JOIN Antibioticos a
-	ON g.idAntibiotico = a.id
-	WHERE g.operador = "<="
-		AND g.idAntibiotico <> 1;
+CREATE TABLE TokenSeguridad (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fechaRegistro DATETIME NOT NULL,
+	dias INTEGER NOT NULL
+);
 
-DROP VIEW IF EXISTS GermenesEnEquilibrio;
+/*
+	Entidad donde se almacena los eventos generados duraante la ejecución de algunas de las funcionalidades 
+	provistas por la APP.
+*/
+DROP TABLE IF EXISTS BitacoraEventos;
 
-CREATE VIEW GermenesEnEquilibrio AS
-	SELECT g.*, a.nombre
-	FROM GRAM AS g
-	JOIN Antibioticos a
-	ON g.idAntibiotico = a.id
-	WHERE g.operador = "="
-		AND g.idAntibiotico <> 1; 
-		
-DROP VIEW IF EXISTS GermenesResistentes;
-
-CREATE VIEW GermenesResistentes AS
-	SELECT g.*, a.nombre
-	FROM GRAM AS g
-	JOIN Antibioticos a
-	ON g.idAntibiotico = a.id
-	WHERE g.operador = ">="
-		AND g.idAntibiotico <> 1; 
-
-DROP VIEW IF EXISTS GermenesSensiblesoEnEquilibrio;
-
-CREATE VIEW GermenesSensiblesoEnEquilibrio AS
-	SELECT g.*, a.nombre
-	FROM GRAM AS g
-	JOIN Antibioticos a
-	ON g.idAntibiotico = a.id
-	WHERE (g.operador = "<=" 
-		OR g.operador = "=")
-		AND g.idAntibiotico <> 1;
-
-DROP VIEW IF EXISTS GermenesResistentesoEnEquilibrio;
-
-CREATE VIEW GermenesResistentesoEnEquilibrio AS
-	SELECT g.*, a.nombre
-	FROM GRAM AS g
-	JOIN Antibioticos a
-	ON g.idAntibiotico = a.id
-	WHERE (g.operador = ">=" 
-		OR g.operador = "=")
-		AND g.idAntibiotico <> 1; 		
-		
-DROP VIEW IF EXISTS PruebasAplicadas;
-
-CREATE VIEW PruebasAplicadas AS
-	SELECT g.*, p.nombre
-	FROM GRAM AS g
-	JOIN Pruebas p
-	ON g.idPrueba = p.id
-	WHERE g.idAntibiotico = 1;
+CREATE TABLE BitacoraEventos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fechaRegistro DATETIME DEFAULT (DATETIME('now')),
+	tipoEvento VARCHAR(100),
+	detalleEvento TEXT NOT NULL
+);
 
 DROP VIEW IF EXISTS AntibioticosPruebas;
 
@@ -293,30 +239,73 @@ CREATE VIEW AntibioticosPruebas AS
 	WHERE idPrueba <> 1;
 
 
+DROP VIEW IF EXISTS EtapaUnoyEtapaDos;
+
+CREATE VIEW EtapaUnoyEtapaDos AS
+	SELECT idParteDelCuerpo, idBacteria, idAntibiotico, NULL as idAsignacion, mensaje
+	FROM InterpretacionGRAMEtapa1
+	UNION ALL           
+	SELECT idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje
+	FROM InterpretacionGRAMEtapa2;
+
+
 /* Lista base de bacterias habilitados para el funcionamiento de la aplicación. */
+DELETE FROM BitacoraEventos;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Bacterias.');
+
 DELETE FROM Bacterias;
 
-INSERT INTO Bacterias(id, nombre) VALUES (1, 'NA'); 
-INSERT INTO Bacterias(id, nombre) VALUES (2, 'Staphylococcus aureus');  
-INSERT INTO Bacterias(id, nombre) VALUES (3, 'Staphylococcus epidermidis');
-INSERT INTO Bacterias(id, nombre) VALUES (4, 'Staphylococcus haemolyticus');
-INSERT INTO Bacterias(id, nombre) VALUES (5, 'Staphylococcus warneri');
-INSERT INTO Bacterias(id, nombre) VALUES (6, 'Staphylococcus lugdunensis');
-INSERT INTO Bacterias(id, nombre) VALUES (7, 'Enterococcus faecalis');
-INSERT INTO Bacterias(id, nombre) VALUES (8, 'Enterococcus faecium');
-INSERT INTO Bacterias(id, nombre) VALUES (9, 'Enterococcus gallinarum');
-INSERT INTO Bacterias(id, nombre) VALUES (10, 'Enterococcus casseliflavus');
-INSERT INTO Bacterias(id, nombre) VALUES (11, 'Streptococcus viridans');
-INSERT INTO Bacterias(id, nombre) VALUES (12, 'Streptococcus mitis');
-INSERT INTO Bacterias(id, nombre) VALUES (13, 'Streptococcus mutans');
-INSERT INTO Bacterias(id, nombre) VALUES (14, 'Streptococcus salivarius');
-INSERT INTO Bacterias(id, nombre) VALUES (15, 'Streptococcus pyogenes');
-INSERT INTO Bacterias(id, nombre) VALUES (16, 'Streptococcus agalactiae');
-INSERT INTO Bacterias(id, nombre) VALUES (17, 'Streptococcus dysgalactiae');
-INSERT INTO Bacterias(id, nombre) VALUES (18, 'Streptococcus pneumoniae');
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Bacterias.');
+
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (1, 'NA', '+'); 
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (2, 'Staphylococcus aureus', '+');  
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (3, 'Staphylococcus epidermidis', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (4, 'Staphylococcus haemolyticus', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (5, 'Staphylococcus warneri', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (6, 'Staphylococcus lugdunensis', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (7, 'Enterococcus faecalis', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (8, 'Enterococcus faecium', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (9, 'Enterococcus gallinarum', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (10, 'Enterococcus casseliflavus', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (11, 'Streptococcus viridans', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (12, 'Streptococcus mitis', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (13, 'Streptococcus mutans', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (14, 'Streptococcus salivarius', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (15, 'Streptococcus pyogenes', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (16, 'Streptococcus agalactiae', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (17, 'Streptococcus dysgalactiae', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (18, 'Streptococcus pneumoniae', '+');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (19, 'Escherichia Coli', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (20, 'Klebsiella', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (21, 'Serratia', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (22, 'Enterobacter', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (23, 'Pseudomonas', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (24, 'Citrobacter', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (25, 'Aeromonas', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (26, 'Morganella', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (27, 'Stenotrophomonas maltophilia', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (28, 'Acinetobacter', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (29, 'Proteus mirabilis', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (30, 'Proteus vulgaris', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (31, 'Proteus penneri', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (32, 'Salmonella', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (33, 'Shigella', '-');
+INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (34, 'Providencia', '-');
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'El ingreso de información a la tabla Bacterias fue exitoso, 32 filas afectadas.');
 
 /* Lista base de antibióticos habilitados para el funcionamiento de la aplicación. */
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Antibioticos.');
+
 DELETE FROM Antibioticos;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Antibioticos.');
 
 INSERT INTO Antibioticos(id, nombre) VALUES (1, 'NA'); 
 INSERT INTO Antibioticos(id, nombre) VALUES (2, 'Clindamycin');
@@ -326,7 +315,7 @@ INSERT INTO Antibioticos(id, nombre) VALUES (5, 'Linezolid');
 INSERT INTO Antibioticos(id, nombre) VALUES (6, 'Oxacillin');
 INSERT INTO Antibioticos(id, nombre) VALUES (7, 'Rifampicin');
 INSERT INTO Antibioticos(id, nombre) VALUES (8, 'Tetracycline');
-INSERT INTO Antibioticos(id, nombre) VALUES (9, 'Trimethoprim / Sulfa');
+INSERT INTO Antibioticos(id, nombre) VALUES (9, 'Trimethoprim/Sulfa');
 INSERT INTO Antibioticos(id, nombre) VALUES (10, 'Vancomycin');
 INSERT INTO Antibioticos(id, nombre) VALUES (11, 'Nitrofurantoin');
 INSERT INTO Antibioticos(id, nombre) VALUES (12, 'Daptomycin');
@@ -338,16 +327,51 @@ INSERT INTO Antibioticos(id, nombre) VALUES (17, 'Penicillin meningitis');
 INSERT INTO Antibioticos(id, nombre) VALUES (18, 'Penicillin otros');
 INSERT INTO Antibioticos(id, nombre) VALUES (19, 'Cefotaxima meningitis');
 INSERT INTO Antibioticos(id, nombre) VALUES (20, 'Cefotaxima otros');
+INSERT INTO Antibioticos(id, nombre) VALUES (21, 'Amikacin');
+INSERT INTO Antibioticos(id, nombre) VALUES (22, 'Aztreonam');
+INSERT INTO Antibioticos(id, nombre) VALUES (23, 'Cefazolin');
+INSERT INTO Antibioticos(id, nombre) VALUES (24, 'Cefepime');
+INSERT INTO Antibioticos(id, nombre) VALUES (25, 'Ceftazidime');
+INSERT INTO Antibioticos(id, nombre) VALUES (26, 'Cefotaxime');
+INSERT INTO Antibioticos(id, nombre) VALUES (27, 'Ciprofloxacin');
+INSERT INTO Antibioticos(id, nombre) VALUES (28, 'Ertapenem');
+INSERT INTO Antibioticos(id, nombre) VALUES (29, 'Colistin');
+INSERT INTO Antibioticos(id, nombre) VALUES (30, 'Imipenem');
+INSERT INTO Antibioticos(id, nombre) VALUES (31, 'Meropenem');
+INSERT INTO Antibioticos(id, nombre) VALUES (32, 'Doripenem');
+INSERT INTO Antibioticos(id, nombre) VALUES (33, 'Piperacillin / Tazobactam');
+INSERT INTO Antibioticos(id, nombre) VALUES (34, 'Tigecycline');
+INSERT INTO Antibioticos(id, nombre) VALUES (35, 'Ampicillin/Sulbactam');
+INSERT INTO Antibioticos(id, nombre) VALUES (36, 'Moxifloxacin');
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Antibioticos, 36 filas afectadas.');
 
 /* Lista base de pruebas habilitados para el funcionamiento de la aplicación. */
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Pruebas.');
+
 DELETE FROM Pruebas;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Pruebas.');
 
 INSERT INTO Pruebas(id, nombre) VALUES (1, 'NA'); 
 INSERT INTO Pruebas(id, nombre) VALUES (2, 'Resistencia inducible a Clindamycin');
 INSERT INTO Pruebas(id, nombre) VALUES (3, 'Cefoxitin Screen');
+INSERT INTO Pruebas(id, nombre) VALUES (4, 'ESBL/BLEE');
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Pruebas, 4 filas afectadas.');
 
 /* Lista de partes del cuerpo habilitados para el funcionamiento de la aplicación. */
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla PartesDelCuerpo.');
+
 DELETE FROM PartesDelCuerpo;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla PartesDelCuerpo.');
 
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (0, 'Sistema nervioso central');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (1, 'Boca, senos paranasales y cuello');
@@ -359,6 +383,9 @@ INSERT INTO PartesDelCuerpo(id,nombre) VALUES (6, 'Prostata');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (7, 'Tejidos blandos');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (8, 'Sangre');
 
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla PartesDelCuerpo, 8 filas afectadas.');
+
 /* 	
 	Lista de las combinaciones de antibioticos y pruebas que pueden usarse para el tratamiento de cada una de las
 	
@@ -367,7 +394,13 @@ INSERT INTO PartesDelCuerpo(id,nombre) VALUES (8, 'Sangre');
 	almacenamiento se identitica el tipo de control grpafico (INPUT TEXT y/o RADIO BUTTON) que deberá  presentarse
 	sobre el formulario GRAM para su gestión.
 */
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla CBxA.');
+
 DELETE FROM CBxA;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla CBxA.');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (2, 2, 1,'INPUT TEXT','+');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (2, 3, 1,'INPUT TEXT','+');
@@ -506,22 +539,189 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 19, 1,'INPUT TEXT','+');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 21, 1,'INPUT TEXT','+');
 
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 13, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 22, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 23, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 16, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 33, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 34, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 11, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 1, 4,'RADIO BUTTON','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 22, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 23, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 16, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 33, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 34, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 11, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (20, 1, 4,'RADIO BUTTON','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 33, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 32, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 21, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 36, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 34, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 29, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 30, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 13, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 22, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 23, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 16, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 33, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 1, 4,'RADIO BUTTON','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (32, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (32, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (33, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (33, 25, 1,'INPUT TEXT','-');
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 27, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 28, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 4, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 31, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 32, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 9, 1,'INPUT TEXT','-');
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla CBxA, 263 filas afectadas.');
+
 /*  
 	Lista con  la combinación de la partes del cuerpo, los antibióticos, el estado de sensibilidad, resistencia o 
 	Lista de los antibióticos y/o comentarios usada para la configuración de las combinaciones  posibles  para la 
 	asignación de los medicamentos requeridos en el tratamiento de un paciente.
 */
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Asignaciones.');
+
 DELETE FROM Asignaciones;
 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (1, 'Oxacilina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (2, 'Ceftriaxona (si Albumina > 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (3, 'Cefotaxime (si Albumina < 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (4, 'Ampicilina/sulbactam');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (5, 'Ampicilina/sulbactam (si sospecha broncoaspiración)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (6, 'Ampicilina/sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (8, 'Descartar bacteriemia o contaminación');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (9, 'Cefazolina ');
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Asignaciones.');
+
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 1, 'Oxacilina');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 2, 'Ceftriaxona (si Albumina > 3.5)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 3, 'Cefotaxime (si Albumina < 3.5)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 4, 'Ampicilina/sulbactam');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 5, 'Ampicilina/sulbactam (si sospecha broncoaspiración)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 6, 'Ampicilina/sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 8, 'Descartar bacteriemia o contaminación');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 9, 'Cefazolina ');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (10, 'Daptomicina');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (11, 'Linezolide');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (12, 'Clindamicina');
@@ -541,383 +741,21 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (25, 'Rifampicina o M
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (26, 'Confirmar con un laboratorio de referencia');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (27, 'Descartar bacteriemia');
 
-/*  
-	Lista con  la combinación de la partes del cuerpo, los antibióticos, el estado de sensibilidad, resistencia o 
-	equilibrio de  estos  y  comentarios  usado  para  determinar los  medicamentos que deberán asignarse para el 
-	tratamiento de un paciente.
-*/
-DELETE FROM CPDCxA;
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (28, 'Gentamicina');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (29, 'Tetracycline (Minociclina)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (30, 'Trimethoprim/Sulfa');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (31, 'Amikacin');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (32, 'Aztreonam'); 
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (33, 'Cefepime');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (34, 'Ceftazidime');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (35, 'Ceftriaxone');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (36, 'Ciprofloxacin'); 
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (37, 'Ertapenem');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (38, 'Colistin');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (39, 'Imipenem');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (40, 'Meropenem');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (41, 'Doripenem');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (42, 'Piperacillin/Tazobactam');
 
-/*
-	Staphylococcus (Grupo 1)
-*/
--- Sensibilidad al antibiótico 6 (Oxacilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 0, 1, 0, 0, 1);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 0, 1, 0, 0, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 0, 1, 0, 0, 3);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 1, 1, 0, 0, 4);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 1, 0, 0, 1);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 1, 0, 0, 9);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 1, 0, 0, 5);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 1, 0, 0, 1);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 1, 0, 0, 9);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 1, 0, 0, 6);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 1, 0, 0, 1);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 1, 0, 0, 9);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 1, 0, 0, 6);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 1, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 3, 1, 0, 0, 4);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 4, 1, 0, 0, 8);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 6, 1, 0, 0, 8);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 8, 1, 0, 0, 1);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 8, 1, 0, 0, 9);
-
--- Resistencia al antibiótico 6 (Oxacilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 0, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 0, 0, 1, 0, 11);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 1, 0, 1, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 1, 0, 1, 0, 13);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 0, 1, 0, 11);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 2, 0, 1, 0, 14);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 0, 1, 0, 11);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 7, 0, 1, 0, 15);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 0, 1, 0, 15);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 5, 0, 1, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 3, 0, 1, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 3, 0, 1, 0, 16);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 4, 0, 1, 0, 8);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 6, 0, 1, 0, 8);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 8, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 6, 8, 0, 1, 0, 10);
-
--- Reglas para la asignación de medicamentos donde no se tiene en cuenta la resistencia, sensibilidad y equilibrio de este.
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 0, 0, 0, 0, 11);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 0, 0, 0, 0, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 0, 0, 0, 0, 3);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 1, 0, 0, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 1, 0, 0, 0, 13);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 2, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 2, 0, 0, 0, 11);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 2, 0, 0, 0, 9);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 7, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 7, 0, 0, 0, 9);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 7, 0, 0, 0, 15);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 5, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 5, 0, 0, 0, 9);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 5, 0, 0, 0, 15);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 5, 0, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 3, 0, 0, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 3, 0, 0, 0, 16);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 4, 0, 0, 0, 8);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 6, 0, 0, 0, 8);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 8, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (1, 1, 8, 0, 0, 0, 9);
-
-/*
-	Entercoccus faecalis, gallinarum y casseliflavus (Grupo 2)
-*/
--- Sensibilidad al antibiótico 13
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 0, 1, 0, 0, 17);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 1, 1, 0, 0, 4);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 2, 1, 0, 0, 4);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 7, 1, 0, 0, 4);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 5, 1, 0, 0, 4);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 5, 1, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 3, 1, 0, 0, 4);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 1, 0, 0, 20);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 1, 0, 0, 4);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 6, 1, 0, 0, 17);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 6, 1, 0, 0, 22);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 8, 1, 0, 0, 4);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 8, 1, 0, 0, 19);
-
--- Resistencia al antibiótico 13
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 0, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 0, 0, 1, 0, 11);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 1, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 1, 0, 1, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 1, 0, 1, 0, 11);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 2, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 2, 0, 1, 0, 11);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 7, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 7, 0, 1, 0, 11);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 5, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 5, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 5, 0, 1, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 3, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 3, 0, 1, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 3, 0, 1, 0, 11);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 0, 1, 0, 18);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 0, 1, 0, 21);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 4, 0, 1, 0, 11);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 6, 0, 1, 0, 22);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 6, 0, 1, 0, 13);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 8, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 13, 8, 0, 1, 0, 10);
-
--- Reglas para la asignación de medicamentos donde no se tiene en cuenta la resistencia, sensibilidad y equilibrio de este.
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 0, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 0, 0, 1, 0, 11);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 1, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 1, 0, 1, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 1, 0, 1, 0, 11);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 2, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 2, 0, 1, 0, 11);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 7, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 7, 0, 1, 0, 11);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 5, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 5, 0, 1, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 5, 0, 1, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 3, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 3, 0, 1, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 3, 0, 1, 0, 11);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 4, 0, 1, 0, 18);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 4, 0, 1, 0, 21);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 4, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 4, 0, 1, 0, 11);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 6, 0, 1, 0, 22);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 6, 0, 1, 0, 13);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 8, 0, 1, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (2, 1, 8, 0, 1, 0, 10);
-
-/*
-	Enterocuccus faecium (Grupo 3)
-*/
--- Reglas para la asignación de medicamentos donde no se tiene en cuenta la resistencia, sensibilidad y equilibrio de este.
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 0, 0, 0, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 0, 0, 0, 0, 11);
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 1, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 1, 0, 0, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 1, 0, 0, 0, 11);
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 2, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 2, 0, 0, 0, 11);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 7, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 7, 0, 0, 0, 11);
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 5, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 5, 0, 0, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 5, 0, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 3, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 3, 0, 0, 0, 16);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 3, 0, 0, 0, 11);
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 4, 0, 0, 0, 18);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 4, 0, 0, 0, 21);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 4, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 4, 0, 0, 0, 11);
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 6, 0, 0, 0, 22);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 6, 0, 0, 0, 13);
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 8, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (3, 1, 8, 0, 0, 0, 10);
-
-/*
-	Streptococcus (Grupo 4)
-*/
--- Sensibilidad al antibiótico 14 (Penicilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 1, 0, 0, 23);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 1, 0, 0, 17);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 1, 0, 0, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 1, 0, 0, 3); 
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 1, 1, 0, 0, 4); 
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 2, 1, 0, 0, 4); 
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 7, 1, 0, 0, 4); 
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 5, 1, 0, 0, 4); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 5, 1, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 3, 1, 0, 0, 4); 
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 4, 1, 0, 0, 20); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 4, 1, 0, 0, 4); 
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 6, 1, 0, 0, 23); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 6, 1, 0, 0, 17); 
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 1, 0, 0, 24); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 1, 0, 0, 20); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 1, 0, 0, 4); 
--- Resistencia al antibiótico 14 (Penicilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 0, 1, 0, 26);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 0, 1, 0, 26);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 0, 1, 0, 26);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 0, 0, 1, 0, 26); 
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 1, 0, 1, 0, 26); 
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 2, 0, 1, 0, 26); 
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 7, 0, 1, 0, 26); 
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 5, 0, 1, 0, 26); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 5, 0, 1, 0, 26);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 3, 0, 1, 0, 26); 
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 4, 0, 1, 0, 26); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 4, 0, 1, 0, 26); 
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 6, 0, 1, 0, 26); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 6, 0, 1, 0, 26); 
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 0, 1, 0, 26); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 0, 1, 0, 26); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 14, 8, 0, 1, 0, 26);
--- Reglas para la asignación de medicamentos donde no se tiene en cuenta la resistencia, sensibilidad y equilibrio de este.
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 0, 0, 0, 0, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 0, 0, 0, 0, 3);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 0, 0, 0, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 0, 0, 0, 0, 11); 
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 1, 0, 0, 0, 16); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 1, 0, 0, 0, 12); 
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 2, 0, 0, 0, 13); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 2, 0, 0, 0, 11);
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 7, 0, 0, 0, 13);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 7, 0, 0, 0, 15); 
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 5, 0, 0, 0, 13); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 5, 0, 0, 0, 10);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 5, 0, 0, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 5, 0, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 3, 0, 0, 0, 12);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 3, 0, 0, 0, 16); 
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 4, 0, 0, 0, 18); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 4, 0, 0, 0, 21);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 4, 0, 0, 0, 13);  
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 6, 0, 0, 0, 22); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 6, 0, 0, 0, 2); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 6, 0, 0, 0, 3); 
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 8, 0, 0, 0, 13); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (4, 1, 8, 0, 0, 0, 10); 
-/*
-	Streptococcus pneumoniae(Grupo 5)
-*/
--- Sensibilidad al antibiótico 14 (Penicilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 1, 0, 0, 23);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 1, 0, 0, 17);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 1, 0, 0, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 1, 0, 0, 3); 
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 1, 1, 0, 0, 4); 
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 2, 1, 0, 0, 4); 
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 7, 1, 0, 0, 4); 
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 5, 1, 0, 0, 4); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 5, 1, 0, 0, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 3, 1, 0, 0, 4); 
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 4, 1, 0, 0, 27); 
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 6, 1, 0, 0, 27); 
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 1, 0, 0, 24); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 1, 0, 0, 20); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 1, 0, 0, 4); 
--- Equilibrio al antibiótico 14 (Penicilina)
--- Sistema nervioso central
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 0, 0, 1, 23);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 0, 0, 1, 17);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 0, 0, 1, 2);
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 0, 0, 0, 1, 3); 
--- Boca y senos paranasales
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 1, 0, 0, 1, 4); 
--- Pulmones
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 2, 0, 0, 1, 4); 
--- Tejidos blandos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 7, 0, 0, 1, 4); 
--- Huesos
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 5, 0, 0, 1, 4); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 5, 0, 0, 1, 7);
--- Abdomen
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 3, 0, 0, 1, 4); 
--- Tracto genitourinario
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 4, 0, 0, 1, 27); 
--- Próstata
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 6, 0, 0, 1, 27); 
--- Sangre
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 0, 0, 1, 24); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 0, 0, 1, 20); 
-INSERT INTO CPDCxA(idGrupo, idAntibiotico,idParteDelCuerpo,esSensible,esResistente,enEquilibrio,idAsignacion) VALUES (5, 14, 8, 0, 0, 1, 4); 
-
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Asignaciones, 42 filas afectadas.');
