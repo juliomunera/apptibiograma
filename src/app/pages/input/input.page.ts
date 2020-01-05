@@ -119,7 +119,7 @@ export class InputPage implements OnInit {
 
       this.analyzeService.executeGramScript(this.bacteriumId, '+')
           .then(_ => {
-            this.presentAlertMultipleButtons('Análisis realizado satisfactoriamente.');
+            // this.presentAlertMultipleButtons('Análisis realizado satisfactoriamente.');
 
             this.router.navigate(['/summary', { name : this.textDescription }]);
             // this.router.navigateByUrl('/summary');

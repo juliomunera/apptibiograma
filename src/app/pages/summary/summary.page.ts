@@ -74,7 +74,9 @@ export class SummaryPage implements OnInit {
                     }
                   }
 
-                  this.database.executeSql(`SELECT id, idAsignacion, mensaje FROM InterpretacionGRAMEtapa3`, [])
+                  this.database.executeSql(`
+                    SELECT e3.id, e3.idAsignacion, e3.mensaje, a.comentariosTratamiento 
+                    FROM InterpretacionGRAMEtapa3 e3 INNER JOIN Asignaciones a ON e3.idAsignacion = a.id`, [])
                   .then(dosis => {
                       if (dosis === undefined)
                         return;

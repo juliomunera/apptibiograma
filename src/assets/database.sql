@@ -341,7 +341,7 @@ INSERT INTO Antibioticos(id, nombre) VALUES (31, 'Meropenem');
 INSERT INTO Antibioticos(id, nombre) VALUES (32, 'Doripenem');
 INSERT INTO Antibioticos(id, nombre) VALUES (33, 'Piperacillin / Tazobactam');
 INSERT INTO Antibioticos(id, nombre) VALUES (34, 'Tigecycline');
-INSERT INTO Antibioticos(id, nombre) VALUES (35, 'Ampicillin/Sulbactam');
+INSERT INTO Antibioticos(id, nombre) VALUES (35, 'Ampicillin / Sulbactam');
 INSERT INTO Antibioticos(id, nombre) VALUES (36, 'Moxifloxacin');
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
@@ -359,7 +359,7 @@ VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Pruebas.');
 INSERT INTO Pruebas(id, nombre) VALUES (1, 'NA'); 
 INSERT INTO Pruebas(id, nombre) VALUES (2, 'Resistencia inducible a Clindamycin');
 INSERT INTO Pruebas(id, nombre) VALUES (3, 'Cefoxitin Screen');
-INSERT INTO Pruebas(id, nombre) VALUES (4, 'ESBL/BLEE');
+INSERT INTO Pruebas(id, nombre) VALUES (4, 'ESBL / BLEE');
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Pruebas, 4 filas afectadas.');
@@ -716,9 +716,9 @@ VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Asignaciones
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 1, 'Oxacilina');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 2, 'Ceftriaxona (si Albumina > 3.5)');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 3, 'Cefotaxime (si Albumina < 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 4, 'Ampicilina/sulbactam');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 5, 'Ampicilina/sulbactam (si sospecha broncoaspiración)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 6, 'Ampicilina/sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 4, 'Ampicilina / sulbactam');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 5, 'Ampicilina / sulbactam (si sospecha broncoaspiración)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 6, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 8, 'Descartar bacteriemia o contaminación');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 9, 'Cefazolina ');
@@ -743,7 +743,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (27, 'Descartar bacte
 
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (28, 'Gentamicina');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (29, 'Tetracycline (Minociclina)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (30, 'Trimethoprim/Sulfa');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (30, 'Trimethoprim / Sulfa');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (31, 'Amikacin');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (32, 'Aztreonam'); 
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (33, 'Cefepime');
@@ -755,7 +755,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (38, 'Colistin');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (39, 'Imipenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (40, 'Meropenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (41, 'Doripenem');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (42, 'Piperacillin/Tazobactam');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (42, 'Piperacillin / Tazobactam');
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Asignaciones, 42 filas afectadas.');

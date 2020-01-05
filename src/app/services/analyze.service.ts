@@ -64,8 +64,15 @@ export class AnalyzeService {
                 this.sqlitePorter.importSqlToDb(this.database, sql)
                   .then(_ => {
 
-                    this.dbReady.next(true);
-                    resolve();
+                    this.http.get(`assets/${folderName}/stage3.sql`, { responseType: 'text'})
+                    .subscribe(sql => {
+                      this.sqlitePorter.importSqlToDb(this.database, sql)
+                        .then(_ => {
+
+                            this.dbReady.next(true);
+                            resolve();
+                          }).catch(e => { reject(); alert(e.message); });
+                      });
 
                   }).catch(e => { reject(); alert(e.message); });
 
