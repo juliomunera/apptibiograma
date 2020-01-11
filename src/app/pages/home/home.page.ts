@@ -24,7 +24,7 @@ export class HomePage {
     public modalController: ModalController,
     private db : HomedbService,
     private helperService : HelperService) { 
-
+      
     }
 
   ngOnInit() {

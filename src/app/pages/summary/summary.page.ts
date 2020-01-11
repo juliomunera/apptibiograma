@@ -12,14 +12,12 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SummaryPage implements OnInit {
 
-  // data : any;
-  // dosis : any;
-
   private database: SQLiteObject;
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public  lists = [];
   public  listsDosis = [];
   public textDescription : String;
+  private bodyName : String = '';
 
   constructor(private router: Router,
     private plt: Platform, 
@@ -40,6 +38,7 @@ export class SummaryPage implements OnInit {
       });
 
       this.textDescription = this.activatedRoute.snapshot.paramMap.get('name');
+      this.bodyName = this.activatedRoute.snapshot.paramMap.get('bodyName');
 
      }
 
@@ -105,7 +104,7 @@ export class SummaryPage implements OnInit {
   }
 
   finish(){
-    this.router.navigateByUrl('/general');
+    this.router.navigate(['/general', { refresh: '1' }]);
   }
 
   comeBack(){
@@ -125,34 +124,6 @@ export class SummaryPage implements OnInit {
         });
       }  
     });
-  }
-
-  getSummaryInfo(){
-
-    return this.plt.ready()
-    .then(()=> {
-
-      // return this.database.executeSql("SELECT id, idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje from EtapaUnoyEtapaDos", [])
-      // .then((data)=>{
-
-      //   let lists = [];
-      //   if (data === undefined)
-      //     return lists;
-
-      //   if (data !== undefined && data !== null) {
-      //     for(let i=0; i<data.rows.length; i++){
-      //       lists.push(data.rows.item(i));
-      //     }
-      //   }
-      //   return lists;
-      // })
-      // .catch(error => {
-      //   console.log(error.message);
-      // });
-      
-    });
-
-
   }
   
 }

@@ -17,6 +17,9 @@ import { AnalyzeService } from '../../services/analyze.service';
 })
 export class InputPage implements OnInit {
 
+  private bodyName : String = '';
+  private gramType : String = '';
+
   public bacteriumId : String = '';
   public textDescription : String = '';
   private database: SQLiteObject;
@@ -52,6 +55,8 @@ export class InputPage implements OnInit {
           
           this.bacteriumId = this.activatedRoute.snapshot.paramMap.get('id');
           this.textDescription = this.activatedRoute.snapshot.paramMap.get('name');
+          this.gramType = this.activatedRoute.snapshot.paramMap.get('gramType');
+          this.bodyName = this.activatedRoute.snapshot.paramMap.get('bodyName');
 
           this.plt.ready().then(() => {
             this.isReady()
@@ -59,7 +64,7 @@ export class InputPage implements OnInit {
 
               this.database.executeSql(
               `
-              SELECT * FROM AntibioticosPruebas WHERE idBacteria = ?
+              SELECT * FROM AntibioticosPruebas WHERE idBacteria = ? ORDER BY nombre ASC
               `, [this.bacteriumId]).then(data => { 
                   if (data === undefined)
                     return;
@@ -75,14 +80,13 @@ export class InputPage implements OnInit {
                       ctrl.idAntibiotico = data.rows.item(i).id;
                       ctrl.idPrueba = data.rows.item(i).idPrueba;
                       ctrl.valor = 0;
+                      ctrl.tipoGRAM = this.gramType;
 
                       if(data.rows.item(i).tipoControl==='INPUT TEXT'){
                         ctrl.operador = "<=";
-                        ctrl.tipoGRAM = "+";
-
                         this.context.antibioticControls.push(ctrl);
                       }else {
-
+                        ctrl.valor = 3;
                         this.context.testControls.push(ctrl);
                       }
 
@@ -116,17 +120,21 @@ export class InputPage implements OnInit {
     }
 
     this.antibioticsService.insertData(this.context).then(() => {
+      this.antibioticsService.insertDataTest(this.context).then(() => {
 
-      this.analyzeService.executeGramScript(this.bacteriumId, '+')
+          this.analyzeService.executeGramScript(this.bacteriumId, this.gramType)
           .then(_ => {
-            // this.presentAlertMultipleButtons('Análisis realizado satisfactoriamente.');
 
-            this.router.navigate(['/summary', { name : this.textDescription }]);
-            // this.router.navigateByUrl('/summary');
+            this.router.navigate(['/summary', { name : this.textDescription, bodyName : this.bodyName, gramType : this.gramType }]);
           })
           .catch(e => {
             alert(e.message);
           });
+      })
+      .catch(e => {
+        alert(e.message);
+      });
+
 
     });
 

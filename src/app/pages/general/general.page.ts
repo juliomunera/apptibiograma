@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { ModalController, AlertController } from '@ionic/angular';
 
 import { InfectionPage } from '../infection/infection.page'
@@ -17,8 +17,10 @@ import { HelperService } from '../../services/helper.service';
 export class GeneralPage implements OnInit {
   
   dataReturned : any = "Seleccionar";
+  refresh : string = '';
 
   constructor(private router: Router, 
+              private activatedRoute: ActivatedRoute,
               private modalController: ModalController,
               private validatorService: ValidatorService,
               private alertController: AlertController,
@@ -26,10 +28,26 @@ export class GeneralPage implements OnInit {
               private helperService : HelperService,
               public contextModel : ContextModel) {
 
+
+    this.refresh = this.activatedRoute.snapshot.paramMap.get('refresh');
+    if(this.refresh !== undefined && this.refresh !== ''){
+
+      this.contextModel.name = 'Seleccionar';
+      this.contextModel.depuracionCreatinina = 0;
+      this.contextModel.sexType = undefined;
+      this.contextModel.yearsOld = undefined;
+      this.contextModel.weight = undefined;
+      this.contextModel.alergiaPenicilina = false;
+      this.contextModel.creatinina = undefined;
+      this.contextModel.hemodialisis = false;
+      this.contextModel.capd = false;
+      this.contextModel.crrt = false;
+    }
+
     this.contextModel.name = 'Seleccionar';
     this.contextModel.depuracionCreatinina = this.getCreatinineDebug();
-
   }
+  
 
   ngOnInit() {
   }
@@ -94,7 +112,9 @@ export class GeneralPage implements OnInit {
                 (this.contextModel.crrt?1:0), this.contextModel.depuracionCreatinina];
 
     this.db.insertGeneralData(params).then(()=> {
-      this.router.navigateByUrl('/gram');
+      // this.router.navigateByUrl('/gram');
+
+      this.router.navigate(['/gram', { bodyName : this.contextModel.name }]);
     })
     .catch(e => {
       alert(e.message);

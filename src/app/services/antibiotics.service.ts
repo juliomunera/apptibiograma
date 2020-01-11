@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { BehaviorSubject } from 'rxjs';
-// import OperatorsModel from '../models/operators.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +42,26 @@ export class AntibioticsService {
               params)
             .catch((err)=>alert(err.message));
         }
+        
+      })
+      .catch(e=> alert(e.message));
+  }
 
+  insertDataTest(data : any){
+      
+    return this.plt.ready()
+      .then(() => {
+        for (let test of data.testControls) {
+
+          let paramsTest = [test.idBacteria, test.idAntibiotico, test.idPrueba,
+                        '', test.valor, test.tipoGRAM];
+
+          this.database.executeSql(
+            `INSERT INTO GRAM (idBacteria, idAntibiotico, idPrueba, operador, valor, tipoGRAM ) VALUES (?, ?, ?, ?, ?, ?)`, 
+            paramsTest)
+            .catch((err)=>alert(err.message));
+        }
+        
       })
       .catch(e=> alert(e.message));
   }

@@ -1,19 +1,20 @@
 /*
 	ETAPA 1
 */	
+
 /*
-	Cuando todos los antibióticos Aj del formulario sean sensibles, debe salir el mensaje “Germen sensible a todo el panel
-	 de antibióticos, pero con resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas”
+Cuando todos los antibióticos Aj del formulario sean sensibles, debe salir el mensaje “Germen sensible a todo el panel de antibióticos, pero con 
+resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1','Ingresando el mensaje que indica que el germen sensible a todo el panel de antibióticos, pero con resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas.');
+VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1','Todos sensibles.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g1.idBacteria, 
 	1 as idAntibiotico,
-	'Germen sensible a todo el panel de antibióticos, pero con resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas'
+	'Germen sensible a todo el panel de antibióticos'
 FROM
 	(
 		SELECT g.idBacteria, COUNT(1) as total
@@ -36,14 +37,14 @@ FROM
 			g.idBacteria IN (9,10) AND 
 			g.idPrueba = 1
 	) g2
-		ON (g1.total = g2.total);
-	
+		ON (g1.total = g2.total)
+;
+
 /*
-	Cuando Aj =Vancomicina es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad 
-	disminuida a Vancomicina”
+Cuando Aj =Vancomicina es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a Vancomicina”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1','Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Vancomicina.');
+VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1','Vancomicina entero.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -59,14 +60,14 @@ WHERE
 	g.idPrueba = 1 AND
 	
 	g.idAntibiotico IN (10) AND 
-	g.operador = '=';
-	
+	g.operador = '=' 
+;
+
 /*
-	Cuando Vancomicina es resistente (es decir ≥) debe salir un mensaje que diga “Germen resistente a Vancomicina 
-	mediado por VAN-C, por favor corrobore con un laboratorio de referencia”
+Cuando Vancomicina es resistente (es decir ≥) debe salir un mensaje que diga “Germen resistente a Vancomicina mediado por VAN-C, por favor corrobore con un laboratorio de referencia”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1', 'Ingresando el mensaje que indica que el germen es resistente a la Vancomicina mediado por VAN-C, por favor corrobore con un laboratorio de referencia.');
+VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa1','Vancomicina resistente');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -82,7 +83,9 @@ WHERE
 	g.idPrueba = 1 AND
 	
 	g.idAntibiotico IN (10) AND 
-	g.operador = '>=';
+	g.operador = '>=' 
+;
+
 
 /*
 	ETAPA 2
@@ -276,6 +279,7 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
 	) a2;
 
+/*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMPositivo-EnterococcusGallinarumyCasseliflvus-Etapa2','Eliminando de la asignación de medicamentos (ARk) la Vancomicina.');
 
@@ -301,4 +305,4 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 		Asignaciones a
 	WHERE
 		a.id IN (13)
-);
+);*/

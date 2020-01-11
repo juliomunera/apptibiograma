@@ -1,12 +1,12 @@
 /*
-	ETAPA 1
+ETAPA 1
 */	
+
 /*
-	Cuando todos los antibióticos sean sensibles (es decir ≤), debe salir un mensaje que diga “Germen sensible a todo el 
-	panel de antibióticos”
+Cuando todos los antibióticos sean sensibles (es decir ≤), debe salir un mensaje que diga “Germen sensible a todo el panel de antibióticos”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa1','Ingresando el mensaje que indica la sensibilidad de todo el panel de antibióticos.');
+VALUES ('GRAMPositivo-Streptococcus-Etapa1','Todos sensibles.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -36,15 +36,15 @@ FROM
 			g.idBacteria IN (11,12,13,14,15,16,17,18) AND 
 			g.idPrueba = 1
 	) g2
-	ON (g1.total = g2.total);
-	
+		ON (g1.total = g2.total)
+;
+
 /*
-	Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad 
-	disminuida a ese <Aj>” (siempre y cuando no sea para todo el panel de antibióticos, debe salir mensaje por cada Aj 
-	que cumpla con la condición)
+Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a ese <Aj>” 
+(siempre y cuando no sea para todo el panel de antibióticos, debe salir mensaje por cada Aj que cumpla con la condición)
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa1','Ingresando el mensaje que indica que el germen presenta sensibilidad a algunos antibióticos.');
+VALUES ('GRAMPositivo-Streptococcus-Etapa1','Algun antibiotico =.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -60,7 +60,8 @@ WHERE
 	g.idPrueba = 1 AND
 	
 	g.idAntibiotico NOT IN (5,12,6) AND 
-	g.operador = '=';
+	g.operador = '='
+;
 
 /*
 	ETAPA 2: Streptococcus

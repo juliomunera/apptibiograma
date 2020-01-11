@@ -14,6 +14,8 @@ export class BacteriumPage implements OnInit {
 
   private database: SQLiteObject;
   public bacteriumsList : any[] = [];
+  private bodyName : String = '';
+  private gramType : String = '';
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(private plt: Platform, 
@@ -29,7 +31,8 @@ export class BacteriumPage implements OnInit {
           this.database = db;
           this.dbReady.next(true);
           
-          let type = this.activatedRoute.snapshot.paramMap.get('gramType');
+          this.gramType = this.activatedRoute.snapshot.paramMap.get('gramType');
+          this.bodyName = this.activatedRoute.snapshot.paramMap.get('bodyName');
 
           this.plt.ready().then(() => {
             this.isReady()
@@ -76,10 +79,10 @@ export class BacteriumPage implements OnInit {
 
   itemSelected(itemSelected){
 
-    this.router.navigate(['/input', { id: itemSelected.id, name : itemSelected.nombre }]);
+    this.router.navigate(['/input', { id: itemSelected.id, name : itemSelected.nombre, bodyName : this.bodyName, gramType : this.gramType }]);
   }
 
   continue(){
-    alert('En construcción!')
+    
   }
 }

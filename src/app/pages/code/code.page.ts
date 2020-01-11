@@ -73,6 +73,7 @@ export class CodePage implements OnInit {
         let params = [this.helperService.formatDate(dateNow), days]
 
         this.db.insertAllowAccess(params).then(()=> {
+
           this.modalController.dismiss("valid");
         })
         .catch(e => {
@@ -82,7 +83,7 @@ export class CodePage implements OnInit {
       }
       else{
         this.modalController.dismiss("");
-        this.presentAlert(this.result.msg);
+        this.presentAlert(`No posee créditos: ${this.result.msg}`);
         return;
       }
     })

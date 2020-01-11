@@ -10,51 +10,40 @@
 
 <ion-content>
     <ion-card class="cardcolor">
-        <ion-card-header>
-            <ion-card-title>Resultado del cálculo</ion-card-title>
-            <ion-card-subtitle>Bacteria: <b><ion-label class="labelcolor2">{{ textDescription }}</ion-label></b></ion-card-subtitle>
-
-        </ion-card-header>
 
         <ion-card-content>
+            <div>
+                <ion-label class="LabelTitle1"><b>Resultado del análisis</b></ion-label>
+            </div>
+            <div>
+                <ion-label><b>Bacteria: </b></ion-label>
+                <ion-label class="labelcolor2">{{ textDescription }}</ion-label>
+            </div>
+            <div>
+                <ion-label><b>Órgano: &nbsp;&nbsp;</b></ion-label>
+                <ion-label class="labelcolor2">{{bodyName }}</ion-label>
+            </div>
+
             <ul>
                 <li *ngFor="let item of lists">{{ item.mensaje }}</li>
             </ul>
 
             <ion-grid>
+                <ion-row>
+                    <ion-label>Recomendaciones del tratamiento:</ion-label>
+                    <br /><br />
+                </ion-row>
                 <ion-row *ngFor="let item of listsDosis">
-                    <ion-col>
-                        <ion-icon name="checkmark-circle"></ion-icon>
-                        <ion-label class="labelcolor1"> {{ item.comentariosTratamiento }}:</ion-label>
-
-                    </ion-col>
-                    <ion-col>{{ item.mensaje }}</ion-col>
+                    <div>
+                        <ion-label class="labelcolor1"> {{ item.comentariosTratamiento }}: </ion-label>
+                    </div>
+                    <div>
+                        {{ item.mensaje }}
+                    </div>
+                    <div>
+                        <br /> &nbsp;&nbsp;
+                    </div>
                 </ion-row>
-
-                <!-- <ion-row>
-                    <ion-col>
-                        <ion-icon name="checkmark-circle"></ion-icon>
-                        <ion-label class="labelcolor1"> Cefazolin:</ion-label>
-                    </ion-col>
-                    <ion-col>
-                        2 gm cada 12 horas Trimethoprim/Sulfa: No se recomienda, pero si no hay otra opcion, utilizar 5-10 mg/kg/dia </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        <ion-icon name="checkmark-circle"></ion-icon>
-                        <ion-label class="labelcolor1"> Trimethoprim/Sulfa:</ion-label>
-                    </ion-col>
-                    <ion-col>
-                        5 mg/kg cada 8 horas </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        <ion-icon name="checkmark-circle"></ion-icon>
-                        <ion-label class="labelcolor1"> Clindamycin:</ion-label>
-                    </ion-col>
-                    <ion-col>
-                        600 a 900 mg IV/VO cada 8 horas Gentamicin: 2 mg/kg/dia</ion-col>
-                </ion-row> -->
             </ion-grid>
 
         </ion-card-content>
@@ -64,9 +53,7 @@
         <ion-row>
             <ion-col>
                 <ion-button (click)="finish()" color="vibrant">Finalizar</ion-button>
-                <!-- <ion-button (click)="comeBack()" color="vibrant">Regresar</ion-button> -->
             </ion-col>
-
         </ion-row>
     </ion-grid>
 </ion-content>

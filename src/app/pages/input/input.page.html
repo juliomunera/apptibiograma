@@ -39,7 +39,11 @@
 
         <ion-item ion-item *ngFor="let item of context.testControls">
             <ion-label>{{ item.name }}</ion-label>
-            <ion-toggle checked="false"></ion-toggle>
+            <ion-select class="floating" interface="popover" cancelText="Cancelar" [(ngModel)]="item.valor">
+                <ion-select-option value="3"></ion-select-option>
+                <ion-select-option value="0">Negativo</ion-select-option>
+                <ion-select-option value="1">Positivo</ion-select-option>
+            </ion-select>
         </ion-item>
 
     </ion-list>
@@ -48,7 +52,7 @@
         <ion-row>
             <ion-col>
                 <ion-button (click)="continue()" color="select">Calcular</ion-button>
-                <ion-button (click)="comeBack()" color="select">Regresar</ion-button>
+                <!-- <ion-button (click)="comeBack()" color="select">Regresar</ion-button> -->
             </ion-col>
 
         </ion-row>

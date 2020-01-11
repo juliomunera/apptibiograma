@@ -202,6 +202,20 @@ CREATE TABLE InterpretacionGRAMEtapa3 (
 );
 
 /*
+	Entidad NUEVA donde se relacionan las asignaciones con los Antibioticos que se ingresan
+*/
+DROP TABLE IF EXISTS asignacionAntibiotico;
+
+CREATE TABLE asignacionAntibiotico (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	idAsignacion INTEGER NOT NULL,
+	idAntibiotico INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS IDX_ASIGNACIONANTIBIOTICO_Antib ON asignacionAntibiotico( idAntibiotico );
+CREATE INDEX IF NOT EXISTS IDX_ASIGNACIONANTIBIOTICO_Asig_Antib ON asignacionAntibiotico( idAsignacion, idAntibiotico );
+
+/*
 	Entidad donde se almacena el token otorgado para el acceder a la funciones expuestas por la APP.
 */
 DROP TABLE IF EXISTS TokenSeguridad;
@@ -756,6 +770,76 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (39, 'Imipenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (40, 'Meropenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (41, 'Doripenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (42, 'Piperacillin / Tazobactam');
+
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (43, 'Piperacillin / Tazobactam (si sospecha broncoaspiración)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (44, 'Piperacilina / tazobactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (45, 'Piperacilina/tazobactam (si se sospecha origen en abdomen)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (46, 'Considerar adicionar Metronidazol para cubrir anaerobios');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (47, 'Ciprofloxacin (considerar adicionar Metronidazol para cubrir anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (48, 'Ciprofloxacin (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (49, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, y se demuestra sensibilidad a estos antibioticos)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)');
+
+
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (6,1);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (16,2);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (26,3);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (35,4);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (35,5);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (35,6);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (7,7);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,8);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (23,9);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (12,10);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (5,11);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (2,12);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,13);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,14);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (2,15);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (34,16);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (13,17);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,18);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (16,19);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (13,20);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (11,21);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,22);
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (14,23);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (14,24);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (17,23);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (17,24);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (18,23);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (18,24);
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (7,25);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,26);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,27);
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (4,28);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (8,29);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (9,30);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (21,31);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (22,32);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (24,33);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (25,34);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (16,35);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (27,36);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (28,37);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (29,38);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (30,39);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (31,40);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (32,41);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,42);
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,43);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,44);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,45);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,46);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (27,47);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (27,48);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (24,49);
+
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Asignaciones, 42 filas afectadas.');

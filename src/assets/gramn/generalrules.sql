@@ -18,6 +18,19 @@ DELETE FROM InterpretacionGRAMEtapa3;
 GRAM-
 ******************************************/
 /*
+	Se va a crear una copia de GRAM para poder realizar los Updates respectivos de acuerdo con las pruebas
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMPositivo-General', 'Eliminando información de la tabla temporal GRAM.');
+
+DELETE FROM TMP_GRAM;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMPositivo-General', 'Ingresando información a la tabla temporal GRAM.');
+
+INSERT INTO TMP_GRAM SELECT * FROM GRAM;
+
+/*
 	Cuando todos los antibióticos sean sensibles (es decir ?), debe salir un mensaje que diga “Germen sensible a todo 
 	el panel de antibióticos”, 
 */
@@ -254,14 +267,13 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 27 AND
-	g.operador = '>='
+	g.operador = '>=';
 
 /*
 	5.	Trimetoprim sulfa:
 	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
-		Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática”
-	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Trimetoprim-sulfa, mediado
-		por disminución en la afinidad enzimática”
+		Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática” 
+	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimatica”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática.');
@@ -858,7 +870,7 @@ SELECT
 FROM
 	(
 		SELECT
-			idBacteria
+			idBacteria,
 			SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 			SUM(valor) as suma
 		FROM
@@ -886,7 +898,7 @@ SELECT
 FROM
 	(
 		SELECT
-			idBacteria
+			idBacteria,
 			SUM(CASE WHEN operador = '>=' THEN 1 ELSE 0 END) as conteo,
 			SUM(valor) as suma
 		FROM
@@ -920,14 +932,14 @@ SELECT
 	31 AS idAntibiotico,
 	(
 		CASE
-			valorImipenem > valorMeropenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por cierre de porinas'
-			valorMeropenem > valorImipenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por bombas de eflujo'
+			WHEN valorImipenem > valorMeropenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por cierre de porinas'
+			WHEN valorMeropenem > valorImipenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por bombas de eflujo'
 		END
 	) AS Mensaje
 FROM
 	(
 		SELECT
-			idBacteria
+			idBacteria,
 			SUM(CASE WHEN operador <> '>=' THEN 1 ELSE 0 END) as conteo,
 			SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 			SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
