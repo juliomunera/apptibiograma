@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { ModalController } from '@ionic/angular';
 
 import { ContextModel }  from '../../models/context.model';
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-infection',
@@ -44,4 +45,18 @@ export class InfectionPage implements OnInit {
 
     await this.modalController.dismiss(this.contextModel.name);
   }
+
+  logScrollStart(){
+    alert("logScrollStart : When Scroll Starts");
+  }
+ 
+  logScrolling(){
+    alert("logScrolling : When Scrolling");
+  }
+ 
+  logScrollEnd(){
+    alert("logScrollEnd : When Scroll Ends");
+  }
+ 
+
 }

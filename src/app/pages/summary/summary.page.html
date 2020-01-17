@@ -30,20 +30,26 @@
 
             <ion-grid>
                 <ion-row>
-                    <ion-label>Recomendaciones del tratamiento:</ion-label>
+                    <ion-label *ngIf="listsDosis.length>0">Recomendaciones del tratamiento:</ion-label>
                     <br /><br />
                 </ion-row>
+
                 <ion-row *ngFor="let item of listsDosis">
-                    <div>
-                        <ion-label class="labelcolor1"> {{ item.comentariosTratamiento }}: </ion-label>
-                    </div>
-                    <div>
-                        {{ item.mensaje }}
-                    </div>
-                    <div>
-                        <br /> &nbsp;&nbsp;
-                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <ion-label class="labelcolor1"> {{ item.comentariosTratamiento }}:</ion-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ item.mensaje }}</td>
+                        </tr>
+                        <tr>
+                            &nbsp;
+                        </tr>
+                    </table>
                 </ion-row>
+
             </ion-grid>
 
         </ion-card-content>
@@ -51,9 +57,18 @@
 
     <ion-grid text-center>
         <ion-row>
-            <ion-col>
-                <ion-button (click)="finish()" color="vibrant">Finalizar</ion-button>
+
+            <ion-col *ngIf="countMsgTest > 0 ; else Finalizar">
+                <ion-button (click)="comeBack()" color="vibrant">Continuar</ion-button>
             </ion-col>
+
+            <ng-template #Finalizar>
+                <ion-col>
+                    <ion-button (click)="finish()" color="vibrant">Finalizar</ion-button>
+                </ion-col>
+            </ng-template>
+
         </ion-row>
     </ion-grid>
+
 </ion-content>

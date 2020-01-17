@@ -37,7 +37,7 @@ export class BacteriumPage implements OnInit {
           this.plt.ready().then(() => {
             this.isReady()
             .then(()=>{
-              this.database.executeSql(`SELECT id, nombre from Bacterias WHERE nombre <> 'NA'`, []).then(data => { 
+              this.database.executeSql(`SELECT id, nombre from Bacterias WHERE nombre <> 'NA' AND tipoGRAM = ?`, [this.gramType]).then(data => { 
 
                   if (data === undefined)
                     return;

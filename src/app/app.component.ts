@@ -26,11 +26,11 @@ export class AppComponent {
       url: '/about',
       icon: 'person'
     }
-    ,{
-      title: 'Test',
-      url: '/test',
-      icon: 'home'
-    }
+    // ,{
+    //   title: 'Test',
+    //   url: '/test',
+    //   icon: 'home'
+    // }
   ];
 
   constructor(

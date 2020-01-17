@@ -19,6 +19,7 @@ WHERE
 	a.idAntibiotico > 1
 );
 
+
 /*
 ETAPA 3
 */	
@@ -275,19 +276,20 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '7.5 mg/kg/día (' || (7.5*dp1.peso) || ' mg)'
-            WHEN CRRT = 0 AND requiereHemodialisis = 1 THEN '7.5 mg/kg (' || (7.5*dp1.peso) || ' mg)  cada 48 horas, y 3.75 mg/kg  (' || (3.75*dp1.peso) || ' mg) adicional después de HD (corroborar niveles)'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 80 THEN 
+            WHEN CRRT = 1 AND CAPD = 0 THEN '7.5 mg/kg/día (' || (7.5*dp1.peso) || ' mg'
+			WHEN CRRT = 0 AND CAPD = 1 THEN 'No se recomienda'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '7.5 mg/kg (' || (7.5*dp1.peso) || ' mg)  cada 48 horas, y 3.75 mg/kg  (' || (3.75*dp1.peso) || ' mg) adicional después de HD (corroborar niveles)'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 80 THEN 
                 '15 mg/kg (' || (15*dp1.peso) || ' mg)  cada 24 horas'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 AND depuracionCreatinina < 80 THEN 
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 AND depuracionCreatinina < 80 THEN 
                 '12 mg/kg (' || (12*dp1.peso) || ' mg)  cada 24 horas'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 40 AND depuracionCreatinina < 60 THEN 
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 40 AND depuracionCreatinina < 60 THEN 
                 '7.5 mg/kg (' || (7.5*dp1.peso) || ' mg)  cada 24 horas'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 40 THEN 
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 40 THEN 
                 '4 mg/kg (' || (4*dp1.peso) || ' mg)  cada 24 horas'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 20 AND depuracionCreatinina < 30 THEN 
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 20 AND depuracionCreatinina < 30 THEN 
                 '7.5 mg/kg (' || (7.5*dp1.peso) || ' mg)  cada 24 horas'
-            WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 20 THEN 
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 20 THEN 
                 '4 mg/kg (' || (4*dp1.peso) || ' mg)  cada 24 horas'
         END
     )
@@ -594,6 +596,9 @@ SELECT
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm al día'
+			
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN '2 gm al día'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN '2 gm al día'
         END
     )
 FROM
@@ -648,8 +653,9 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '1.5 gm cada 8 horaS'
-            
+            WHEN CRRT = 1 THEN '2 gm cada 12 horas'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm al dia (dosis luego de Hemodialisis)'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN '1 gm al dia'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm al día'
@@ -861,6 +867,9 @@ SELECT
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN '0.5 a 1 gm cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN '250 a 500 mg cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '250 mg cada 12 horas'
+			
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN 'No se recomienda'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN 'No se recomienda'
         END
     )
 FROM

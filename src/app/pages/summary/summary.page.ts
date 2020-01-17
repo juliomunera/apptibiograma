@@ -18,6 +18,9 @@ export class SummaryPage implements OnInit {
   public  listsDosis = [];
   public textDescription : String;
   private bodyName : String = '';
+  public countMsgTest : number = 0;
+  public bacteriumId : String = '';
+  private gramType : String = '';
 
   constructor(private router: Router,
     private plt: Platform, 
@@ -33,14 +36,29 @@ export class SummaryPage implements OnInit {
         })
         .then((db: SQLiteObject) => {
             this.database = db;
-        }
-        )
+
+            this.database.executeSql(`SELECT total FROM validarTestMsg`, [])
+            .then(total => {
+      
+                if (total !== undefined){
+                  if(total.rows.item(0).total > 0) {
+                    this.countMsgTest = Number(total.rows.item(0).total);
+                  }
+                }
+            })
+            .catch(e => {
+              alert(e.message);                    
+            });
+
+        })
       });
 
       this.textDescription = this.activatedRoute.snapshot.paramMap.get('name');
       this.bodyName = this.activatedRoute.snapshot.paramMap.get('bodyName');
+      this.bacteriumId = this.activatedRoute.snapshot.paramMap.get('id');
+      this.gramType = this.activatedRoute.snapshot.paramMap.get('gramType');
 
-     }
+    }
 
   ngOnInit() {
    
@@ -88,13 +106,14 @@ export class SummaryPage implements OnInit {
                           this.listsDosis.push(dosis.rows.item(i));
                         }
                       }
+
                   })
                   .catch(e => {
                     alert(e.message);                    
                   })
         
                 }).catch(e=>alert(e.message));
-            }); 
+            });
             
           });
      
@@ -108,7 +127,7 @@ export class SummaryPage implements OnInit {
   }
 
   comeBack(){
-    this.router.navigateByUrl('/input');
+    this.router.navigate(['/input', { id : this.bacteriumId, name : this.textDescription, bodyName : this.bodyName, gramType : this.gramType }]);
   }
 
   private isReady(){

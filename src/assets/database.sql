@@ -258,10 +258,16 @@ DROP VIEW IF EXISTS EtapaUnoyEtapaDos;
 CREATE VIEW EtapaUnoyEtapaDos AS
 	SELECT idParteDelCuerpo, idBacteria, idAntibiotico, NULL as idAsignacion, mensaje
 	FROM InterpretacionGRAMEtapa1
-	UNION ALL           
+/*	UNION ALL           
 	SELECT idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje
-	FROM InterpretacionGRAMEtapa2;
+	FROM InterpretacionGRAMEtapa2*/;
+	
+DROP VIEW IF EXISTS validarTestMsg;
 
+CREATE VIEW validarTestMsg AS
+	SELECT COUNT(1) as total
+	FROM InterpretacionGRAMEtapa1 
+	WHERE mensaje like 'Realizar D-test%' OR mensaje like 'Realizar test%';
 
 /* Lista base de bacterias habilitados para el funcionamiento de la aplicación. */
 DELETE FROM BitacoraEventos;
@@ -794,7 +800,7 @@ INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (23,9);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (12,10);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (5,11);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (2,12);
-INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,13);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (10,13);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,14);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (2,15);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (34,16);

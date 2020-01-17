@@ -54,7 +54,7 @@
         </ion-item>
         <ion-item>
             <ion-label position="floating">Depuración creatinina (mL/min)</ion-label>
-            <ion-input class="floating" [(ngModel)]="contextModel.depuracionCreatinina" readonly></ion-input>
+            <ion-input class="floating" (change)="getCreatinineDebug()" [(ngModel)]="contextModel.depuracionCreatinina" readonly></ion-input>
         </ion-item>
     </ion-list>
 

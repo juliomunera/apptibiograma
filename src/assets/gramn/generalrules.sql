@@ -391,11 +391,14 @@ WHERE
 	g.idAntibiotico = 34 AND
 	g.operador = '>=';		
 
+
+/* **************************************************************************************************************************************************************************************************************************** */
+
 /*
 	8.	Ampicilina:
 	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
 		Ampicilina, mediado por Penicilinasas”
-	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, mediado por
+	*	Cuando es resistente (es decir >=), debe salir un mensaje que dice “Germen resistente a Ampicilina, mediado por
 		Penicilinasas”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
@@ -406,14 +409,20 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ampicilina, mediado por Penicilinasas'
+	'Germen con sensibilidad disminuida a Ampicilina, mediado por Penicilinasas' 
 FROM
 	GRAM g
 WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico= 13 AND
-	g.operador = '=';
+	g.operador = '=' AND
+
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,35,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) 
+;
+	
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, mediado por Penicilinasas.');
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, mediado por Penicilinasas.');
@@ -423,14 +432,19 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen resistente a Ampicilina, mediado por Penicilinasas'
+	'Germen resistente a Ampicilina, mediado por Penicilinasas' 
 FROM
 	GRAM g
 WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 13 AND
-	g.operador = '>=';	
+	g.operador = '>=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,35,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) 
+;	
+	
+
 
 /*
 	9.	Ampicilina/sulbactam:
@@ -455,7 +469,29 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 35 AND
-	g.operador = '=';
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13) AND operador NOT IN ('<='))
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ampicilina y Ampicilina/sulbactam, mediado Penicilinasas parcialmente inhibibles por el Sulbactam'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 35 AND
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13) AND operador NOT IN ('<='))
+;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina/sulbactam, mediado por Penicilinasas no inhibibles por el Sulbactam.');
@@ -472,7 +508,240 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 35 AND
-	g.operador = '>=';	
+	g.operador = '>=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13) AND operador NOT IN ('<='))
+	
+;	
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ampicilina y Ampicilina/sulbactam, mediado por Penicilinasas no inhibibles por el Sulbactam'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 35 AND
+	g.operador = '>=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13) AND operador NOT IN ('<='))
+	
+;	
+
+
+/*
+	12.	Cefazolina: 
+	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
+		Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado”
+	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
+		Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 23 AND
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1))
+;
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ampicilina, Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 23 AND
+	g.operador = '>=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1))
+;	
+
+
+/*
+	13.	Cefepime, Ceftazidima y Ceftriaxona:
+	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen productor de Beta-lactamasas de 
+		espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”
+	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen productor de Beta-lactamasas de espectro
+		extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”
+	*	Cuando el test ESBL/BLEE es positivo, debe salir un mensaje que dice “Germen productor de Beta-lactamasas de 
+		espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”, independiente de lo que
+		haya marcado en estos 3 antibioticos (Cefepime, Ceftazidima y Ceftriaxona)
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems.');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g2.idBacteria, 
+	24 as idAntibiotico,
+	'Germen productor de Beta-lactamasas de espectro extendido (resistente a todos los beta-lactámicos excepto Carbapenems)'
+FROM
+	(
+		SELECT 
+			g.idBacteria as idBacteria,
+			COUNT(1) as total
+		FROM 
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND 
+			g.idPrueba = 1 AND
+			g.idAntibiotico IN (24,25,16) AND
+			g.operador = '=' AND
+			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0)) AND
+			0 >= (SELECT count(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador = '>=')
+		GROUP BY
+			g.idBacteria
+	) g2
+WHERE
+	g2.total > 0;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g2.idBacteria, 
+	24 as idAntibiotico,
+	'Germen productor de Beta-lactamasas de espectro extendido (resistente a todos los beta-lactámicos excepto Carbapenems)'
+FROM
+	(
+		SELECT 
+			g.idBacteria  as idBacteria,
+			COUNT(1) as total
+		FROM 
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND 
+			g.idPrueba = 1 AND
+			g.idAntibiotico IN (24,25,16) AND
+			g.operador = '>=' AND
+			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0))
+		GROUP BY
+			g.idBacteria
+	) g2
+WHERE
+	g2.total > 0;
+	
+	
+	
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g2.idBacteria, 
+	24 as idAntibiotico,
+	'Germen productor de AMP-C (resistente a todos los beta-lactámicos excepto Carbapenems'
+FROM
+	(
+		SELECT 
+			g.idBacteria as idBacteria,
+			COUNT(1) as total
+		FROM 
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND 
+			g.idPrueba = 1 AND
+			g.idAntibiotico IN (24,25,16) AND
+			g.operador IN ('=', '>=') AND
+			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor = 0)
+		GROUP BY
+			g.idBacteria
+	) g2
+WHERE
+	g2.total > 0;
+	
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen productor de Beta-lactamasas de espectro extendido (resistente a todos los beta-lactámicos excepto Carbapenems)'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 4 AND
+	g.valor = 1 
+;
+
+
+/*
+	11.	Piperacilina/tazobactam:
+	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
+		Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro 
+		ampliado”
+	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
+		Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Aztreonam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 33 AND
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
+
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ampicilina, Ampicilina/sulbactam, Aztreonam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 33 AND
+	g.operador = '>='  AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
+
+
+
+/* **************************************************************************************************************************************************************************************************************************** */
+
 
 /*
 	10.	Aztreonam:
@@ -496,7 +765,10 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 22 AND
-	g.operador = '=';
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Aztreonam, mediado por Beta-lactamasas.');
@@ -513,146 +785,12 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idAntibiotico = 22 AND
-	g.operador = '>=';	
-
-/*
-	11.	Piperacilina/tazobactam:
-	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
-		Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro 
-		ampliado”
-	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
-		Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
-*/
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico = 33 AND
-	g.operador = '=';
-
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen resistente a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico = 33 AND
-	g.operador = '>=';	
-	
-/*
-	12.	Cefazolina: 
-	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a 
-		Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado”
-	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
-		Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
-*/
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico = 23 AND
-	g.operador = '=';
-
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen resistente a Ampicilina, Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico = 23 AND
-	g.operador = '>=';	
-
-/*
-	13.	Cefepime, Ceftazidima y Ceftriaxona:
-	*	Cuando es un numero entero (es decir =), debe salir un mensaje que dice “Germen productor de Beta-lactamasas de 
-		espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”
-	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen productor de Beta-lactamasas de espectro
-		extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”
-	*	Cuando el test ESBL/BLEE es positivo, debe salir un mensaje que dice “Germen productor de Beta-lactamasas de 
-		espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”, independiente de lo que
-		haya marcado en estos 3 antibioticos (Cefepime, Ceftazidima y Ceftriaxona)
-*/
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems.');
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico IN (24,25,16) AND
-	g.operador = '=' AND
-	0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1);
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 1 AND
-	g.idAntibiotico IN (24,25,16) AND
 	g.operador = '>=' AND
-	0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1);
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);	
 
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
-	g.idBacteria, 
-	g.idAntibiotico,
-	'Germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems'
-FROM
-	GRAM g
-WHERE
-	g.tipoGRAM = '-' AND 
-	g.idPrueba = 4 AND
-	g.valor = 1;
+	
 
 /*
 	14.	Ertapenem:
@@ -883,8 +1021,8 @@ FROM
 			idBacteria
 	) g
 WHERE
-	g.conteo = 3 OR
-	g.suma = CAST((g.suma / 3) AS INTEGER) * 3;
+	g.conteo = 3 /*OR
+	g.suma = CAST((g.suma / 3) AS INTEGER) * 3*/;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia.');
@@ -960,3 +1098,8 @@ WHERE
 		valorImipenem <> valorDoripenem AND
 		valorMeropenem <> valorDoripenem
 	);
+	
+
+
+
+

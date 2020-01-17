@@ -28,10 +28,15 @@ export class GeneralPage implements OnInit {
               private helperService : HelperService,
               public contextModel : ContextModel) {
 
-
+    this.contextModel.name = 'Seleccionar';
+    this.contextModel.depuracionCreatinina = this.getCreatinineDebug();
+  }
+  
+  clearInputData(){
+    
     this.refresh = this.activatedRoute.snapshot.paramMap.get('refresh');
-    if(this.refresh !== undefined && this.refresh !== ''){
 
+    if(this.refresh !== undefined && this.refresh !== ''){
       this.contextModel.name = 'Seleccionar';
       this.contextModel.depuracionCreatinina = 0;
       this.contextModel.sexType = undefined;
@@ -43,13 +48,21 @@ export class GeneralPage implements OnInit {
       this.contextModel.capd = false;
       this.contextModel.crrt = false;
     }
-
-    this.contextModel.name = 'Seleccionar';
-    this.contextModel.depuracionCreatinina = this.getCreatinineDebug();
   }
-  
 
   ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
+    if(this.contextModel.depuracionCreatinina > 0){
+    let debugCreatinine = (((this.contextModel.sexType === 'F')?0.85:1) * (140 - this.contextModel.yearsOld)*this.contextModel.weight)/(72*this.contextModel.creatinina);
+
+    if (debugCreatinine === NaN)
+      debugCreatinine = 0;
+    else
+      this.contextModel.depuracionCreatinina = Number(debugCreatinine.toFixed(2));
+    }
   }
 
   getLocation(){
@@ -99,7 +112,7 @@ export class GeneralPage implements OnInit {
       return;
     }
 
-    if(this.contextModel.infectionLocation === undefined || this.contextModel.infectionLocation.toString().trim().length === 0){
+    if(this.contextModel.infectionLocation === undefined || this.contextModel.infectionLocation.toString().trim().length === 0 || this.contextModel.name === 'Seleccionar'){
       this.presentAlertMultipleButtons('Debe seleccionar la ubicación de la infección');
       return;
     }
@@ -137,7 +150,11 @@ export class GeneralPage implements OnInit {
       return 0;
 
     debugCreatinine = (((this.contextModel.sexType === 'F')?0.85:1) * (140 - this.contextModel.yearsOld)*this.contextModel.weight)/(72*this.contextModel.creatinina);
-    this.contextModel.depuracionCreatinina = Number(debugCreatinine.toFixed(2));
+    
+    if (debugCreatinine === NaN)
+      debugCreatinine = 0;
+    else
+      this.contextModel.depuracionCreatinina = Number(debugCreatinine.toFixed(2));
 
     return debugCreatinine;
   }

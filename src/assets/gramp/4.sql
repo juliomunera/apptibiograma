@@ -142,7 +142,36 @@ FROM
 WHERE
 	g.tipoGRAM = '+' AND
 	g.idBacteria IN (2,3,4,5) AND 
-	((g.idPrueba = 2 AND COAlESCE(g.valor, 3) = 1) OR (g.idAntibiotico = 2 AND g.operador = '>='))
+	((g.idPrueba = 2 AND COAlESCE(g.valor, 3) = 1) )
+		
+;		
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	2 as idAntibiotico,
+	'Germen sensible Clindamicina'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '+' AND
+	g.idBacteria IN (2,3,4,5) AND 
+	g.idPrueba = 2 AND COAlESCE(g.valor, 3) = 0
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT DISTINCT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	2 as idAntibiotico,
+	'Germen resistente a Clindamicina' /*Dado el Test de resistencia inducible a Clindamicina = Positivo, */
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '+' AND
+	g.idBacteria IN (2,3,4,5) AND 
+	( (g.idAntibiotico = 2 AND g.operador = '>='))
 		
 ;		
 
@@ -292,6 +321,7 @@ FROM
 		* Boca y senos paranasales: 1
 			- Clindamicina
 			- Vancomicina
+			- Linezolide
 			- [cuando solo aparezca la opción Vancomicina, es decir, se elimino clindamicina por D-test positivo, colocar 
 			Linezolide]
 		* Pulmones: 2
@@ -348,11 +378,11 @@ FROM
 			a.id,
 			a.comentariosTratamiento
 		FROM
-			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 0) dp1,
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
@@ -371,6 +401,7 @@ FROM
 		* Boca y senos paranasales: 1
 			- Clindamicina
 			- Vancomicina
+			- Linezolide
 		* Pulmones: 2
 			- Vancomicina 
 			- Linezolide
@@ -413,7 +444,8 @@ FROM
 			GRAM g
 		WHERE
 			g.tipoGRAM = '+' AND
-			g.idBacteria IN (2,3,4,5,6)
+			g.idBacteria IN (2,3,4,5,6) AND
+			0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico = 6 AND operador = '>=') OR (idPrueba = 3 AND valor = 1))
 	) g1,
 	(
 		SELECT
@@ -425,7 +457,7 @@ FROM
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (2,3,10)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
@@ -531,7 +563,7 @@ FROM
 	GRAM g
 WHERE
 	g.tipoGRAM = '+' AND
-	g.idBacteria IN (2,3,4,5,6) AND 
+	g.idBacteria IN (2,3,4,5,6,10) AND 
 	g.idPrueba = 1 AND
-	g.idAntibiotico NOT IN (5,12,6) AND 
+	g.idAntibiotico NOT IN (5,12,6,10) AND 
 	g.operador = '=';
