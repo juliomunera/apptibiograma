@@ -14,4 +14,43 @@ ion-content {
 .borderColor {
     border-color: red;
     background-color: aquamarine;
+    border-style: solid;
+    ;
+}
+
+.fixed[scrollx=true],
+div[scrolly=true] {
+    position: relative;
+    overflow: hidden;
+     ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.fixed[scrollx=true] {
+    overflow-x: auto;
+}
+
+.fixed[scrolly=true] {
+    overflow-y: auto;
+}
+
+.bodyImageWidth {
+    width: 600px;
+}
+
+.bodyTable {
+    width: 390px;
+    height: 730px;
+    border-style: none;
+}
+
+.trCss {
+    border-style: none;
+    border-width: 1px;
+    width: 50px;
+}
+
+.table1 {
+    text-align: center;
 }

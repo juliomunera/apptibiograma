@@ -9,22 +9,62 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content text-center [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)" (ionScrollEnd)="logScrollEnd()">
-    <!-- 
-<ion-content text-center> -->
+<ion-content class="ion-text-center">
 
-    <img src="../../assets/body.svg" usemap="#image-map" />
-    <map name="image-map">
-                <area coords="0, 40, 145, 100" title="Sistema nervioso" (click) = "selectRegion('Sistema nervioso')" target="" alt="Sistema nervioso" shape="rect">
-                <area coords="265, 85, 410, 135" title="Boca, senos, paranasales y cuello"  (click) = "selectRegion('Boca, senos, paranasales y cuello')" target="" alt="Boca, senos, paranasales y cuello" shape="rect">
-                <area coords="0, 190, 145, 240" title="Pulmones y vía aérea" (click) = "selectRegion('Pulmones y vía aérea')" target="" alt="Pulmones y vía aérea" shape="rect">
-                <area coords="0, 300, 145, 360" title="Abdomen" (click) = "selectRegion('Abdomen')" target="" alt="Abdomen" shape="rect">
-                <area coords="0, 440, 145, 490" title="Tracto genito urinario" (click) = "selectRegion('Tracto genito urinario')" target="" alt="racto genito urinario" shape="rect">
-                <area coords="0, 595, 145, 645" title="Huesos" (click) = "selectRegion('Huesos')" target="" alt="Huesos" shape="rect">
-                <area coords="265, 323, 410, 378" title="Prostata" (click) = "selectRegion('Prostata')" target="" alt="Prostata" shape="rect">
-                <area coords="265, 451, 410, 503" title="Tejidos blandos"  (click) = "selectRegion('Tejidos blandos')" target="" alt="Tejidos blandos" shape="rect">
-                <area coords="265, 565, 410, 625" title="Sangre"  (click) = "selectRegion('Sangre')" target="" alt="Sangre" shape="rect">
-        </map>
+    <div class="fixed" scrollx="true">
+        <div>
+            <table class="bodyTable" style="background-image: url(../../assets/body.svg);">
+                <tr>
+                    <td class="trCss" (click)="selectRegion('Sistema nervioso')">
+                        &nbsp;
+                    </td>
+                    <td class="trCss" (click)="selectRegion('Boca, senos, paranasales y cuello')">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="trCss" (click)="selectRegion('Pulmones y vía aérea')">
+                        &nbsp;
+                    </td>
+                    <td class="trCss">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="trCss" (click)="selectRegion('Abdomen')">
+                        &nbsp;
+                    </td>
+                    <td class="trCss" (click)="selectRegion('Prostata')">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="trCss" (click)="selectRegion('Tracto genito urinario')">
+                        &nbsp;
+                    </td>
+                    <td class="trCss" (click)="selectRegion('Tejidos blandos')">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="trCss" (click)="selectRegion('Huesos')">
+                        &nbsp;
+                    </td>
+                    <td class="trCss" (click)="selectRegion('Sangre')">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="trCss">
+                        &nbsp;
+                    </td>
+                    <td class="trCss">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
     <br /><br />
     <br /><br />

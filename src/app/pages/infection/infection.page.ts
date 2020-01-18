@@ -24,6 +24,7 @@ export class InfectionPage implements OnInit {
   }
 
   async selectRegion(area){
+
     this.isSelected = true;
     this.selectedText = area;
 
@@ -46,17 +47,5 @@ export class InfectionPage implements OnInit {
     await this.modalController.dismiss(this.contextModel.name);
   }
 
-  logScrollStart(){
-    alert("logScrollStart : When Scroll Starts");
-  }
- 
-  logScrolling(){
-    alert("logScrolling : When Scrolling");
-  }
- 
-  logScrollEnd(){
-    alert("logScrollEnd : When Scroll Ends");
-  }
- 
 
 }
