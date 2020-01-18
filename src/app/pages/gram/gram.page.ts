@@ -17,8 +17,6 @@ export class GramPage implements OnInit {
   }
 
   openGram(isGramPositive){
-
     this.router.navigate(['/bacterium', { gramType: isGramPositive, bodyName : this.bodyName }]);
-    // this.router.navigateByUrl('/bacterium');
   }
 }

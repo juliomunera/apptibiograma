@@ -57,7 +57,6 @@ export class SummaryPage implements OnInit {
       this.bodyName = this.activatedRoute.snapshot.paramMap.get('bodyName');
       this.bacteriumId = this.activatedRoute.snapshot.paramMap.get('id');
       this.gramType = this.activatedRoute.snapshot.paramMap.get('gramType');
-
     }
 
   ngOnInit() {

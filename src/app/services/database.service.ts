@@ -102,26 +102,6 @@ export class DatabaseService {
       .catch((err)=>console.log("error detected creating tables", err));
     }
 
-    //  createTables(){
-    //   return this.database.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS DatosDelPaciente (
-    //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //       idParteDelCuerpo INTEGER,
-    //       fechaRegistro DATETIME,
-    //       genero CHAR(1),
-    //       edad INTEGER,
-    //       peso REAL,
-    //       creatinina REAL,
-    //       esAlergicoAPenicilina BOOLEAN,
-    //       requiereHemodialisis BOOLEAN,
-    //       CAPD BOOLEAN,
-    //       CRRT BOOLEAN,
-    //       depuracionCreatinina DECIMAL(10,5)
-    //       );`
-    //   , null)
-    //   .catch((err)=>console.log("error detected creating tables", err));
-    // }
-
     createAllowAccess(){
       return this.database.executeSql(
         `
@@ -148,26 +128,6 @@ export class DatabaseService {
         })
         .catch(e=> alert(e.message));
     }
-  
-    // private createTables(){
-    //   return this.database.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS list (
-    //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //       name TEXT
-    //     );`
-    //   , null)
-    //   .then(()=>{
-    //     return this.database.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS todo (
-    //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //       description TEXT,
-    //       isImportant INTEGER,
-    //       isDone INTEGER,
-    //       listId INTEGER,
-    //       FOREIGN KEY(listId) REFERENCES list(id)
-    //       );`,null )
-    //   }).catch((err)=>console.log("error detected creating tables", err));
-    // }
 
     private isReady(){
       return new Promise((resolve, reject) =>{
@@ -286,36 +246,6 @@ export class DatabaseService {
         })
       });    
     }
-
-    // insertAntibiotic(){
-    //   return this.isReady()
-    //   .then(()=>{
-    //     return this.database.executeSql(`DROP TABLE IF EXISTS Antibioticos;`, null)
-    //     .catch(err => alert('Error: ' + err.message));
-    //   })
-    //   .then(()=>{
-
-    //     let items = ['Staphylococcus aureus', 'Staphylococcus epidermidis', 'Staphylococcus haemolyticus',
-    //                  'Staphylococcus warneri', 'Staphylococcus lugdunensis', 'Enterococcus faecalis',
-    //                  'Enterococcus faecium', 'Enterococcus gallinarum', 'Enterococcus casseliflavus',
-    //                  'Streptococcus viridans', 'Streptococcus mitis', 'Streptococcus mutans',
-    //                  'Streptococcus salivarius', 'Streptococcus pyogenes', 'Streptococcus agalactiae',
-    //                  'Streptococcus dysgalactiae', 'Streptococcus pneumoniae'];
-
-    //     let insertRows = [];
-    //     items.forEach(item => {
-    //         insertRows.push([
-    //             "INSERT INTO Bacterias (nombre) VALUES (?)", [item.toString()]                
-    //         ]);
-    //     });
-
-    //     return this.database.sqlBatch(insertRows).then(() => {
-    //         console.log('Save all bacteriums records.')
-    //     });  
-
-    //   });   
-      
-    // }
 
     insertBacterium(){
 

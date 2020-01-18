@@ -12,10 +12,6 @@ export class RestapiService {
   constructor(private http: HttpClient) { }
 
   validateAccessCode(code : any) {
-    // let data = {
-    //     "token": "zTa5RzNLKQQDp8XBMdKu2Vu7Xp3dDYuP",
-    //     "codigo": code
-    //   }
 
     return new Promise((resolve, reject) => {
 

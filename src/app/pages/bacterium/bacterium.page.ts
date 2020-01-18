@@ -59,7 +59,7 @@ export class BacteriumPage implements OnInit {
   }
 
   ngOnInit() {
-    // 
+
   }
 
   private isReady(){
