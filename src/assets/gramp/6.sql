@@ -171,7 +171,8 @@ FROM
 WHERE
 	g.tipoGRAM = '+' AND
 	g.idBacteria IN (2,3,4,5) AND 
-	( (g.idAntibiotico = 2 AND g.operador = '>='))
+	( (g.idAntibiotico = 2 AND g.operador = '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 2 AND COAlESCE(valor, 3) = 1)
 		
 ;		
 
@@ -236,6 +237,8 @@ WHERE
 	g.idAntibiotico IN (10) AND 
 	g.operador = '>=' 	
 ;
+
+
 
 /*
 	ETAPA 2

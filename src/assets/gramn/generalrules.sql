@@ -14,6 +14,9 @@ VALUES ('GRAMNegativo-General', 'Eliminando información de la tabla Interpretac
 
 DELETE FROM InterpretacionGRAMEtapa3;
 
+
+
+
 /*****************************************
 GRAM-
 ******************************************/
@@ -29,6 +32,15 @@ INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento)
 VALUES ('GRAMPositivo-General', 'Ingresando información a la tabla temporal GRAM.');
 
 INSERT INTO TMP_GRAM SELECT * FROM GRAM;
+
+
+
+/*****
+Actualizacion del valor de BLEE cuando alguno de CEFXX es = o >=
+*****/
+UPDATE GRAM SET valor = 1 WHERE valor = 3 AND idPrueba = 4 AND 0 < (SELECT COUNT(1) FROM TMP_GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>='));
+
+
 
 /*
 	Cuando todos los antibióticos sean sensibles (es decir ?), debe salir un mensaje que diga “Germen sensible a todo 
@@ -102,6 +114,38 @@ FROM
 			g.idBacteria IN (21,22,24,25,31,30,26,28,34)
 	) g2
 	ON (g1.total = g2.total AND g1.total > 0);
+	
+/* Mensaje siempre*/
+	
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g1.idBacteria, 
+	1 as idAntibiotico,
+	'Intrinsecamente resistente a Ampicilina y Ampicilina/sulbactam'
+FROM
+	(
+		SELECT g.idBacteria, COUNT(1) as total
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idPrueba = 1 AND
+			g.operador = '<='
+		GROUP BY 
+			g.idBacteria
+	) g1
+	INNER JOIN (
+		SELECT COUNT(1) as total
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idPrueba = 1
+	) g2
+	ON (g1.total = g2.total)
+WHERE
+	g1.idBacteria IN (20);
 	
 /*
 	Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad 
@@ -543,14 +587,14 @@ WHERE
 		Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
+	'Germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
 FROM
 	GRAM g
 WHERE
@@ -699,14 +743,14 @@ WHERE
 		Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ampicilina, Ampicilima/sulbactam, Aztreonam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
+	'Germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam, Aztreonam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado'
 FROM
 	GRAM g
 WHERE
@@ -813,16 +857,68 @@ FROM
 WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
-	g.idBacteria  NOT IN (21,22,24,25,31,30,26,28,34) AND
-	g.idAntibiotico = 46 AND
-	g.operador = '=' AND
+	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
+	g.idAntibiotico = 28 AND
+	g.operador = '='
+	
+	and
 	(
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
 	) AND
 	(
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
-	);
+	)
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	;
+	/*
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ertapenem por hiperexpresión de BLEE'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
+	g.idAntibiotico = 28 AND
+	g.operador = '='
+	
+	and
+	(
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
+		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
+	) AND
+	(
+		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
+	);*/
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen es resistente a Ertapenem, mediado por hiperproduccion de AMP-C.');
@@ -839,15 +935,111 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 1 AND
 	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
-	g.idAntibiotico = 46 AND
-	g.operador = '>=' AND
+	g.idAntibiotico = 28 AND
+	g.operador = '>=' 
+	
+	AND
 	(
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
 	) AND
 	(
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
+	)
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	;
+	/*
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ertapenem por hiperexpresión de BLEE'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
+	g.idAntibiotico = 28 AND
+	g.operador = '>=' 
+	
+	AND
+	(
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
+		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
+	) AND
+	(
+		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
 	);
+	*/
+
+	/*
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ertapenem por hiperexpresión de BLEE'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
+	g.idAntibiotico = 28 AND
+	g.operador = '=' AND
+	(
+		0 < (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) OR
+		0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) OR
+		3 <= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (30,31,32) AND operador IN ('<='))
+	)
+	;
+	
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ertapenem por hiperexpresión de BLEE'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idBacteria NOT IN (21,22,24,25,31,30,26,28,34) AND
+	g.idAntibiotico = 28 AND
+	g.operador = '>=' AND
+	(
+		0 < (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) OR
+		0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) OR
+		3 <= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (30,31,32) AND operador IN ('<='))
+	)
+	
+	;*/
 
 /*
 	*	Pero en este antibiótico hay que hacer un análisis adicional para añadir a las reglas:
@@ -871,7 +1063,32 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idBacteria IN (21,22,24,25,31,30,26,28,34) AND
 	g.idAntibiotico = 28 AND
-	g.operador = '=';
+	g.operador = '='
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por hiperproduccion de AMP-C.');
@@ -889,7 +1106,34 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idBacteria IN (21,22,24,25,31,30,26,28,34) AND
 	g.idAntibiotico = 28 AND
-	g.operador = '>=';
+	g.operador = '>='
+	
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	;
 	
 /*
 	*	Si es un numero entero o resistente, y además tiene test ESBL/BLEE positivo o Cefepime, Ceftazidima o Cerfriaxona 
@@ -914,9 +1158,35 @@ WHERE
 	g.idAntibiotico = 28 AND
 	g.operador = '=' AND
 	(
-		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
-		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
-	);
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) /*OR
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))*/
+	)
+	
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen es resistente a Ertapenem, mediado por hiperproduccion de Beta-lactamasas de expectro extendido.');
@@ -935,9 +1205,36 @@ WHERE
 	g.idAntibiotico = 28 AND
 	g.operador = '>=' AND
 	(
-		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1) OR
-		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
-	);
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idPrueba = 4 AND valor = 1)/* OR
+		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))*/
+	)
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	
+	;
 
 /*
 	*	Si es un numero entero o resistente, y además Meropenem y/o Imipenem y/o Doripenem son números enteros o resistentes;
@@ -962,7 +1259,33 @@ WHERE
 	g.operador = '=' AND
 	(
 		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
-	);
+	)
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por mecanismos de permeabilidad o KPC.');
@@ -982,7 +1305,33 @@ WHERE
 	g.operador = '>=' AND
 	(
 		0 < (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
-	);		
+	)
+	
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem
+	)
+	
+	;		
 	
 /*
 	15.	Imipenem, Doripenem y Meropenem:
@@ -1099,6 +1448,8 @@ WHERE
 		valorMeropenem <> valorDoripenem
 	);
 	
+	
+
 
 
 

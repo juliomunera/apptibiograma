@@ -85,6 +85,32 @@ export class GeneralPage implements OnInit {
     return await modal.present();
   }
 
+  changeRadioButton(type){
+
+    switch(type){
+      case 'hemodialisis':
+        if(this.contextModel.hemodialisis){
+          this.contextModel.capd = false;
+          this.contextModel.crrt = false;
+        }
+        break;
+
+      case 'capd':
+        if(this.contextModel.capd){
+          this.contextModel.hemodialisis = false;
+          this.contextModel.crrt = false;
+        }
+      
+      case 'crrt':
+        if(this.contextModel.crrt){
+          this.contextModel.hemodialisis = false;
+          this.contextModel.capd = false;
+        }
+
+    }
+
+  }
+
   continue(){
 
     if(this.contextModel.sexType === '' || this.contextModel.sexType === undefined){

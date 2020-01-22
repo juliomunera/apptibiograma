@@ -557,7 +557,7 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 17, 1,'INPUT TEXT','+');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 18, 1,'INPUT TEXT','+');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 19, 1,'INPUT TEXT','+');
-INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 21, 1,'INPUT TEXT','+');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (18, 20, 1,'INPUT TEXT','+');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (19, 13, 1,'INPUT TEXT','-');

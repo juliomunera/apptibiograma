@@ -37,6 +37,31 @@ UPDATE GRAM SET operador = '>=' WHERE tipoGRAM = '+' AND idAntibiotico = 2 AND 0
 
 
 /*
+Cuando es prostata o orina Y STAPHYLOCOCCUS
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Prostata');
+
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT DISTINCT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	1 AS idAntibiotico,
+	'Descartar contaminación o bacteriemia'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '+' AND
+	g.idBacteria IN (2,3,4,5,6) AND 
+	g.idPrueba = 1 AND
+	0 < (SELECT COUNT(1) FROM DatosDelPaciente WHERE idParteDelCuerpo IN (4,6))
+;
+
+
+
+
+/*
 Cuando algún antibiótico Aj del formulario con Aj NOT IN {Oxacilina, vancomicina}, posee un valor >=, debe salir un mensaje que dice “Germen resistente a <Aj>”.
 */
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 

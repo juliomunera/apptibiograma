@@ -19,6 +19,11 @@ WHERE
 	a.idAntibiotico NOT IN (1,5,12)
 );
 
+/* Eliminar cuando tiene mensaje de hacer test */
+
+DELETE FROM InterpretacionGRAMEtapa2 WHERE 0 < (select total from validarTestMsg);
+
+
 
 /*
 ETAPA 3

@@ -37,15 +37,15 @@
         </ion-item>
         <ion-item>
             <ion-label>Hemodialisis</ion-label>
-            <ion-toggle checked="false" [(ngModel)]="contextModel.hemodialisis"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.hemodialisis" (ionChange)="changeRadioButton('hemodialisis')"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>CAPD</ion-label>
-            <ion-toggle checked="false" [(ngModel)]="contextModel.capd"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.capd" (ionChange)="changeRadioButton('capd')"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>CRRT</ion-label>
-            <ion-toggle checked="false" [(ngModel)]="contextModel.crrt"></ion-toggle>
+            <ion-toggle checked="false" [(ngModel)]="contextModel.crrt" (ionChange)="changeRadioButton('crrt')"></ion-toggle>
         </ion-item>
         <ion-item>
             <ion-label>Ubicación infección</ion-label>
