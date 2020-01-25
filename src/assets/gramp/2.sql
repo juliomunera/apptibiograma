@@ -39,6 +39,24 @@ FROM
 		ON (g1.total = g2.total)
 ;
 
+/*
+Mensaje para sangre
+*/
+INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
+VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Sangre es un numero entero');
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	h.idParteDelCuerpo, 
+	g.idBacteria, 
+	1 AS idAntibiotico,
+	'Descartar contaminacion'
+FROM
+	(SELECT DISTINCT idbacteria FROM GRAM WHERE idBacteria IN (3,4,5,6)) g,
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp WHERE idParteDelCuerpo = 8) h
+
+;
+
 
 /*
 Cuando Aj del formulario con Aj in {Oxacilina} es un numero entero (es decir =), debe salir un mensaje que diga “Realizar test de Cefoxitin”.
@@ -309,7 +327,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (1,9,5)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id = 4) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6,7)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (1,9,6)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (1,9)) 
@@ -389,7 +407,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15,7)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13,15)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
@@ -464,7 +482,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15,7)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (9,13,15)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (9,13)) 

@@ -34,7 +34,7 @@ FROM
 		WHERE
 			g.tipoGRAM = '-' AND
 			g.idBacteria IN (19,29) AND
-			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor = 0)
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor IN (0,3))
 	) g1,
 	(
 		SELECT
@@ -50,12 +50,14 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,9,4,43)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,42)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,4,44,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,4,44)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,4,44)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,51,44)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,4,45)) 
 			
 	) a2;
+	
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion in (42,43,44,45) AND 0 < (SELECT COUNT(1) FROM InterpretacionGRAMEtapa1 WHERE mensaje like 'Germen sensible a todo el panel de%');
 
 /*
 •	Cuando la sensibilidad a Ampicilina/sulbactam es un numero entero o es resistente (es decir > o =), pero Cefazolina sigue siendo sensible (es decir < o =) 
@@ -188,13 +190,13 @@ FROM
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (32,2,3)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (36)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (36,16)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,9,36)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (47)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,36)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,36,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,36,16)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,36)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,36,16)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,48)) 
 			
 	) a2;
@@ -243,15 +245,15 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 0) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (36,40)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (36,39,40)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (36,37,16)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,40)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,37)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,39,40)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16,37)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,37,49)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,40)) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (36,37)) OR
-			(dp1.idParteDelCuerpo = 8 AND a.id IN (40,48)) 
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,16,37)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,39,40)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (36,16,37)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (39,40,48)) 
 			
 	) a2;
 		

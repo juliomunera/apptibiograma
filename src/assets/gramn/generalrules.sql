@@ -90,7 +90,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g1.idBacteria, 
 	1 as idAntibiotico,
-	'Germen sensible a todo el panel de antibióticos, pero productor de AMP-C y por ende resistente a todos los beta-lactámicos excepto Carbapenems'
+	'Germen productor de AMP-C (resistente a todos los beta-lactámicos excepto Carbapenems)'
 FROM
 	(
 		SELECT g.idBacteria, COUNT(1) as total
@@ -103,17 +103,7 @@ FROM
 			g.idBacteria IN (21,22,24,25,31,30,26,28,34)
 		GROUP BY 
 			g.idBacteria
-	) g1
-	INNER JOIN (
-		SELECT COUNT(1) as total
-		FROM
-			GRAM g
-		WHERE
-			g.tipoGRAM = '-' AND
-			g.idPrueba = 1 AND
-			g.idBacteria IN (21,22,24,25,31,30,26,28,34)
-	) g2
-	ON (g1.total = g2.total AND g1.total > 0);
+	) g1;
 	
 /* Mensaje siempre*/
 	
@@ -879,7 +869,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -890,8 +883,12 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+		/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
 	
 	;
@@ -956,7 +953,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -967,8 +967,12 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+			/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
 	
 	;
@@ -1063,7 +1067,9 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idBacteria IN (21,22,24,25,31,30,26,28,34) AND
 	g.idAntibiotico = 28 AND
-	g.operador = '='
+	g.operador = '=' AND
+	
+	0 <= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (30,31,32) AND operador IN ('=', '>='))
 	
 	AND
 	0 >= (
@@ -1074,7 +1080,42 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
+	)
+	
+	/*
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1086,8 +1127,10 @@ WHERE
 			) g5
 		WHERE
 			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
-	)
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')
+	)*/
 	;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
@@ -1106,8 +1149,8 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idBacteria IN (21,22,24,25,31,30,26,28,34) AND
 	g.idAntibiotico = 28 AND
-	g.operador = '>='
-	
+	g.operador = '>=' AND
+	0 <= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (30,31,32) AND operador IN ('=', '>='))
 	
 	AND
 	0 >= (
@@ -1118,7 +1161,43 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
+				FROM
+					GRAM 
+				WHERE
+					tipoGRAM = '-' AND 
+					idPrueba = 1 AND
+					idAntibiotico IN (30,32,31)
+				GROUP BY
+					idBacteria
+			) g5
+		WHERE
+			/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
+	)
+	
+	
+	/*
+	AND
+	0 >= (
+		SELECT COUNT(1) FROM
+			(
+				SELECT
+					idBacteria,
+					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1130,8 +1209,10 @@ WHERE
 			) g5
 		WHERE
 			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
-	)
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')
+	)*/
 	
 	;
 	
@@ -1172,7 +1253,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1183,9 +1267,14 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+			/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
+	
 	;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
@@ -1218,7 +1307,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1229,8 +1321,12 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+			/*	valorImipenem > valorMeropenem OR
+			valorMeropenem > valorImipenem OR
+			(signoImipenem = '=' AND  signoMeropenem = '<=') OR
+			(signoImipenem = '<=' AND  signoMeropenem = '=')*/
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
 	
 	
@@ -1241,6 +1337,7 @@ WHERE
 		debe salir un mensaje que diga “Germen con sensibilidad disminuida (o resistente según el caso), mediado por 
 		mecanismos de permeabilidad o KPC.
 */
+/*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Ertapenem, mediado por mecanismos de permeabilidad o KPC.');
 
@@ -1270,7 +1367,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1281,12 +1381,12 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
-	
 	;
-
+	*/
+/*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por mecanismos de permeabilidad o KPC.');
 
@@ -1316,7 +1416,10 @@ WHERE
 					SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
 					SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 					SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+					SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+					MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+					MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+					MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
 				FROM
 					GRAM 
 				WHERE
@@ -1327,11 +1430,13 @@ WHERE
 					idBacteria
 			) g5
 		WHERE
-			valorImipenem > valorMeropenem OR
-			valorMeropenem > valorImipenem
+			
+			(signoImipenem IN ('>=') AND signoMeropenem IN ('>=')) OR
+			(signoImipenem IN ('=') AND signoMeropenem IN ('=') AND valorImipenem = valorMeropenem)
 	)
-	
 	;		
+	*/
+	
 	
 /*
 	15.	Imipenem, Doripenem y Meropenem:
@@ -1353,24 +1458,28 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	31 AS idAntibiotico,
-	'Germen con sensibilidad disminuida a Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia'
+	'Germen con sensibilidad disminuida a Carbapenems mediado por KPC, corroborar con laboratorio de referencia'
 FROM
 	(
 		SELECT
 			idBacteria,
 			SUM(CASE WHEN operador = '=' THEN 1 ELSE 0 END) as conteo,
+			SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+			SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
 			SUM(valor) as suma
 		FROM
 			GRAM 
 		WHERE
 			tipoGRAM = '-' AND 
 			idPrueba = 1 AND
-			idAntibiotico IN (30,32,31)
+			idAntibiotico IN (30,31)
 		GROUP BY
 			idBacteria
 	) g
 WHERE
-	g.conteo = 3 /*OR
+	g.conteo = 2 AND
+	valorImipenem = valorMeropenem
+	/*OR
 	g.suma = CAST((g.suma / 3) AS INTEGER) * 3*/;
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
@@ -1381,24 +1490,26 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	31 AS idAntibiotico,
-	'Germen resistente a Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia'
+	'Germen resistente a Carbapenems mediado por KPC, corroborar con laboratorio de referencia'
 FROM
 	(
 		SELECT
 			idBacteria,
 			SUM(CASE WHEN operador = '>=' THEN 1 ELSE 0 END) as conteo,
+			SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
+			SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
 			SUM(valor) as suma
 		FROM
 			GRAM 
 		WHERE
 			tipoGRAM = '-' AND 
 			idPrueba = 1 AND
-			idAntibiotico IN (30,32,31)
+			idAntibiotico IN (30,31)
 		GROUP BY
 			idBacteria
 	) g
 WHERE
-	g.conteo = 3;	
+	g.conteo = 2 ;	
 	
 /*
 	*	Si ninguno es resistente, y los 3 tienen números enteros pero diferentes, se deben comparar aritméticamente los 
@@ -1419,8 +1530,22 @@ SELECT
 	31 AS idAntibiotico,
 	(
 		CASE
-			WHEN valorImipenem > valorMeropenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por cierre de porinas'
-			WHEN valorMeropenem > valorImipenem THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por bombas de eflujo'
+			/*WHEN  (signoImipenem IN ('=', '>=') AND  signoMeropenem = '<=') OR (signoImipenem = '>=' AND  signoMeropenem = '=') THEN 'Germen con sensibilidad disminuida a Imipenem mediante cierre de porinas'
+			WHEN  (signoMeropenem IN ('=', '>=') AND  signoImipenem = '<=') OR (signoMeropenem = '>=' AND  signoImipenem = '=') THEN 'Germen con sensibilidad disminuida a Meropenem mediante bombas de eflujo'*/
+			
+			WHEN  (signoImipenem IN ('=') AND  signoMeropenem = '<=') THEN 'Germen con sensibilidad disminuida a Imipenem mediante cierre de porinas'
+			WHEN  (signoImipenem IN ('>=') AND  signoMeropenem = '<=') THEN 'Germen resistente a Imipenem mediante cierre de porinas'
+			
+			WHEN  (signoImipenem IN ('>=') AND  signoMeropenem = '=') THEN 'Germen resistente a Imipenem y con sensibilidad disminuida a Meropenem mediante cierre de porinas'
+			
+			
+			WHEN  (signoMeropenem IN ('=') AND  signoImipenem = '<=')  THEN 'Germen con sensibilidad disminuida a Meropenem mediante bombas de eflujo'
+			WHEN  (signoMeropenem IN ('>=') AND  signoImipenem = '<=')  THEN 'Germen resistente a Meropenem mediante bombas de eflujo'
+			WHEN  (signoMeropenem IN ('>=') AND  signoImipenem = '=') THEN 'Germen resistente a Meropenem y con sensibilidad disminuida a Imipenem mediante bombas de eflujo'
+			
+			
+			WHEN (valorImipenem > valorMeropenem) AND (signoImipenem = '=' AND  signoMeropenem = '=') THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por cierre de porinas'
+			WHEN (valorMeropenem > valorImipenem) AND (signoImipenem = '=' AND  signoMeropenem = '=') THEN 'Germen con sensibilidad disminuida a Carbapenems mediado por bombas de eflujo'
 		END
 	) AS Mensaje
 FROM
@@ -1430,7 +1555,11 @@ FROM
 			SUM(CASE WHEN operador <> '>=' THEN 1 ELSE 0 END) as conteo,
 			SUM(CASE WHEN idAntibiotico = 30 THEN valor ELSE 0 END) as valorImipenem,
 			SUM(CASE WHEN idAntibiotico = 31 THEN valor ELSE 0 END) as valorMeropenem,
-			SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem
+			SUM(CASE WHEN idAntibiotico = 32 THEN valor ELSE 0 END) as valorDoripenem,
+			MAX(CASE WHEN idAntibiotico = 30 THEN operador ELSE '' END) as signoImipenem,
+			MAX(CASE WHEN idAntibiotico = 31 THEN operador ELSE '' END) as signoMeropenem,
+			MAX(CASE WHEN idAntibiotico = 32 THEN operador ELSE '' END) as signoDoripenem
+			
 		FROM
 			GRAM 
 		WHERE
@@ -1441,11 +1570,14 @@ FROM
 			idBacteria
 	) g
 WHERE
-	g.conteo = 3 AND
+	/*g.conteo = 3 AND*/
 	(
-		valorImipenem <> valorMeropenem AND
+	/*	valorImipenem <> valorMeropenem AND
 		valorImipenem <> valorDoripenem AND
-		valorMeropenem <> valorDoripenem
+		valorMeropenem <> valorDoripenem */
+		(valorImipenem > valorMeropenem) OR (signoImipenem IN ('=', '>=') AND  signoMeropenem = '<=') OR (signoImipenem = '>=' AND  signoMeropenem = '=') OR
+		(valorMeropenem > valorImipenem) OR (signoMeropenem IN ('=', '>=') AND  signoImipenem = '<=') OR (signoMeropenem = '>=' AND  signoImipenem = '=')
+		
 	);
 	
 	

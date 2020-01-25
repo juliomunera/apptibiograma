@@ -35,7 +35,7 @@ FROM
 		WHERE
 			g.tipoGRAM = '-' AND
 			g.idBacteria IN (20) AND
-			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor = 0)
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor IN (0,3))
 	) g1,
 	(
 		SELECT
@@ -51,7 +51,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,43)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (42,50)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,42)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,33,44)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,33,45)) 
@@ -133,7 +133,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,36,33)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (33,47,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,36)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,36,16,33,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,36,16,33)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,36,16,33)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,33,48)) 
@@ -189,7 +189,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,39,40)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (46,16,37)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,16,37,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,16,37)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,39,40)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (36,16,37)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (39,40,48)) 

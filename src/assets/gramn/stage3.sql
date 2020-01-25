@@ -328,14 +328,14 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '2 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '1 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm cada 12 horas'
+            WHEN CRRT = 1 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV cada 12 horas'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 4 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 50 THEN '2 gm cada 6 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN '2 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 4 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 50 THEN '2 gm IV cada 6 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV cada 12 horas'
         END
     )
 FROM
@@ -350,17 +350,17 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN 'De 1 a 2 gm cada 8 a 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN 'De 0.5 gm a 1 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'De 1 a 2 gm cada 12 horas'
+            WHEN CRRT = 1 THEN 'De 1 a 2 gm IV cada 8 a 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN 'De 0.5 gm a 1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'De 1 a 2 gm IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 
-                'De 1 a 2 gm cada 4 horas'
+                'De 1 a 2 gm IV cada 4 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 50 THEN 
-                'De 1 a 2 gm cada 6 horas'
+                'De 1 a 2 gm IV cada 6 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN 
-                'De 1 a 2 gm cada 8 horas'
+                'De 1 a 2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                'De 1 a 2 gm cada 12 horas'
+                'De 1 a 2 gm IV cada 12 horas'
         END
     )
 FROM
@@ -387,13 +387,14 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '3 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '3 gm al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '3 gm al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV cada 12 horas'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '3 gm cada 6 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '3 gm cada 8 a 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '3 gm al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 4 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 50 THEN '2 gm IV cada 6 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV cada 12 horas'
         END
     )
 FROM
@@ -419,15 +420,15 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN 'De 1 a 1.5 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'De 1 a 2 gm al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN 'De 1 a 1.5 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'De 1 a 2 gm IV al día (dosis luego de HD)'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 
-                '2 gm cada 8 horas'
+                '2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN 
-                'De 1 a 1.5 gm cada 8 horas'
+                'De 1 a 1.5 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                'De 1 a 2 gm al día'
+                'De 1 a 2 gm IV al día'
         END
     )
 FROM
@@ -522,13 +523,13 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '2 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '1 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV al día (dosis luego de HD)'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 6 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 6 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV cada 12 horas'
         END
     )
 FROM
@@ -556,17 +557,17 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '2 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '2 gm cada 48 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '1 gm al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '2 gm IV cada 48 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '1 gm IV al día (dosis luego de HD)'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN 
-                '2 gm cada 8 horas'
+                '2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN 
-                '2 gm cada 12 horas'
+                '2 gm IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN 
-                '2 gm al día'
+                '2 gm IV al día'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                '1 gm al día'
+                '1 gm IV al día'
         END
     )
 FROM
@@ -591,14 +592,14 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '1.5 gm cada 8 horas'
+            WHEN CRRT = 1 THEN '1.5 gm IV cada 8 horas'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV al día'
 			
-			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN '2 gm al día'
-			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN '2 gm al día'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN '2 gm IV al día'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN '2 gm IV al día'
         END
     )
 FROM
@@ -619,7 +620,7 @@ VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para e
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
     e2.idAsignacion,
-    '1 gm cada 12 horas'
+    '1 gm IV cada 12 horas'
 FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
@@ -630,7 +631,7 @@ WHERE
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
     e2.idAsignacion,
-    '2 gm cada 12 horas'
+    '2 gm IV cada 12 horas'
 FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
@@ -653,12 +654,12 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '2 gm cada 12 horas'
-			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm al dia (dosis luego de Hemodialisis)'
-			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN '1 gm al dia'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm al día'
+            WHEN CRRT = 1 THEN '2 gm IV cada 12 horas'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV al dia (dosis luego de Hemodialisis)'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN '1 gm IV al dia'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV al día'
         END
     )
 FROM
@@ -685,15 +686,15 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '400 mg cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '400 mg al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '400 mg al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '400 mg IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '400 mg IV al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '400 mg IV al día (dosis luego de HD)'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 
-                '400 mg cada 8 horas'
+                '400 mg IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN 
-                '400 mg cada 12 horas'
+                '400 mg IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                '400 mg al día'
+                '400 mg IV al día'
         END
     )
 FROM
@@ -718,12 +719,12 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '1 gm al día'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '1 gm IV al día'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg IV al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg IV al día (dosis luego de HD)'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 THEN '1 gm al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '500 mg al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 THEN '1 gm IV al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '500 mg IV al día'
         END
     )
 FROM
@@ -765,15 +766,15 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '500 mg cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '250 mg cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg cada 12 horas'
+            WHEN CRRT = 1 THEN '500 mg IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '250 mg IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN 
-                '500 mg cada 6 horas'
+                '500 mg IV cada 6 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN 
-                '500 mg cada 8 horas'
+                '500 mg IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN 
-                '500 mg cada 12 horas'
+                '500 mg IV cada 12 horas'
         END
     )
 FROM
@@ -802,17 +803,17 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '1 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg al día (dosis luego de HD)'
+            WHEN CRRT = 1 THEN '1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg IV al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg IV al día (dosis luego de HD)'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 
-                '1 gm cada 8 horas'
+                '1 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 25 AND depuracionCreatinina < 50 THEN 
-                '1 gm cada 12 horas'
+                '1 gm IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 25 THEN 
-                '500 mg cada 12 horas'
+                '500 mg IV cada 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                '500 mg al día'
+                '500 mg IV al día'
         END
     )
 FROM
@@ -827,16 +828,16 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '1 gm cada 12 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg al día'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg al día (dosis luego de HD)'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm cada 8 horas'
+            WHEN CRRT = 1 THEN '1 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '500 mg IV al día'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '500 mg IV al día (dosis luego de HD)'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 25 AND depuracionCreatinina < 50 THEN 
-                '2 gm cada 8 horas'
+                '2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 25 THEN 
-                '2 gm cada 8 horas'
+                '2 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 
-                '2 gm cada 8 horas'
+                '2 gm IV cada 8 horas'
         END
     )
 FROM
@@ -862,11 +863,11 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '500 mg cada 8 horas'
+            WHEN CRRT = 1 THEN '500 mg IV cada 8 horas'
             
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN '0.5 a 1 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN '250 a 500 mg cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '250 mg cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN '0.5 a 1 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN '250 a 500 mg IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '250 mg IV cada 12 horas'
 			
 			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN 'No se recomienda'
 			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN 'No se recomienda'
@@ -895,15 +896,15 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN '54.5 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 1 THEN '2.25 gm cada 8 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2.25 gm cada 6 horas'
+            WHEN CRRT = 1 THEN '4.5 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 1 THEN '2.25 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2.25 gm IV cada 6 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 40 THEN 
-                '4.5 gm cada 6 horas'
+                '4.5 gm IV cada 6 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 20 AND depuracionCreatinina < 40 THEN 
-                '4.5 gm cada 8 horas'
+                '4.5 gm IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 20 THEN 
-                '2.25 gm cada 6 horas'
+                '2.25 gm IV cada 6 horas'
         END
     )
 FROM
@@ -922,7 +923,7 @@ VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para e
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
     e2.idAsignacion,
-    'Dosis de carga de 100 mg y luego 50 mg cada 12 horas'
+    'Dosis de carga de 100 mg IV y luego 50 mg IV cada 12 horas'
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	

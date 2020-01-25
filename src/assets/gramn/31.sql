@@ -50,7 +50,7 @@ FROM
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,40)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,37,40)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,40,49)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,40)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,40)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (36,40)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (40,48)) 

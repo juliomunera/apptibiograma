@@ -786,6 +786,8 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (48, 'Ciprofloxacin (
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (49, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, y se demuestra sensibilidad a estos antibioticos)');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)');
 
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (51, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
+
 
 
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (6,1);
@@ -844,7 +846,10 @@ INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,45);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,46);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (27,47);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (27,48);
-INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (24,49);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (7,49);
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (24,50);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (35,51);
 
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
