@@ -770,7 +770,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (33, 'Cefepime');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (34, 'Ceftazidime');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (35, 'Ceftriaxone');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (36, 'Ciprofloxacin'); 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (37, 'Ertapenem');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (37, 'Ertapenem (si Albumina > 3.5)');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (38, 'Colistin');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (39, 'Imipenem');
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (40, 'Meropenem');
@@ -787,6 +787,8 @@ INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (49, 'Rifampicina o M
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)');
 
 INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (51, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (52, 'Germen multidrogo-resistente, consultar con infectología el esquema de tratamiento');
+INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (53, 'Tamizar Ceftazidime/Avibactam, Fosfomycin y Ceftolozano/Tazobactam');
 
 
 
@@ -850,6 +852,12 @@ INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (7,49);
 
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (24,50);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (35,51);
+
+
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,32);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,52);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,53);
+/*INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,9);*/
 
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 

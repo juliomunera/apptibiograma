@@ -49,11 +49,11 @@ FROM
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,42)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,9,4,43)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,42)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42,36)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,4,44)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22/*,2,3*/)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,51,44)) OR
-			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,4,45)) 
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,4,45,36)) 
 			
 	) a2;
 	
@@ -195,7 +195,7 @@ FROM
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,36)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,36,16)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22/*,2,3*/)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,36,16)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,48)) 
 			
@@ -256,10 +256,95 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (39,40,48)) 
 			
 	) a2;
-		
+	
+	
+/**
+
+**/
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idBacteria IN (19,29) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13,35) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (33) AND operador IN ('=', '>='))
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (37,36)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (33,36)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (37,39,16)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR 
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (37,36)) OR
+		/*	(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22)) OR*/
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (37,36)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (33,39))
+	) a2;
+
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idBacteria IN (19,29) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13,35) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('<=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (33) AND operador IN ('=', '>='))
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (9,36)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (9,36)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (36)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,36)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,37))
+			
+	) a2;
+	
+
+
 /*
 •	Cuando es resistente (es decir > o =) a algún antibiótico dentro de las opciones mencionadas, entonces ese antibiótico no puede aparecer dentro de las opciones
 */
+/*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Eliminando Antibioticos resistentes.');
 
@@ -278,3 +363,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 		g.operador IN ('>=') AND
 		a.idAntibiotico > 1
 );
+*/
+
+

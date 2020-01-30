@@ -750,7 +750,26 @@ WHERE
 	g.operador = '=' AND
 	
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
-	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>='));
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam, Aztreonam y Piperacilina/tazobactam, mediado por Penicilinasas'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 33 AND
+	g.operador = '=' AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>='));
 
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
 VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
@@ -770,8 +789,27 @@ WHERE
 	g.operador = '>='  AND
 	
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
-	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>='));
 
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen resistente a Ampicilina, Ampicilina/sulbactam, Aztreonam y Piperacilina/tazobactam, mediado por Penicilinasas'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 1 AND
+	g.idAntibiotico = 33 AND
+	g.operador = '>='  AND
+	
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>='));
 
 
 /* **************************************************************************************************************************************************************************************************************************** */
@@ -1575,8 +1613,8 @@ WHERE
 	/*	valorImipenem <> valorMeropenem AND
 		valorImipenem <> valorDoripenem AND
 		valorMeropenem <> valorDoripenem */
-		(valorImipenem > valorMeropenem) OR (signoImipenem IN ('=', '>=') AND  signoMeropenem = '<=') OR (signoImipenem = '>=' AND  signoMeropenem = '=') OR
-		(valorMeropenem > valorImipenem) OR (signoMeropenem IN ('=', '>=') AND  signoImipenem = '<=') OR (signoMeropenem = '>=' AND  signoImipenem = '=')
+		((valorImipenem > valorMeropenem) AND (signoImipenem = '=' AND  signoMeropenem = '=')) OR (signoImipenem IN ('=', '>=') AND  signoMeropenem = '<=') OR (signoImipenem = '>=' AND  signoMeropenem = '=') OR
+		((valorMeropenem > valorImipenem) AND (signoImipenem = '=' AND  signoMeropenem = '=')) OR (signoMeropenem IN ('=', '>=') AND  signoImipenem = '<=') OR (signoMeropenem = '>=' AND  signoImipenem = '=')
 		
 	);
 	
