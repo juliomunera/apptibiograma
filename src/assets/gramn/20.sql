@@ -16,8 +16,6 @@
 	o	Sangre: Aztreonam, Cefepime, Piperacilina/tazobactam (si se sospecha origen en abdomen)
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Klebsiella-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 4.Klebsiella.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -49,7 +47,7 @@ FROM
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (32,2,3)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (42,32,33)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,43)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (42,50)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (42,50,47)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,42)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3)) OR
@@ -61,8 +59,6 @@ FROM
 /*
 •	Cuando la sensibilidad a Piperacilina/tazobactam es un numero entero o es resistente (es decir > o =), entonces Piperacilina/tazobactam) desaparece de las opciones de tratamiento, siendo entonces el análisis igual al que si fueran alérgicos a Penicilina (no importa si no son alérgicos a Penicilina).
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Klebsiella-Etapa2', 'Eliminando (Ampicilina/sulbactam).');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 
@@ -99,8 +95,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Klebsiella-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 1.	E.coli y Proteus mirabilis.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -154,8 +148,6 @@ FROM
 	o	Sangre: Imipenem, Meropenem, Ciprofloxacino (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Klebsiella-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 4.Klebsiella.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -187,7 +179,7 @@ FROM
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (36,39,40)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (36,37,16)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,39,40)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (46,16,37)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16,37)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,16,37)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,39,40)) OR
@@ -199,8 +191,6 @@ FROM
 /*
 •	Cuando es resistente (es decir > o =) a algún antibiótico dentro de las opciones mencionadas, entonces ese antibiótico no puede aparecer dentro de las opciones
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Klebsiella-Etapa2', 'Eliminando Antibioticos resistentes.');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 

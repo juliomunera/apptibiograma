@@ -1,3 +1,22 @@
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	31 AS idAntibiotico,
+	'Germen intrinsecamente resistente a Colistina, Tigeciclina e Imipenem'
+FROM
+	(
+		SELECT distinct
+			idBacteria
+		FROM
+			GRAM 
+		WHERE
+			tipoGRAM = '-' AND
+			idBacteria IN (29)
+	) g ;	
+	
+
 /*
 	ETAPA 2
 */	
@@ -15,8 +34,6 @@
 	o	Sangre: Aztreonam, Cefazolina, Ampicilina/sulbactam o Piperacilina/tazobactam (si se sospecha origen en abdomen)
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 1.	E.coli y Proteus mirabilis.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -49,7 +66,7 @@ FROM
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,42)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,9,4,43)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,42)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42,36)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42,36,21)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,4,44)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22/*,2,3*/)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,51,44)) OR
@@ -63,8 +80,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion in (42,43,44,45) AND 0 <
 •	Cuando la sensibilidad a Ampicilina/sulbactam es un numero entero o es resistente (es decir > o =), pero Cefazolina sigue siendo sensible (es decir < o =) 
 	entonces este antibiótico (Ampicilina/sulbactam) desaparece de las opciones de tratamiento
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Eliminando (Ampicilina/sulbactam).');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 
@@ -91,8 +106,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 •	Cuando la sensibilidad a Ampicilina/sulbactam y Cefazolina son un numero entero o son resistentes (es decir > o =), pero Piperacilina/tazobactam sigue siendo sensible (es decir < o =) 
 	entonces estos dos antibióticos (Ampicilina/sulbactam y Cefazolina) desaparecen de las opciones de tratamiento
 */	
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Eliminando Ampicilina/sulbactam y Cefazolina.');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 
@@ -121,8 +134,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	estos tres antibióticos (Ampicilina/sulbactam, Cefazolina y Piperacilina/tazobactam) desaparecen de las opciones de tratamiento, 
 	siendo entonces el análisis igual al que si fueran alérgicos a Penicilina (no importa si no son alérgicos a Penicilina).
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Eliminando Ampicilina/sulbactam y Cefazolina.');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 
@@ -160,8 +171,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	o	Sangre: Aztreonam, Cefazolina, Ciprofloxacino (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 1.	E.coli y Proteus mirabilis.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -193,7 +202,7 @@ FROM
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (36,16)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,9,36)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,36)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,36,21)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,36,16)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22/*,2,3*/)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,36,16)) OR
@@ -215,8 +224,6 @@ FROM
 	o	Próstata: Ciprofloxacino, Fosfomycin (3gm cada 3 dias por 7 dosis), Imipenem (excepto si es Proteus), Meropenem
 	o	Sangre: Imipenem (excepto si es Proteus), Meropenem, Ciprofloxacino (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Ecoli-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 1.	E.coli y Proteus mirabilis.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -259,7 +266,7 @@ FROM
 	
 	
 /**
-
+Cuando los anteriores estan bloqueados
 **/
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
@@ -280,7 +287,8 @@ FROM
 			g.idBacteria IN (19,29) AND
 			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13,35) AND operador IN ('=', '>=')) AND
 			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>=')) AND
-			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (33) AND operador IN ('=', '>='))
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (33) AND operador IN ('=', '>=')) AND
+			0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (27) AND operador IN ('=', '>='))
 	) g1,
 	(
 		SELECT
@@ -293,7 +301,7 @@ FROM
 		WHERE
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (37,36)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (33,36)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (37,39,16)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (37,16,47)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR 
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (37,36)) OR
 		/*	(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22)) OR*/
@@ -301,7 +309,46 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (33,39))
 	) a2;
 
-
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idBacteria IN (19,29) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13,35) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (33) AND operador IN ('=', '>=')) AND
+			0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (27) AND operador IN ('=', '>='))
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (37,36)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (33,36)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (37,16,39)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR 
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (37,36)) OR
+		/*	(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22)) OR*/
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (37,36)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (33,39))
+	) a2;
+	
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
 	a2.idParteDelCuerpo, 

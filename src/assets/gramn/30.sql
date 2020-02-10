@@ -1,3 +1,22 @@
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	31 AS idAntibiotico,
+	'Germen intrinsecamente resistente a Colistina, Tigeciclina e Imipenem'
+FROM
+	(
+		SELECT distinct
+			idBacteria
+		FROM
+			GRAM 
+		WHERE
+			tipoGRAM = '-' AND
+			idBacteria IN (30,31,34)
+	) g ;	
+	
+
 /*
 	ETAPA 2
 */	
@@ -16,8 +35,6 @@
 	o	Sangre: Imipenem (excepto si es Proteus, Providencia y Morganella), Meropenem, Ciprofloxacino (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-2Seratia-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando 2.Serratia, Enterobacter, Citrobacter, Aeromonas, Morganella, Proteus vulgaris, Proteus penneri, Acinetobacter y Providencia');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -60,8 +77,7 @@ FROM
 /*
 •	Cuando es resistente (es decir > o =) a algún antibiótico dentro de las opciones mencionadas, entonces ese antibiótico no puede aparecer dentro de las opciones
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-2Serriata-Etapa2', 'Eliminando Antibioticos resistentes.');
+
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 

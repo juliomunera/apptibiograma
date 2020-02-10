@@ -6,8 +6,6 @@
 Cuando todos los antibióticos Aj del formulario sean sensibles, debe salir el mensaje “Germen sensible a todo el panel de antibióticos, 
 pero con resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa, Ampicilina, Penicilina y Cefalosporinas”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecium-Etapa1', 'Todos los antibioticos sensibles');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -43,8 +41,6 @@ FROM
 /*
 Cuando Aj = Vancomicina es un numero entero (es decir signo =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a Vancomicina”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecium-Etapa1', 'Vancomicina es un numero entero');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -67,8 +63,6 @@ WHERE
 /*
 Cuando Vancomicina es resistente (es decir signo >=) debe salir un mensaje que diga “Germen resistente a Vancomicina mediado por VAN-A o VAN-B, por favor corrobore con un laboratorio de referencia”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecium-Etapa1', 'Vancomicina es resistente');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -128,8 +122,6 @@ WHERE
 	
 	**Si es además resistente a Vancomicina, se quita Vancomicina de todas las opciones donde aparece
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecium-Etapa2', 'Ingresando la asignación de medicamentos (ARk).');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -168,8 +160,6 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
 	) a2;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecium-Etapa2', 'Eliminando de la asignación de medicamentos (ARk) la Vancomicina.');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 

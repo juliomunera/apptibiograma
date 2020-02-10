@@ -5,8 +5,6 @@
 /*
 Se evalua que sea sensible a todo el panel de antibioticos
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Sensibilidad de todo el panel de antibióticos.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -42,8 +40,6 @@ FROM
 /*
 Mensaje para sangre
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Sangre es un numero entero');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -67,8 +63,6 @@ Si el test (test de Cefoxitin) no tiene alguna selección (positivo o negativo) 
 y se debe colocar mensaje de que se va a asumir como negativo dado que no ingreso algún valor. Lo anterior cuando le de clic en continuar. 
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','{Oxacilina} es un numero entero');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -126,8 +120,6 @@ Si el test (D-test o Test de resistencia inducible a Clindamicina) no tiene algu
 Test de resistencia inducible a Clindamicina = negativo y se debe colocar mensaje de que se va a asumir como negativo dado que no ingreso algún valor. Lo anterior cuando le de clic en continuar.
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Aj = Clidamicina  es sensible pero resistente o con sensibilidad disminuida a Eritromicina');
 
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
@@ -212,8 +204,6 @@ WHERE
 /*
 Cuando en el Aj = Vancomicina es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a Vancomicina, mediada por engrosamiento de la pared"
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Vancomicina es un numero entero');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -235,8 +225,6 @@ WHERE
 /*
 Cuando en el Aj = Vancomicina es resistente (es decir ≥) debe salir un mensaje que diga “Posible germen resistente a Vancomicina, por favor corrobore con un laboratorio de referencia”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Vancomicina es resistente');
 
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
@@ -292,8 +280,6 @@ WHERE
 			- Oxacilina
 			- Cefazolina 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando el germen es sensible a la Oxacilina o los resultados de la prueba de Cefoxitin son negativos.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -371,8 +357,6 @@ FROM
 			- Vancomicina
 			- Daptomicina
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando el germen es resistente a la Oxacilina o los resultados de la prueba de Cefoxitin son positivos.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -447,8 +431,6 @@ FROM
 			- Vancomicina
 			- Cefazolina
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa2', 'Ingresando la asignación de medicamentos (ARk) cuando el paciente es alérgico a la penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -492,8 +474,6 @@ FROM
 	** Si (D-test = positivo OR Test de resistencia inducible a Clindamicina=positivo), quita Clidamicina de todas las 
 	opciones donde aparece.
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa2', 'Eliminando de la asignación de medicamentos (ARk) la Clidamicina si los resultados de la prueba de resistencia inducible a Clindamicina son positivos.');
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 
@@ -530,8 +510,6 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 			- [cuando solo aparezca la opción Tigeciclina, es decir, se elimino clindamicina por D-test positivo, colocar 
 			Linezolide]
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa2', 'Ingresando la asignación de medicamentos (ARk) si la Oxacilina es resistente o si los resultados de la prueba Cefoxitin son positivos.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -571,8 +549,6 @@ FROM
 	Cuando algún antibiótico Aj del formulario con Aj NOT IN {Linezolide, Daptomicina, Oxacilina}, posee un valor entero
 	(es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a ese <Aj>”. 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Ingresando el mensaje que indica la sensibilidad disminuida de algunos antibióticos usados para el tratamiento de la familia de bacterias Staphylococcus. Se excluyen el Linezolide, Daptomicina y Oxacilina.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT

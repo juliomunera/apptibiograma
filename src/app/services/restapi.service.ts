@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class RestapiService {
 
   apiUrl : any = 'https://jsonplaceholder.typicode.com';
-  validateCodeUrl : any = 'http://apptibiograma.analyticsmodels.com/validecode.php?token=zTa5RzNLKQQDp8XBMdKu2Vu7Xp3dDYuP&codigo=';
+  validateCodeUrl : any = 'http://analyticsmodels.com/project/apptibiograma/validecode.php?token=zTa5RzNLKQQDp8XBMdKu2Vu7Xp3dDYuP&codigo=';
 
   constructor(private http: HttpClient) { }
 

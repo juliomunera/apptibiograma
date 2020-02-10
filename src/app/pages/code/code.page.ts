@@ -41,7 +41,7 @@ export class CodePage implements OnInit {
   }
 
   payAccessCode(){
-    this.iab.create(`http://apptibiograma.analyticsmodels.com`, `_blank`);
+    this.iab.create(`http://analyticsmodels.com/project/apptibiograma/`, `_blank`);
   }
 
   closeModal() {

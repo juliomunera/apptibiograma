@@ -1,6 +1,4 @@
 /*Elimina datos sonbre la tablas donde se almacenarán los resultados del análisis.*/
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Eliminando información de las tablas de interpretacion y TMP_GRAM.');
 
 DELETE FROM InterpretacionGRAMEtapa1;
 DELETE FROM InterpretacionGRAMEtapa2;
@@ -13,8 +11,6 @@ GRAM+
 /*
 Se va a crear una copia de GRAM para poder realizar los Updates respectivos de acuerdo con las pruebas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Copiando datos a TMP_GRAM.');
 
 INSERT INTO TMP_GRAM
 	SELECT * FROM GRAM;
@@ -22,16 +18,12 @@ INSERT INTO TMP_GRAM
 /*
 	Prueba Cefoxitin Screen Positivo
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Prueba Cefoxitin Screen Positivo.');
 
 UPDATE GRAM SET operador = '>=' WHERE tipoGRAM = '+' AND idAntibiotico = 6 AND 0 < (SELECT COUNT(1) FROM TMP_GRAM WHERE idPrueba = 3 AND valor = 1);
 
 /*
 	Prueba Resist. inducible a Clindamycin Positiva
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Prueba Resist. inducible a Clindamycin Positiva.');
 
 UPDATE GRAM SET operador = '>=' WHERE tipoGRAM = '+' AND idAntibiotico = 2 AND 0 < (SELECT COUNT(1) FROM TMP_GRAM WHERE idPrueba = 2 AND valor = 1);
 
@@ -39,8 +31,6 @@ UPDATE GRAM SET operador = '>=' WHERE tipoGRAM = '+' AND idAntibiotico = 2 AND 0
 /*
 Cuando es prostata o orina Y STAPHYLOCOCCUS
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Staphylocuccus-Etapa1','Prostata');
 
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
@@ -59,13 +49,29 @@ WHERE
 ;
 
 
+/**
+sangre staphylococcus
+**/
+/*
+Mensaje para sangre
+*/
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	h.idParteDelCuerpo, 
+	g.idBacteria, 
+	1 AS idAntibiotico,
+	'DESCARTAR CONTAMINACION'
+FROM
+	(SELECT DISTINCT idbacteria FROM GRAM WHERE idBacteria IN (3,4,5,6)) g,
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp WHERE idParteDelCuerpo = 8) h
+
+;
 
 
 /*
 Cuando algún antibiótico Aj del formulario con Aj NOT IN {Oxacilina, vancomicina}, posee un valor >=, debe salir un mensaje que dice “Germen resistente a <Aj>”.
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'NOT IN {Oxacilina, vancomicina}.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT

@@ -1,8 +1,6 @@
 /*
     Eliminar antibioticos de la respuesta cuando son =. >=	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Eliminando los antibioticos de resultado que no aplican por =, >=.');
 
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
@@ -39,7 +37,8 @@ FROM
 		WHERE
 			g.tipoGRAM = '-' AND
 			g.idPrueba = 1 AND
-			g.operador IN ('=', '>=')
+			g.operador IN ('=', '>=') AND
+			g.idBacteria NOT IN (27,32,33)
 		GROUP BY 
 			g.idBacteria
 	) g1
@@ -68,7 +67,81 @@ FROM
 	) a2 ON (1 = 1);
 
 
+/**
+cuando no haya opciones, bloqueados (=, >=):
+ampicilina
+ampicilina sulbactam
+aztreonam
+BLEE
+cipro
+(erta, imi, o mero)
+pipytazo 
+tige
 
+**/
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	(SELECT DISTINCT idBacteria FROM GRAM) as idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a
+		WHERE
+			a.id IN (52,53)
+			
+	) a2
+WHERE
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (13)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (35)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (22)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE valor IN (1) AND idPrueba IN (4)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (27)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (28,30,31)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (33)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (34))	
+;
+
+
+	
+/******* 
+
+organizacion de InterpretacionGRAMEtapa3 por el orden asignado
+
+********/
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+
+DELETE FROM InterpretacionGRAMEtapa2;
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje,orden)
+SELECT DISTINCT
+	a.idParteDelCuerpo,
+	a.idBacteria,
+	a.idAntibiotico,
+	a.idAsignacion,
+	a.mensaje,
+	b.orden
+FROM
+	TMP_InterpretacionGRAMEtapa2 a 
+	
+	inner join Asignaciones b 
+		on (b.id = a.idAsignacion)
+ORDER BY
+	b.orden
+;
+ 
+
+ 
+ 
 
 /*
 ETAPA 3
@@ -76,8 +149,6 @@ ETAPA 3
 /*
     Clindamycin: 600 a 900 mg IV/VO cada 8 horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Clindamycin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -100,8 +171,6 @@ WHERE
             cada 72 horas, haciendo que coincida con los días de diálisis y se aplique DESPUES de la HD (corroborar niveles)
         -	CRRT = 1: No se recomienda
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Gentamicin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -129,8 +198,6 @@ WHERE
     Linezolid: 
     -	600 mg IV/VO cada 12 horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Linezolid.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -145,8 +212,6 @@ WHERE
     Oxacillin: 
     -	2 gm IV cada 4 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Oxacillin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -161,8 +226,6 @@ WHERE
     Rifampicin: 
     -	600 mg VO cada 12 horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Rifampicin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -178,8 +241,6 @@ WHERE
     -	100 mg VO cada 12 horas 	
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Tetracycline (Minociclina).');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -199,8 +260,6 @@ WHERE
     -	snCAPD: No se recomienda
     -	CRRT: No se recomienda
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Trimethoprim/Sulfa.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -208,7 +267,7 @@ SELECT
     (
         CASE 
             WHEN CRRT = 1 OR CAPD = 1 OR requiereHemodialisis = 1 OR depuracionCreatinina < 10 THEN 
-                'No se recomienda'
+                'Consultar la dosis con infectología'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 THEN 
                 'De 5 a 20 mg/kg/día (' || (5*dp1.peso) || ' mg/día a ' || (20*dp1.peso) || ' mg/día) dividido cada 6 a 12 horas.'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN 
@@ -230,8 +289,6 @@ WHERE
     -	snCAPD: No se recomienda
     -	CRRT: No se recomienda
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Vancomycin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -257,8 +314,6 @@ WHERE
     -	DepuracionCreatinina Mayor de 50: De 50 a 100 mg VO cada 6 a 8 horas
     -	DepuracionCreatinina Menor de 50: No se recomienda	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Nitrofurantoin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -283,8 +338,6 @@ WHERE
     -	snCAPD: 8 mg/kg (8  * peso mg) cada 48 horas
     -	CRRT: 8 mg/kg (8  * peso mg) cada 48 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Daptomycin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -318,8 +371,6 @@ WHERE
     -	snHemodialisis: 7.5 mg/kg (7.5  * peso mg)  cada 48 horas, y 3.75 mg/kg  (3.75  * peso mg) adicional después de HD (corroborar niveles)
     -	CRRT: 7.5 mg/kg/día (7.5  * peso mg)
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Amikacin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -370,8 +421,6 @@ WHERE
     o	snCAPD: 1 gm cada 12 horas
     o	CRRT: 2 gm cada 8 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ampicillin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -429,8 +478,6 @@ WHERE
     -	snCAPD: 3 gm al día
     -	CRRT: 3 gm cada 12 horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ampicillin/Sulbactam.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -461,8 +508,6 @@ WHERE
     -	snCAPD: 500 mg cada 8 horas
     -	CRRT: De 1 a 1.5 gm cada 8 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Aztreonam.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -505,8 +550,6 @@ WHERE
     o	snCAPD: 4 millones de UI cada 12 horas
     o	CRRT: 4 millones de UI cada 6 a 8 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -564,8 +607,6 @@ WHERE
     -	snCAPD: 1 gm cada 12 horas	
     -	CRRT: 2 gm cada 12 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Cefazolin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -598,8 +639,6 @@ WHERE
     -	CRRT: 2 gm cada 12 horas	
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Cefepime.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -633,8 +672,6 @@ WHERE
     -	CRRT: 1.5 gm cada 8 horas	
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ceftazidime.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -663,8 +700,6 @@ WHERE
 
     ** Cuando el órgano seleccionado es Sistema nervioso central o Próstata, debe ser la dosis: 2 gm cada 12 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ceftriaxone.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -695,8 +730,6 @@ WHERE
     -	DepuracionCreatinina Menor de 10: 2 gm al día
     -	CRRT: 1.5 gm cada 8 horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Cefotaxime.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -727,8 +760,6 @@ WHERE
     -	CRRT: 400 mg cada 12 horas
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ciprofloxacin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -760,8 +791,6 @@ WHERE
     -	snCAPD: 500 mg al día
     -	CRRT: 1 gm al día	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Ertapenem.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -786,8 +815,6 @@ WHERE
     Colistin: 
     -	Verificar con Infectología la dosis
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Colistin.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -807,8 +834,6 @@ WHERE
     -	snCAPD: 250 mg cada 12 horas
     -	CRRT: 500 mg cada 12horas	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Imipenem.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -844,8 +869,6 @@ WHERE
 
     ** Cuando el órgano seleccionado es Sistema nervioso central o Próstata, debe ser la dosis: 2 gm cada 8 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Meropenem.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -904,8 +927,6 @@ WHERE
     -	CRRT: 500 mg cada 8 horas	
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Doripenem.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -937,8 +958,6 @@ WHERE
     -	snCAPD: 2.25 gm cada 8 horas
     -	CRRT: 4.5 gm cada 8 horas 	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Piperacillin/Tazobactam.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -966,8 +985,6 @@ WHERE
     Tigecycline: 
     -	Dosis de carga de 100 mg y luego 50 mg cada 12 horas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Ingresando el mensaje que indica la dosis para el antibiótico Tigecycline.');
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -977,3 +994,21 @@ FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
     e2.idAsignacion = 16;
+	
+	
+/* aquellos sin valores
+
+*/
+
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    ' '
+FROM
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (8,19,26,27,46,48,52,53,54);
+	
+
+	
+	

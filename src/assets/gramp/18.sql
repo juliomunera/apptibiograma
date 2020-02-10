@@ -5,8 +5,6 @@ ETAPA 1
 /*
 Cuando todos los antibióticos sean sensibles (es decir ≤), debe salir un mensaje que diga “Germen sensible a todo el panel de antibióticos”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-StreptococcusPneumoniae-Etapa1','Sensible a todos.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -43,8 +41,6 @@ FROM
 Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a ese <Aj>” 
 (siempre y cuando no sea para todo el panel de antibióticos, debe salir mensaje por cada Aj que cumpla con la condición)
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-StreptococcusPneumoniae-Etapa1','Alguno entero.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -93,8 +89,6 @@ WHERE
 			- Ampicilina
 			- Ampicilina/sulbactam
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-StreptococcusPneumoniae-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el pacientes es sensible a la Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -172,8 +166,6 @@ FROM
 			- Vancomicina
 			- Daptomicina
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-StreptococcusPneumoniae-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el paciente tiene sensibilidad a la Penicilina o es resistente a la Penicilina o es alérgico a Penicilina, pero es sensible al Cefotaxime.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -248,8 +240,6 @@ FROM
 			- Daptomicina
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-StreptococcusPneumoniae-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el paciente es resistente a la Penicilina o es alérgico a Penicilina, pero es resistente al Cefotaxime.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT

@@ -6,8 +6,6 @@
 Cuando todos los antibióticos Aj del formulario sean sensibles, debe salir el mensaje “Germen sensible a todo el panel de antibióticos, pero con 
 resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas"
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa1','Todos los antibioticos sensibles.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -45,8 +43,6 @@ FROM
 /*
 Cuando Aj = Vancomicina es un numero entero (es decir signo =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a Vancomicina”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa1','Vancomicina numero entero.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -68,8 +64,6 @@ WHERE
 /*
 Cuando Aj = Vancomicina es resistente (es decir signo >=) debe salir un mensaje que diga “Germen resistente a Vancomicina mediado por VAN-A o VAN-B, por favor corrobore con un laboratorio de referencia”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa1','Vancomicina resistente.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -91,8 +85,6 @@ WHERE
 /*
 Cuando Aj = Ampicilina es resistente o igual (es decir signo =, >=) debe salir un mensaje que diga “Germen resistente a Vancomicina mediado por VAN-A o VAN-B, por favor corrobore con un laboratorio de referencia”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa1','Ampicilina resistente.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -144,8 +136,6 @@ ETAPA 2
 
 	** Cuando es resistente a Ampicilina o alérgico a Penicilina, se comporta igual a Enterococcus faecium
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa2','Ingresando la asignación de medicamentos (ARk) cuando el germen es sensible a la Ampicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -223,8 +213,6 @@ FROM
 			- 	Daptomicina
 	**Si es además resistente a Vancomicina, se quita Vancomicina de todas las opciones donde aparece
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa2','Ingresando la asignación de medicamentos (ARk) cuando el germen es resistente a la Ampicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -264,8 +252,6 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
 	) a2;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-EnterecoccusFaecalis-Etapa2','Ingresando la asignación de medicamentos (ARk) cuando el paciente es alérgico a la Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT

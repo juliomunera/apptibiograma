@@ -57,7 +57,8 @@ DROP TABLE IF EXISTS Asignaciones;
 
 CREATE TABLE Asignaciones (
     id INTEGER PRIMARY KEY,
-	comentariosTratamiento VARCHAR2(250) NOT NULL
+	comentariosTratamiento VARCHAR2(250) NOT NULL,
+	orden INTEGER default 100
 );
 
 /*
@@ -181,12 +182,26 @@ CREATE TABLE InterpretacionGRAMEtapa2 (
 	idAntibiotico INTEGER NOT NULL, 
 	idAsignacion INTEGER NOT NULL,
 	mensaje VARCHAR2(250) NOT NULL,
+	orden INTEGER DEFAULT 100,
 	
 	FOREIGN KEY(idParteDelCuerpo) REFERENCES PartesDelCuerpo(id)
 	FOREIGN KEY(idAntibiotico) REFERENCES Antibioticos(id)
 	FOREIGN KEY(idAsignacion) REFERENCES Asignaciones(id)
 	FOREIGN KEY(idBacteria) REFERENCES Bacterias(id)
 );
+
+DROP TABLE IF EXISTS TMP_InterpretacionGRAMEtapa2;
+
+CREATE TABLE TMP_InterpretacionGRAMEtapa2 (
+    id INTEGER PRIMARY KEY,
+	idParteDelCuerpo INTEGER NOT NULL, 
+	idBacteria INTEGER NOT NULL, 
+	idAntibiotico INTEGER NOT NULL, 
+	idAsignacion INTEGER NOT NULL,
+	mensaje VARCHAR2(250) NOT NULL,
+	orden INTEGER DEFAULT 100
+);
+
 
 /*
 	Entidad donde se persiste los resultados generados en la 3da. etapa del analisis GRAM.
@@ -272,13 +287,9 @@ CREATE VIEW validarTestMsg AS
 /* Lista base de bacterias habilitados para el funcionamiento de la aplicación. */
 DELETE FROM BitacoraEventos;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Bacterias.');
 
 DELETE FROM Bacterias;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Bacterias.');
 
 INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (1, 'NA', '+'); 
 INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (2, 'Staphylococcus aureus', '+');  
@@ -315,17 +326,11 @@ INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (32, 'Salmonella', '-');
 INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (33, 'Shigella', '-');
 INSERT INTO Bacterias(id, nombre, tipoGRAM) VALUES (34, 'Providencia', '-');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'El ingreso de información a la tabla Bacterias fue exitoso, 32 filas afectadas.');
 
 /* Lista base de antibióticos habilitados para el funcionamiento de la aplicación. */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Antibioticos.');
 
 DELETE FROM Antibioticos;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Antibioticos.');
 
 INSERT INTO Antibioticos(id, nombre) VALUES (1, 'NA'); 
 INSERT INTO Antibioticos(id, nombre) VALUES (2, 'Clindamycin');
@@ -364,34 +369,22 @@ INSERT INTO Antibioticos(id, nombre) VALUES (34, 'Tigecycline');
 INSERT INTO Antibioticos(id, nombre) VALUES (35, 'Ampicillin / Sulbactam');
 INSERT INTO Antibioticos(id, nombre) VALUES (36, 'Moxifloxacin');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Antibioticos, 36 filas afectadas.');
 
 /* Lista base de pruebas habilitados para el funcionamiento de la aplicación. */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Pruebas.');
 
 DELETE FROM Pruebas;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Pruebas.');
 
 INSERT INTO Pruebas(id, nombre) VALUES (1, 'NA'); 
 INSERT INTO Pruebas(id, nombre) VALUES (2, 'Resistencia inducible a Clindamycin');
 INSERT INTO Pruebas(id, nombre) VALUES (3, 'Cefoxitin Screen');
 INSERT INTO Pruebas(id, nombre) VALUES (4, 'ESBL / BLEE');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Pruebas, 4 filas afectadas.');
 
 /* Lista de partes del cuerpo habilitados para el funcionamiento de la aplicación. */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla PartesDelCuerpo.');
 
 DELETE FROM PartesDelCuerpo;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla PartesDelCuerpo.');
 
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (0, 'Sistema nervioso central');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (1, 'Boca, senos paranasales y cuello');
@@ -403,8 +396,6 @@ INSERT INTO PartesDelCuerpo(id,nombre) VALUES (6, 'Prostata');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (7, 'Tejidos blandos');
 INSERT INTO PartesDelCuerpo(id,nombre) VALUES (8, 'Sangre');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla PartesDelCuerpo, 8 filas afectadas.');
 
 /* 	
 	Lista de las combinaciones de antibioticos y pruebas que pueden usarse para el tratamiento de cada una de las
@@ -414,13 +405,9 @@ VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tab
 	almacenamiento se identitica el tipo de control grpafico (INPUT TEXT y/o RADIO BUTTON) que deberá  presentarse
 	sobre el formulario GRAM para su gestión.
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla CBxA.');
 
 DELETE FROM CBxA;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla CBxA.');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (2, 2, 1,'INPUT TEXT','+');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (2, 3, 1,'INPUT TEXT','+');
@@ -607,6 +594,7 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (21, 34, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 27, 1,'INPUT TEXT','-');
@@ -617,6 +605,7 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (22, 34, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (23, 24, 1,'INPUT TEXT','-');
@@ -638,8 +627,10 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 9, 1,'INPUT TEXT','-');
-INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (24, 34, 1,'INPUT TEXT','-');
 
+
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 27, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 28, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 29, 1,'INPUT TEXT','-');
@@ -648,6 +639,7 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 34, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 27, 1,'INPUT TEXT','-');
@@ -657,9 +649,9 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 9, 1,'INPUT TEXT','-');
 
-INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 36, 1,'INPUT TEXT','-');
+/*INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 36, 1,'INPUT TEXT','-');*/
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 9, 1,'INPUT TEXT','-');
-INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 34, 1,'INPUT TEXT','-');
+/*INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (27, 34, 1,'INPUT TEXT','-');*/
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 27, 1,'INPUT TEXT','-');
@@ -670,6 +662,7 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 9, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (28, 34, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 21, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 13, 1,'INPUT TEXT','-');
@@ -717,79 +710,74 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 9, 1,'INPUT TEXT','-');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla CBxA, 263 filas afectadas.');
 
 /*  
 	Lista con  la combinación de la partes del cuerpo, los antibióticos, el estado de sensibilidad, resistencia o 
 	Lista de los antibióticos y/o comentarios usada para la configuración de las combinaciones  posibles  para la 
 	asignación de los medicamentos requeridos en el tratamiento de un paciente.
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Eliminando información de la tabla Asignaciones.');
 
 DELETE FROM Asignaciones;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Ingresando información a la tabla Asignaciones.');
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 1, 'Oxacilina',8);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 2, 'Ceftriaxona (si Albumina > 3.5)',21);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 3, 'Cefotaxime (si Albumina < 3.5)',21);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 4, 'Ampicilina / sulbactam',7);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 5, 'Ampicilina / sulbactam (si sospecha broncoaspiración)',8);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 6, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)',9);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)',100);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 8, 'Descartar bacteriemia o contaminación',3);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 9, 'Cefazolina', 11);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (10, 'Daptomicina',15);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (11, 'Linezolide',14);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (12, 'Clindamicina', 12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (13, 'Vancomicina',13);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (14, 'Ceftaroline',16);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)',12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (16, 'Tigeciclina', 25);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (17, 'Ampicilina (dosis meníngeas)',6);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)',23);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (19, 'En caso de endocarditis: Ceftriaxona 2 gm cada 12 horas (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)',21);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (20, 'Ampicilina',5);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (21, 'Nitrofurantoin (solo cistitis)', 22);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (22, 'Fosfomycin (3gm cada 3 dias por 7 dosis)', 23);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (23, 'Penicilina (dosis de meníngeas)',5);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (24, 'Penicilina',5);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (25, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, pero no combinar con Clindamicina)',100);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (26, 'Confirmar con un laboratorio de referencia',4);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (27, 'Descartar bacteriemia',4);
 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 1, 'Oxacilina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 2, 'Ceftriaxona (si Albumina > 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 3, 'Cefotaxime (si Albumina < 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 4, 'Ampicilina / sulbactam');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 5, 'Ampicilina / sulbactam (si sospecha broncoaspiración)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 6, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 8, 'Descartar bacteriemia o contaminación');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES ( 9, 'Cefazolina ');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (10, 'Daptomicina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (11, 'Linezolide');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (12, 'Clindamicina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (13, 'Vancomicina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (14, 'Ceftaroline');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (16, 'Tigeciclina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (17, 'Ampicilina (dosis meníngeas)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (19, 'En caso de endocarditis: Ceftriaxona 2 gm cada 12 horas (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (20, 'Ampicilina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (21, 'Nitrofurantoin (solo cistitis)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (22, 'Fosfomycin (3gm cada 3 dias por 7 dosis)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (23, 'Penicilina (dosis de meníngeas)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (24, 'Penicilina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (25, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, pero no combinar con Clindamicina)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (26, 'Confirmar con un laboratorio de referencia');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (27, 'Descartar bacteriemia');
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (28, 'Gentamicina',31);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (29, 'Tetracycline (Minociclina)',100);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (30, 'Trimethoprim / Sulfa', 26);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (31, 'Amikacin',32);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (32, 'Aztreonam',4); 
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (33, 'Cefepime', 19);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (34, 'Ceftazidime',20);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (35, 'Ceftriaxone', 21);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (36, 'Ciprofloxacin', 16); 
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (37, 'Ertapenem (si Albumina > 3.5)', 24);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (38, 'Colistin',29);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (39, 'Imipenem', 27);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (40, 'Meropenem', 28);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (41, 'Doripenem',30);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (42, 'Piperacillin / Tazobactam', 12);
 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (28, 'Gentamicina');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (29, 'Tetracycline (Minociclina)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (30, 'Trimethoprim / Sulfa');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (31, 'Amikacin');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (32, 'Aztreonam'); 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (33, 'Cefepime');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (34, 'Ceftazidime');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (35, 'Ceftriaxone');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (36, 'Ciprofloxacin'); 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (37, 'Ertapenem (si Albumina > 3.5)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (38, 'Colistin');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (39, 'Imipenem');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (40, 'Meropenem');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (41, 'Doripenem');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (42, 'Piperacillin / Tazobactam');
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (43, 'Piperacillin / Tazobactam (si sospecha broncoaspiración)', 13);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (44, 'Piperacilina / tazobactam (si hay tejido necrótico o sospecha presencia de anaerobios)', 14);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (45, 'Piperacilina/tazobactam (si se sospecha origen en abdomen)', 15);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (46, 'Considerar adicionar Metronidazol para cubrir anaerobios', 18);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (47, 'Ciprofloxacin (considerar adicionar Metronidazol para cubrir anaerobios)', 17);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (48, 'Ciprofloxacin (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)', 18);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (49, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, y se demuestra sensibilidad a estos antibioticos)',100);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)', 20);
 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (43, 'Piperacillin / Tazobactam (si sospecha broncoaspiración)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (44, 'Piperacilina / tazobactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (45, 'Piperacilina/tazobactam (si se sospecha origen en abdomen)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (46, 'Considerar adicionar Metronidazol para cubrir anaerobios');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (47, 'Ciprofloxacin (considerar adicionar Metronidazol para cubrir anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (48, 'Ciprofloxacin (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (49, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, y se demuestra sensibilidad a estos antibioticos)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)');
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (51, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)',10);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (52, 'Germen multidrogo-resistente, consultar con infectología el esquema de tratamiento',2);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (53, 'Tamizar Ceftazidime/Avibactam, Fosfomycin y Ceftolozano/Tazobactam',3);
 
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (51, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (52, 'Germen multidrogo-resistente, consultar con infectología el esquema de tratamiento');
-INSERT INTO Asignaciones(id,comentariosTratamiento) VALUES (53, 'Tamizar Ceftazidime/Avibactam, Fosfomycin y Ceftolozano/Tazobactam');
-
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (54, 'Consultar con infectología el esquema de tratamiento, tamizar Moxifloxacin y Tigecycline',1);
+/*INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (55, 'Germen resistente a Trimethoprim/Sulfa, consultar con infectología el esquema de tratamiento y tamizar Moxifloxacin y Tigecycline');*/
 
 
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (6,1);
@@ -858,7 +846,5 @@ INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,32);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,52);
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (1,53);
 /*INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (33,9);*/
-
-
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('RegistroDatosBasicos', 'Finalizando el ingreso de información a la tabla Asignaciones, 42 filas afectadas.');
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (30,37);
+INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (31,37);

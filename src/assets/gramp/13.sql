@@ -5,8 +5,6 @@ ETAPA 1
 /*
 Cuando todos los antibióticos sean sensibles (es decir ≤), debe salir un mensaje que diga “Germen sensible a todo el panel de antibióticos”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa1','Todos sensibles.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -43,8 +41,6 @@ FROM
 Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que diga “Germen con sensibilidad disminuida a ese <Aj>” 
 (siempre y cuando no sea para todo el panel de antibióticos, debe salir mensaje por cada Aj que cumpla con la condición)
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa1','Algun antibiotico =.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -95,8 +91,6 @@ WHERE
 			- 	Ampicilina
 			- 	Ampicilina/sulbactam
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el pacientes es sensible a la Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -140,8 +134,6 @@ FROM
 /*
 	Cuando es resistente a Penicilina debe aparecer un mensaje que diga “confirmar con un laboratorio de referencia”.
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el pacientes es resistente a la Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -218,8 +210,6 @@ FROM
 			- 	Vancomicina
 			- 	Daptomicina
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa2','Ingresando la asignación de medicamentos (ARK) cuando el pacientes es alérgico a la Penicilina.');
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
@@ -261,8 +251,7 @@ FROM
 /*
 	**Cuando es resistente a Clindamicina y alérgico a Penicilina, no puede aparecer Clindamicina entre las opciones de tratamiento 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-Streptococcus-Etapa2','Eliminando de la asignación de medicamentos (ARK) la Clindamicina.');
+
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	SELECT 

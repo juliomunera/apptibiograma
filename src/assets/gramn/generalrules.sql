@@ -1,20 +1,10 @@
 -- Elimina datos sonbre la tablas donde se almacenarán los resultados del análisis.
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Eliminando información de la tabla InterpretacionGRAMEtapa1.');
 
 DELETE FROM InterpretacionGRAMEtapa1;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Eliminando información de la tabla InterpretacionGRAMEtapa2.');
-
 DELETE FROM InterpretacionGRAMEtapa2;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Eliminando información de la tabla InterpretacionGRAMEtapa3.');
-
 DELETE FROM InterpretacionGRAMEtapa3;
-
-
 
 
 /*****************************************
@@ -23,14 +13,26 @@ GRAM-
 /*
 	Se va a crear una copia de GRAM para poder realizar los Updates respectivos de acuerdo con las pruebas
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Eliminando información de la tabla temporal GRAM.');
 
 DELETE FROM TMP_GRAM;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMPositivo-General', 'Ingresando información a la tabla temporal GRAM.');
+INSERT INTO TMP_GRAM SELECT * FROM GRAM;
 
+INSERT INTO GRAM(idBacteria,idAntibiotico,idPrueba,operador,valor,tipoGRAM) 
+SELECT 
+	g1.idBacteria,
+	1 as idAntibiotico,
+	4 as idPrueba,
+	'<=' as operador,
+	3 as valor,
+	'-' as tipoGRAM
+FROM
+	(SELECT DISTINCT idBacteria FROM TMP_GRAM) g1
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_GRAM WHERE idPrueba = 4)
+;
+
+DELETE FROM TMP_GRAM;
 INSERT INTO TMP_GRAM SELECT * FROM GRAM;
 
 
@@ -46,8 +48,6 @@ UPDATE GRAM SET valor = 1 WHERE valor = 3 AND idPrueba = 4 AND 0 < (SELECT COUNT
 	Cuando todos los antibióticos sean sensibles (es decir ?), debe salir un mensaje que diga “Germen sensible a todo 
 	el panel de antibióticos”, 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es sensible a todo el panel de antibióticos.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -82,8 +82,6 @@ FROM
 	vulgaris, Morganella, Acinetobacter y Providencia; debe decir además “Germen sensible a todo el panel de antibióticos, 
 	pero productor de AMP-C y por ende resistente a todos los beta-lactámicos excepto Carbapenems”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es sensible a todo el panel de antibióticos pero productor de AMP-C y por ende resistente a todos los beta-lactámicos excepto Carbapenems.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -141,8 +139,6 @@ WHERE
 	Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad 
 	disminuida a ese antibiótico” (22,13,21,4,28,29,9,11,37,23,25,26,27,16,32,33,31 y 34).
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen con sensibilidad disminuida a algunos antibióticos.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -163,8 +159,6 @@ WHERE
 	y por ende no puede aparecer (queda bloqueado) en las opciones de tratamiento [este bloqueo se debe validar en cada
 	antibiotico para saber cual es su equivalente]
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen resistente a ese antibiótico.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -187,8 +181,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Amikacina, mediado por 
 		enzimas especificas´”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen con sensibilidad disminuida a Amikacina, mediado por enzimas específicas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -204,8 +196,6 @@ WHERE
 	g.idAntibiotico = 21 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que  germen resistente a Amikacina, mediado por enzimas especificas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -228,8 +218,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Gentamicina, mediado por
 		enzimas específicas”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Gentamicina, mediado por enzimas específicas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -245,8 +233,6 @@ WHERE
 	g.idAntibiotico = 4 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Gentamicina, mediado por enzimas específicas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -269,8 +255,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ciprofloxacina, mediado
 	 	por mutación del gen gyr-A,	par-C y/o bombas de eflujo”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ciprofloxacina, mediado por mutación del gen gyr-A.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -286,8 +270,6 @@ WHERE
 	g.idAntibiotico = 27 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ciprofloxacina, mediado por mutación del gen gyr-A, par-C y/o bombas de eflujo.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -309,8 +291,6 @@ WHERE
 		Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática” 
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimatica”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -326,8 +306,6 @@ WHERE
 	g.idAntibiotico = 9 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -350,8 +328,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Nitrofurantoina, mediado
 		por cambios enzimáticos”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Nitrofurantoina, mediado por cambios enzimática.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -367,8 +343,6 @@ WHERE
 	g.idAntibiotico = 11 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Nitrofurantoina, mediado por cambios enzimáticos.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -391,8 +365,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Tigeciclina, mediado por 
 		bombas de eflujo”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Tigeciclina, mediado por bombas de eflujo.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -408,8 +380,6 @@ WHERE
 	g.idAntibiotico = 34 AND
 	g.operador = '=';
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Tigeciclina, mediado por bombas de eflujo.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -435,8 +405,6 @@ WHERE
 	*	Cuando es resistente (es decir >=), debe salir un mensaje que dice “Germen resistente a Ampicilina, mediado por
 		Penicilinasas”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, mediado por Penicilinasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -455,11 +423,7 @@ WHERE
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16, 23,35,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1)) 
 ;
 	
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, mediado por Penicilinasas.');
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, mediado por Penicilinasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -488,8 +452,6 @@ WHERE
 		mediado por Penicilinasas no inhibibles por el Sulbactam”
 
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina/sulbactam, mediado Penicilinasas parcialmente inhibibles por el Sulbactam.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -527,8 +489,6 @@ WHERE
 	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (13) AND operador NOT IN ('<='))
 ;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina/sulbactam, mediado por Penicilinasas no inhibibles por el Sulbactam.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -576,8 +536,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
 		Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -596,8 +554,6 @@ WHERE
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE (idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) OR (idPrueba = 4 AND valor = 1))
 ;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -627,8 +583,6 @@ WHERE
 		espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems”, independiente de lo que
 		haya marcado en estos 3 antibioticos (Cefepime, Ceftazidima y Ceftriaxona)
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen productor de Beta-lactamasas de espectro extendido, y por ende resistente a todos los beta-lactámicos excepto Carbapenems.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -732,8 +686,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ampicilina, 
 		Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina, mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -771,8 +723,6 @@ WHERE
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1) AND
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (23) AND operador IN ('=', '>='));
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Ampicilina, Ampicilina/sulbactam, Piperacilina/tazobactam y Cefazolina mediado por Beta-lactamasas de espectro ampliado.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -822,8 +772,6 @@ WHERE
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Aztreonam, mediado por 
 		Beta-lactamasas”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Aztreonam, mediado por Beta-lactamasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -842,8 +790,6 @@ WHERE
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16,33) AND operador IN ('=', '>=')) AND
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idPrueba = 4 AND valor = 1);
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen resistente a Aztreonam, mediado por Beta-lactamasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -871,8 +817,6 @@ WHERE
 		Ertapenem”
 	*	Cuando es resistente (es decir ?), debe salir un mensaje que dice “Germen resistente a Ertapenem”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Ertapenem, mediado por hiperproduccion de AMP-C.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -955,8 +899,6 @@ WHERE
 		0 >= (SELECT count(1) FROM GRAM WHERE tipoGRAM = '-' AND idAntibiotico IN (31,30,32) AND operador IN ('=', '>='))
 	);*/
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen es resistente a Ertapenem, mediado por hiperproduccion de AMP-C.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1089,8 +1031,6 @@ WHERE
 			penneri, Proteus vulgaris, Morganella, Acinetobacter o Providencia; debe salir un mensaje que diga “Germen 
 			con sensibilidad disminuida (o resistente según el caso) a Ertapenem, mediado por hiperproduccion de AMP-C
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Ertapenem, mediado por hiperproduccion de AMP-C.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1171,8 +1111,6 @@ WHERE
 	)*/
 	;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por hiperproduccion de AMP-C.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1260,9 +1198,7 @@ WHERE
 		un mensaje que diga “Germen con sensibilidad disminuida (o resistente según el caso) a Ertapenem, mediado por 
 		hiperproduccion de Beta-lactamasas de expectro extendido”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen con sensibilidad disminuida a Ertapenem, mediado por hiperproduccion de Beta-lactamasas de expectro extendido.');
-	
+
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
@@ -1315,8 +1251,6 @@ WHERE
 	
 	;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que germen es resistente a Ertapenem, mediado por hiperproduccion de Beta-lactamasas de expectro extendido.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1488,8 +1422,6 @@ WHERE
 			entero, debe salir un mensaje que diga “Germen con sensibilidad disminuida (o resistente según el caso), a 
 			Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia”
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen presenta con sensibilidad disminuida a Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1520,8 +1452,6 @@ WHERE
 	/*OR
 	g.suma = CAST((g.suma / 3) AS INTEGER) * 3*/;
 
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -1558,8 +1488,6 @@ WHERE
 	-	Si el número de Meropenem es mayor que el de Imipenem, debe salir un mensaje que diga “Germen con sensibilidad 
 		disminuida a Carbapenems mediado por bombas de eflujo”	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen presenta sensibilidad disminuida a Carbapenems mediado por cierre de porinas o por bombas de eflujo.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
