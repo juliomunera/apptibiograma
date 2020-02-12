@@ -80,7 +80,7 @@ WHERE
             (3 * peso mg)  cada 48 horas
         -	snHemodialisis = 1: Dosis de carga de 7 mg/kg (7 * peso mg), seguido a las 24 horas de 2 mg/kg (2 * peso mg) 
             cada 72 horas, haciendo que coincida con los días de diálisis y se aplique DESPUES de la HD (corroborar niveles)
-        -	CRRT = 1: No se recomienda
+        -	CRRT = 1: No se recomienda, consultar dosis con infectología
 */
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -88,7 +88,7 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 THEN 'No se recomienda'
+            WHEN CRRT = 1 THEN 'No se recomienda, consultar dosis con infectología'
             WHEN CRRT = 0 AND requiereHemodialisis = 1 THEN 
                 'Dosis de carga de 7 mg/kg (' || (7*dp1.peso) || ' mg), seguido a las 24 horas de 2 mg/kg (' || (2*dp1.peso) || ' mg) cada 72 horas, haciendo que coincida con los días de diálisis y se aplique DESPUES de la HD (corroborar niveles)'
             WHEN CRRT = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 60 THEN 
@@ -166,10 +166,10 @@ WHERE
     Trimethoprim/Sulfa:	
     -	DepuracionCreatinina Mayor de 30: De 5 a 20 mg/kg/día (5 * peso mg/día a 20 * peso mg/día) dividido cada 6 a 12 horas.
     -	DepuracionCreatinina de 10 a 30: De 5 a 10 mg/kg/día (5 * peso mg/día a 10 * peso mg/día) dividido cada 12 horas.
-    -	DepuracionCreatinina Menor de 10: No se recomienda
-    -	snHemodialisis: No se recomienda
-    -	snCAPD: No se recomienda
-    -	CRRT: No se recomienda
+    -	DepuracionCreatinina Menor de 10: No se recomienda, consultar dosis con infectología
+    -	snHemodialisis: No se recomienda, consultar dosis con infectología
+    -	snCAPD: No se recomienda, consultar dosis con infectología
+    -	CRRT: No se recomienda, consultar dosis con infectología
 */
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -178,7 +178,7 @@ SELECT
     (
         CASE 
             WHEN CRRT = 1 OR CAPD = 1 OR requiereHemodialisis = 1 OR depuracionCreatinina < 10 THEN 
-                'No se recomienda'
+                'No se recomienda, consultar dosis con infectología'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 THEN 
                 'De 5 a 20 mg/kg/día (' || (5*dp1.peso) || ' mg/día a ' || (20*dp1.peso) || ' mg/día) dividido cada 6 a 12 horas.'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 30 THEN 
@@ -195,10 +195,10 @@ WHERE
     Vancomycin:
     -	DepuracionCreatinina Mayor de 50: De 15 a 30 mg/kg (15 * peso mg a 30 * peso mg) cada 12 horas.
     -	DepuracionCreatinina de 10 a 50: 15 mg/kg (15 * peso mg) cada 24 horas.
-    -	DepuracionCreatinina Menos de 10: No se recomienda
-    -	snHemodialisis: No se recomienda
-    -	snCAPD: No se recomienda
-    -	CRRT: No se recomienda
+    -	DepuracionCreatinina Menos de 10: No se recomienda, consultar dosis con infectología
+    -	snHemodialisis: No se recomienda, consultar dosis con infectología
+    -	snCAPD: No se recomienda, consultar dosis con infectología
+    -	CRRT: No se recomienda, consultar dosis con infectología
 */
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -207,7 +207,7 @@ SELECT
     (
         CASE 
             WHEN CRRT = 1 OR CAPD = 1 OR requiereHemodialisis = 1 OR depuracionCreatinina < 10 THEN 
-                'No se recomienda'
+                'No se recomienda, consultar dosis con infectología'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 
                 'De 15 a 30 mg/kg (' || (15*dp1.peso) || ' mg a ' || (30*dp1.peso) || ' mg) cada 12 horas.'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN 
@@ -223,7 +223,7 @@ WHERE
 /*
     Nitrofurantoin:
     -	DepuracionCreatinina Mayor de 50: De 50 a 100 mg VO cada 6 a 8 horas
-    -	DepuracionCreatinina Menor de 50: No se recomienda	
+    -	DepuracionCreatinina Menor de 50: No se recomienda, consultar dosis con infectología	
 */
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -231,7 +231,7 @@ SELECT
     e2.idAsignacion,
     (
         CASE 
-            WHEN CRRT = 1 OR CAPD = 1 OR requiereHemodialisis = 1 OR depuracionCreatinina < 50 THEN 'No se recomienda'
+            WHEN CRRT = 1 OR CAPD = 1 OR requiereHemodialisis = 1 OR depuracionCreatinina < 50 THEN 'No se recomienda, consultar dosis con infectología'
             WHEN depuracionCreatinina >= 50 THEN 'De 50 a 100 mg VO cada 6 a 8 horas'
         END
     )
@@ -289,7 +289,7 @@ SELECT
     (
         CASE 
             WHEN CRRT = 1 AND CAPD = 0 THEN '7.5 mg/kg/día (' || (7.5*dp1.peso) || ' mg'
-			WHEN CRRT = 0 AND CAPD = 1 THEN 'No se recomienda'
+			WHEN CRRT = 0 AND CAPD = 1 THEN 'No se recomienda, consultar dosis con infectología'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '7.5 mg/kg (' || (7.5*dp1.peso) || ' mg)  cada 48 horas, y 3.75 mg/kg  (' || (3.75*dp1.peso) || ' mg) adicional después de HD (corroborar niveles)'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 80 THEN 
                 '15 mg/kg (' || (15*dp1.peso) || ' mg)  cada 24 horas'
@@ -400,7 +400,7 @@ SELECT
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '3 gm IV al día (dosis luego de HD)'
             
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '3 gm IV cada 6 horas'
-            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 100 AND depuracionCreatinina < 50 THEN '3 gm IV cada 8 a 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '3 gm IV cada 8 a 12 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '3 gm IV al día'
         END
     )
@@ -853,8 +853,8 @@ SELECT
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 30 AND depuracionCreatinina < 60 THEN '250 a 500 mg IV cada 8 horas'
             WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 30 THEN '250 mg IV cada 12 horas'
 			
-			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN 'No se recomienda'
-			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN 'No se recomienda'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0  THEN 'No se recomienda, consultar dosis con infectología'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1  THEN 'No se recomienda, consultar dosis con infectología'
         END
     )
 FROM
@@ -918,9 +918,71 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (8,19,26,27,46,48,52,53,54);
+    e2.idAsignacion IN (8,19,26,27,46,48,52,53,54,18);
 	
 
+/*
+    Fosfomycin (3gm cada 3 dias por 7 dosis)	
+*/
 
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    (
+        CASE 
+            WHEN CRRT = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '3gm VO cada 3 dias por 7 dosis'
+            ELSE 'No se recomienda, consultar dosis con infectología'
+        END
+    )
+FROM
+    DatosDelPaciente dp1,
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (22) AND
+	dp1.idParteDelCuerpo IN (6);
+	
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    (
+        CASE 
+            WHEN CRRT = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'No se recomienda, consultar dosis con infectología'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '3gm VO dosis unica'
+            ELSE 'No se recomienda, consultar dosis con infectología'
+        END
+    )
+FROM
+    DatosDelPaciente dp1,
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (22) AND
+	dp1.idParteDelCuerpo NOT IN (6);
+	
+	
+
+/** orden etapa 3**/
+DELETE FROM TMP_InterpretacionGRAMEtapa3;
+INSERT INTO TMP_InterpretacionGRAMEtapa3 SELECT * FROM InterpretacionGRAMEtapa3;
+
+DELETE FROM InterpretacionGRAMEtapa3;
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje, orden)
+SELECT DISTINCT
+	a.idAsignacion,
+	a.mensaje,
+	b.orden
+FROM
+	TMP_InterpretacionGRAMEtapa3 a 
+	
+	inner join Asignaciones b 
+		on (b.id = a.idAsignacion)
+ORDER BY
+	b.orden
+;
+ 
 	
 	

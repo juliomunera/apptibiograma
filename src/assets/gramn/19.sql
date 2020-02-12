@@ -68,7 +68,7 @@ FROM
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,42)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,9,4,42,36,21)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,9,4,44)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22/*,2,3*/)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,36,22,39/*,2,3*/)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,9,51,44)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,9,4,45,36)) 
 			
@@ -413,3 +413,62 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 */
 
 
+/**
+primero agregamos tige y luego eliminamos piptazo 
+**/
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '-' AND
+			g.idBacteria IN (20) AND
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor = 0) AND
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) 
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (36,39,40)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (36,37,16)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (36,39,40)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (47,16,37)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (37,36,18,21)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (36,16,37)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (36,22,39,40)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (36,16,37)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (39,40,48)) 
+	) a2;
+
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (42,43,44,45) AND 0 < (
+	SELECT COUNT(1)
+	FROM GRAM g
+	WHERE
+		g.tipoGRAM = '-' AND
+			g.idBacteria IN (20) AND
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idPrueba = 4 AND g2.valor = 0) AND
+			0 < (SELECT count(1) FROM GRAM g2 WHERE g2.idAntibiotico IN (24,25,16) AND operador IN ('=', '>=')) 
+		
+);
+
+
+
+
+/**
+Cuando no sale nada en esta combinacion
+**/

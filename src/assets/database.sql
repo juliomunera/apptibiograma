@@ -212,6 +212,18 @@ CREATE TABLE InterpretacionGRAMEtapa3 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	idAsignacion INTEGER NOT NULL,
 	mensaje VARCHAR2(250) NOT NULL,
+	orden INTEGER DEFAULT 100,
+	
+	FOREIGN KEY(idAsignacion) REFERENCES Asignaciones(id)
+);
+
+DROP TABLE IF EXISTS TMP_InterpretacionGRAMEtapa3;
+
+CREATE TABLE TMP_InterpretacionGRAMEtapa3 (
+    id INTEGER PRIMARY KEY,
+	idAsignacion INTEGER NOT NULL,
+	mensaje VARCHAR2(250) NOT NULL,
+	orden INTEGER DEFAULT 100,
 	
 	FOREIGN KEY(idAsignacion) REFERENCES Asignaciones(id)
 );
@@ -282,7 +294,8 @@ DROP VIEW IF EXISTS validarTestMsg;
 CREATE VIEW validarTestMsg AS
 	SELECT COUNT(1) as total
 	FROM InterpretacionGRAMEtapa1 
-	WHERE mensaje like 'Realizar D-test%' OR mensaje like 'Realizar test%';
+	WHERE mensaje like '%Realizar D-test%' OR mensaje like '%Realizar test%';
+
 
 /* Lista base de bacterias habilitados para el funcionamiento de la aplicación. */
 DELETE FROM BitacoraEventos;
@@ -739,8 +752,8 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (17, 'Ampicilin
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)',23);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (19, 'En caso de endocarditis: Ceftriaxona 2 gm cada 12 horas (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)',21);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (20, 'Ampicilina',5);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (21, 'Nitrofurantoin (solo cistitis)', 22);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (22, 'Fosfomycin (3gm cada 3 dias por 7 dosis)', 23);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (21, 'Nitrofurantoin (solo cistitis)', 1);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (22, 'Fosfomycin', 23);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (23, 'Penicilina (dosis de meníngeas)',5);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (24, 'Penicilina',5);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (25, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, pero no combinar con Clindamicina)',100);

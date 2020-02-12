@@ -53,7 +53,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Realizar test de Cefoxitin'
+	'<b style="color: red;">Realizar test de Cefoxitin</b>'
 FROM
 	GRAM g
 WHERE
@@ -111,7 +111,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Realizar D-test o Test de resistencia inducible a Clindamicina'
+	'<b style="color: red;">Realizar D-test o Test de resistencia inducible a Clindamicina</b>'
 FROM
 	GRAM g
 WHERE
@@ -211,6 +211,7 @@ WHERE
 /*
 Cuando en el Aj = Vancomicina es resistente (es decir ≥) debe salir un mensaje que diga “Posible germen resistente a Vancomicina, por favor corrobore con un laboratorio de referencia”
 */
+
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
@@ -549,3 +550,6 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idAntibiotico NOT IN (5,12,6,10) AND 
 	g.operador = '=';
+	
+	
+	

@@ -37,22 +37,6 @@ FROM
 		ON (g1.total = g2.total)
 ;
 
-/*
-Mensaje para sangre
-*/
-
-INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
-SELECT
-	h.idParteDelCuerpo, 
-	g.idBacteria, 
-	1 AS idAntibiotico,
-	'Descartar contaminacion'
-FROM
-	(SELECT DISTINCT idbacteria FROM GRAM WHERE idBacteria IN (3,4,5,6)) g,
-	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp WHERE idParteDelCuerpo = 8) h
-
-;
-
 
 /*
 Cuando Aj del formulario con Aj in {Oxacilina} es un numero entero (es decir =), debe salir un mensaje que diga “Realizar test de Cefoxitin”.
@@ -69,7 +53,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Realizar test de Cefoxitin'
+	'<b style="color: red;">Realizar test de Cefoxitin</b>'
 FROM
 	GRAM g
 WHERE
@@ -127,7 +111,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Realizar D-test o Test de resistencia inducible a Clindamicina'
+	'<b style="color: red;">Realizar D-test o Test de resistencia inducible a Clindamicina</b>'
 FROM
 	GRAM g
 WHERE
@@ -155,7 +139,7 @@ WHERE
 	((g.idPrueba = 2 AND COAlESCE(g.valor, 3) = 1) )
 		
 ;		
-
+/*
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
@@ -169,6 +153,8 @@ WHERE
 	g.idBacteria IN (2,3,4,5) AND 
 	g.idPrueba = 2 AND COAlESCE(g.valor, 3) = 0
 ;
+*/
+
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT DISTINCT
@@ -564,3 +550,6 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idAntibiotico NOT IN (5,12,6,10) AND 
 	g.operador = '=';
+	
+	
+	
