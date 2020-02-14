@@ -53,7 +53,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'<b style="color: red;">Realizar test de Cefoxitin</b>'
+	'Realizar test de Cefoxitin'
 FROM
 	GRAM g
 WHERE
@@ -111,7 +111,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'<b style="color: red;">Realizar D-test o Test de resistencia inducible a Clindamicina</b>'
+	'Realizar D-test o Test de resistencia inducible a Clindamicina'
 FROM
 	GRAM g
 WHERE

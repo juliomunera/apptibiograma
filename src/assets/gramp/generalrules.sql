@@ -71,6 +71,7 @@ FROM
 
 /*
 Cuando algún antibiótico Aj del formulario con Aj NOT IN {Oxacilina, vancomicina}, posee un valor >=, debe salir un mensaje que dice “Germen resistente a <Aj>”.
+Ampicilina, Penicilina 
 */
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
@@ -78,7 +79,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g1.idBacteria, 
 	1 as idAntibiotico,
-	'Resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa, Ampicilina, Penicilina y Cefalosporinas'
+	'Resistencia intrínseca a Clindamicina, Quinolonas, Trimetoprim-sulfa y Cefalosporinas'
 FROM
 	(
 		SELECT g.idBacteria, COUNT(1) as total
@@ -127,4 +128,19 @@ INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotic
 		g.idPrueba = 1 AND
 		g.idAntibiotico NOT IN (6,10,2) AND 
 		g.operador = '>='
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		(SELECT 'Germen con sensibilidad disminuida a ' || a.nombre || '.' FROM Antibioticos a WHERE a.id = g.idAntibiotico)
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idPrueba = 1 AND
+		g.idAntibiotico NOT IN (6,10,2) AND 
+		g.operador = '='
 ;

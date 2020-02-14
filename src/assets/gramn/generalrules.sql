@@ -77,6 +77,14 @@ FROM
 	) g2
 	ON (g1.total = g2.total);
 
+
+/**
+Se elimina el grupo de 4 de el grupo de serratia dado que ya no aplica para analisis
+**/
+DELETE FROM GRAM WHERE idAntibiotico IN (24,25,16,35) AND idBacteria IN (21,22,24,25,28);
+DELETE FROM GRAM WHERE idAntibiotico IN (35) AND idBacteria IN (20);
+
+
 /*
 	pero si se trata de los siguientes gérmenes: Serratia, Enterobacter, Citrobacter, Aeromonas, Proteus penneri, Proteus 
 	vulgaris, Morganella, Acinetobacter y Providencia; debe decir además “Germen sensible a todo el panel de antibióticos, 
@@ -110,7 +118,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g1.idBacteria, 
 	1 as idAntibiotico,
-	'Intrinsecamente resistente a Ampicilina y Ampicilina/sulbactam'
+	'Germen intrinsecamente resistente a Ampicilina y Ampicilina/sulbactam'
 FROM
 	(
 		SELECT g.idBacteria, COUNT(1) as total

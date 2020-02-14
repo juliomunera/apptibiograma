@@ -230,7 +230,7 @@ FROM
 		WHERE
 			g.tipoGRAM = '+' AND
 			g.idBacteria = 7 AND 
-			(g.idAntibiotico = 13 AND g.operador = '>=')
+			(g.idAntibiotico = 13 AND g.operador IN ('=','>='))
 	) g1,
 	(
 		SELECT

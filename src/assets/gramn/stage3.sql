@@ -64,6 +64,44 @@ organizacion de InterpretacionGRAMEtapa3 por el orden asignado
 DELETE FROM TMP_InterpretacionGRAMEtapa2;
 INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
 
+
+/**
+cuando no hayan opciones
+**/
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (52,53)
+			
+	) a2
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2);
+
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+
+
+
+
+
 DELETE FROM InterpretacionGRAMEtapa2;
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje,orden)
 SELECT DISTINCT
@@ -139,14 +177,14 @@ cuando no haya opciones, bloqueados (=, >=):
 ampicilina
 ampicilina sulbactam
 aztreonam
-BLEE
+BLEE o (cefepime, ceftriazona, ceftazidima)
 cipro
 (erta, imi, o mero)
 pipytazo 
 tige
-
+trimetro
 **/
-
+/*
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
 SELECT
 	a2.idParteDelCuerpo, 
@@ -171,12 +209,59 @@ WHERE
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (13)) AND
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (35)) AND
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (22)) AND
-	0 < (SELECT COUNT(1) FROM GRAM WHERE valor IN (1) AND idPrueba IN (4)) AND
+	(0 < (SELECT COUNT(1) FROM GRAM WHERE valor IN (1) AND idPrueba IN (4)) OR 0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (24,25,16))) AND
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (27)) AND
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (28,30,31)) AND
 	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (33)) AND
-	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (34))	
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (34)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (9))	
 ;
+*/
+
+/**
+cuando no haya opciones, bloqueados (=, >=):
+aztreonam
+BLEE o (cefepime, ceftriazona, ceftazidima)
+cipro
+(erta, imi, o mero) 
+tige
+trimetro
+**/
+
+/*
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (52,53)
+			
+	) a2
+WHERE
+	a2.idBacteria NOT IN (19,29) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (22)) AND
+	(0 < (SELECT COUNT(1) FROM GRAM WHERE valor IN (1) AND idPrueba IN (4)) OR 0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (24,25,16))) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (27)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (28,30,31)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (34)) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (9))	
+;
+*/
 
 
 	

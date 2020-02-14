@@ -207,7 +207,7 @@ FROM
 			g.tipoGRAM = '+' AND
 			g.idBacteria IN (9,10) AND 
 			
-			((g.idAntibiotico IN (13) AND g.operador = '>='))
+			(g.idAntibiotico IN (13) AND g.operador IN ('=','>='))
 	) g1,
 	(
 		SELECT

@@ -123,6 +123,7 @@ WHERE
 	**Si es además resistente a Vancomicina, se quita Vancomicina de todas las opciones donde aparece
 */
 
+/*
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
 SELECT
 	a2.idParteDelCuerpo, 
@@ -179,3 +180,193 @@ DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 	WHERE
 		a.id = 13
 );
+*/
+
+
+
+
+/*
+ETAPA 2
+*/	
+
+/*
+	Cuando es sensible a Ampicilina y la infección es en:
+
+	*  Sistema nervioso central: 0
+		- 	Ampicilina (dosis meníngeas)
+	*  Boca y senos paranasales: 1
+		- 	 Ampicilina/sulbactam
+	*  Pulmones: 2
+		- 	Ampicilina/sulbactam
+	*  Tejidos blandos: 7
+		- 	Ampicilina/sulbactam 
+	*  Hueso: 5
+		- 	Ampicilina/sulbactam 
+		- 	Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)
+	*  Abdomen: 3
+		- 	Ampicilina/sulbactam
+	*  Tracto genitourinario: 4
+		- 	Ampicilina
+		- 	Ampicilina/sulbactam 
+	*  Próstata: 6
+		- 	Ampicilina (dosis meníngeas)
+		- 	Fosfomycin (3gm cada 3 dias por 7 dosis) 
+	*  Sangre: 8
+		- 	Ampicilina/sulbactam
+		- 	En caso de endocarditis: Ceftriaxona 2 gm cada 12 horas (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)
+
+	** Cuando es resistente a Ampicilina o alérgico a Penicilina, se comporta igual a Enterococcus faecium
+*/
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '+' AND
+			g.idBacteria = 8 AND 
+			((g.idAntibiotico = 13 AND g.operador = '<='))
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 0) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 0 AND a.id = 17) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (20,4)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (4)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (17,22)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (4,19)) 
+	) a2;
+
+/*
+	**Cuando es resistente a Ampicilina o alérgico a Penicilina, se comporta igual a Enterococcus faecium
+	
+	Cuando la infección es en:
+		*  Sistema nervioso central: 0
+			- 	Daptomicina
+			- 	Linezolide
+		*  Boca y senos paranasales: 1
+			- 	Vancomicina
+			- 	Tigeciclina
+			- 	Linezolide
+		*  Pulmones: 2
+			- 	Vancomicina
+			- 	Linezolide
+		*  Tejidos blandos: 7
+			- 	Vancomicina
+			- 	Linezolide
+		*  Hueso: 5
+			- 	Vancomicina
+			- 	Daptomicina
+			- 	Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)
+		*  Abdomen: 3
+			- 	Vancomicina, 
+			- 	Tigeciclina
+			- 	Linezolide
+		*  Tracto genitourinario: 4
+			- 	Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)
+			- 	Nitrofurantoin (solo cistitis)
+			- 	Vancomicina
+			- 	Linezolide
+		*  Próstata: 6
+			- 	Fosfomycin (3gm cada 3 dias por 7 dosis)
+			- 	Vancomicina
+		*  Sangre: 8
+			- 	Vancomicina
+			- 	Daptomicina
+	**Si es además resistente a Vancomicina, se quita Vancomicina de todas las opciones donde aparece
+*/
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '+' AND
+			g.idBacteria = 8 AND 
+			(g.idAntibiotico = 13 AND g.operador IN ('=','>='))
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 0) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (11,13,16)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (13,16,11)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (18,21,11,13)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (22,13)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
+	) a2;
+
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)	
+SELECT
+	a2.idParteDelCuerpo, 
+	g1.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT DISTINCT 
+			g.idBacteria
+		FROM
+			GRAM g
+		WHERE
+			g.tipoGRAM = '+' AND
+			g.idBacteria = 8
+	) g1,
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 1) dp1,
+			Asignaciones a
+		WHERE
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (11,13,16)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (13,16,11)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (18,21,11,13)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (22,13)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
+	) a2;
