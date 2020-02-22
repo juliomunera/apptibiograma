@@ -383,6 +383,7 @@ INSERT INTO Antibioticos(id, nombre) VALUES (35, 'Ampicillin / Sulbactam');
 INSERT INTO Antibioticos(id, nombre) VALUES (36, 'Moxifloxacin');
 
 
+
 /* Lista base de pruebas habilitados para el funcionamiento de la aplicación. */
 
 DELETE FROM Pruebas;
@@ -673,6 +674,10 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (25, 35, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 16, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 27, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 28, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (26, 4, 1,'INPUT TEXT','-');
@@ -717,6 +722,10 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (29, 1, 4,'RADIO BUTTON','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 16, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 27, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 28, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 4, 1,'INPUT TEXT','-');
@@ -725,6 +734,10 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (30, 9, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 16, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 27, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 28, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (31, 4, 1,'INPUT TEXT','-');
@@ -738,13 +751,16 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (33, 25, 1,'INPUT TEXT','-');
 
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 21, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 35, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 24, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 25, 1,'INPUT TEXT','-');
+INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 16, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 27, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 28, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 4, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 31, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 32, 1,'INPUT TEXT','-');
 INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES (34, 9, 1,'INPUT TEXT','-');
-
 
 /*  
 	Lista con  la combinación de la partes del cuerpo, los antibióticos, el estado de sensibilidad, resistencia o 
@@ -765,10 +781,10 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 8, 'Descartar
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 9, 'Cefazolina', 11);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (10, 'Daptomicina',15);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (11, 'Linezolide',14);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (12, 'Clindamicina', 12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (12, 'Clindamicina', 5);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (13, 'Vancomicina',13);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (14, 'Ceftaroline',16);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)',12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)',5);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (16, 'Tigeciclina', 25);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (17, 'Ampicilina (dosis meníngeas)',6);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)',23);
@@ -803,9 +819,9 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (44, 'Piperacil
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (45, 'Piperacilina/tazobactam (si se sospecha origen en abdomen)', 15);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (46, 'Considerar adicionar Metronidazol para cubrir anaerobios', 18);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (47, 'Ciprofloxacin (considerar adicionar Metronidazol para cubrir anaerobios)', 17);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (48, 'Ciprofloxacin (considerar adicionar Amikacina durante 3 dias si la función renal lo permite)', 18);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (48, 'Ciprofloxacin (considerar adicionar Amikacina durante 3 dias si la función renal lo permite y es sensible)', 18);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (49, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis, y se demuestra sensibilidad a estos antibioticos)',100);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)', 20);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (50, 'Cefepime (considerar adicionar Metronidazol para cubrir anaerobios)', 25);
 
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (51, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)',10);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (52, 'Germen multidrogo-resistente, consultar con infectología el esquema de tratamiento',2);

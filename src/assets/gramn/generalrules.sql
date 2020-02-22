@@ -82,6 +82,7 @@ FROM
 Se elimina el grupo de 4 de el grupo de serratia dado que ya no aplica para analisis
 **/
 DELETE FROM GRAM WHERE idAntibiotico IN (24,25,16,35) AND idBacteria IN (21,22,24,25,28);
+DELETE FROM GRAM WHERE idAntibiotico IN (24,25,16,35) AND idBacteria IN (34,31,30,26); /** nuevos agregados**/
 DELETE FROM GRAM WHERE idAntibiotico IN (35) AND idBacteria IN (20);
 
 
@@ -126,22 +127,13 @@ FROM
 			GRAM g
 		WHERE
 			g.tipoGRAM = '-' AND
-			g.idPrueba = 1 AND
-			g.operador = '<='
+			g.idPrueba = 1
 		GROUP BY 
 			g.idBacteria
 	) g1
-	INNER JOIN (
-		SELECT COUNT(1) as total
-		FROM
-			GRAM g
-		WHERE
-			g.tipoGRAM = '-' AND
-			g.idPrueba = 1
-	) g2
-	ON (g1.total = g2.total)
 WHERE
-	g1.idBacteria IN (20);
+	g1.idBacteria IN (20) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16,33,22) and operador IN ('=','>='));
 	
 /*
 	Cuando algún antibiótico es un numero entero (es decir =), debe salir un mensaje que dice “Germen con sensibilidad 
@@ -342,7 +334,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Nitrofurantoina, mediado por cambios enzimática'
+	'Germen con sensibilidad disminuida a Nitrofurantoina, mediado por cambios enzimáticos'
 FROM
 	GRAM g
 WHERE
@@ -611,7 +603,8 @@ FROM
 			g.idAntibiotico IN (24,25,16) AND
 			g.operador = '=' AND
 			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0)) AND
-			0 >= (SELECT count(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador = '>=')
+			0 >= (SELECT count(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador = '>=') AND
+			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34)
 		GROUP BY
 			g.idBacteria
 	) g2
@@ -636,7 +629,8 @@ FROM
 			g.idPrueba = 1 AND
 			g.idAntibiotico IN (24,25,16) AND
 			g.operador = '>=' AND
-			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0))
+			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0)) AND
+			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34) 
 		GROUP BY
 			g.idBacteria
 	) g2
@@ -682,7 +676,8 @@ FROM
 WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 4 AND
-	g.valor = 1 
+	g.valor = 1 AND
+	g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34)
 ;
 
 

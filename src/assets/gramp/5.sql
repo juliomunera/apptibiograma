@@ -243,6 +243,7 @@ WHERE
 			- Cefotaxime (si Albumina <3.5)
 		* Boca y senos paranasales: 1
 			- Ampicilina/sulbactam
+			Clindamicina ********
 		* Pulmones: 2
 			- Oxacilina
 			- Cefazolina
@@ -251,13 +252,16 @@ WHERE
 			- Oxacilina
 			- Cefazolina
 			- Ampicilina/sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)
+			Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios) **********************
 		* Hueso:   5
 			- Oxacilina
 			- Cefazolina
 			- Ampicilina/sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)
 			- Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)
+			Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)*************
 		* Abdomen: 3
 			- Ampicilina/sulbactam
+			Clindamicina**************
 		* Tracto genitourinario: 4
 			- Debe salir un letrero que diga: ”Descartar bacteriemia o contaminación”
 		* Próstata: 6
@@ -295,13 +299,13 @@ FROM
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (1,2,3)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (1,9,5)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id = 4) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6,15)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (1,9,6)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (1,9,6,15)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (1,9)) 
 			
 	) a2;

@@ -662,7 +662,28 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (3,19);
+    e2.idAsignacion IN (3,19) AND
+    e2.idParteDelCuerpo NOT IN (0);
+	
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    (
+        CASE 
+            WHEN CRRT = 1 THEN '2 gm IV cada 12 horas'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV al dia (dosis luego de Hemodialisis)'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN '1 gm IV al dia'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 6 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV al día'
+        END
+    )
+FROM
+    DatosDelPaciente dp1,
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (3,19) AND
+    e2.idParteDelCuerpo IN (0);
         
 /*
     Ciprofloxacin:

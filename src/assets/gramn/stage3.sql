@@ -1,4 +1,10 @@
 /**
+	Eliminar nitrofurantoin de todos menos e coli y klepciela
+**/
+
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (21) AND idBacteria NOT IN (19,20);
+
+/**
 	si imi esta dentro de las opciones y es resistente entonces cambiar por merope
 **/
 DELETE FROM TMP_InterpretacionGRAMEtapa2;
@@ -56,18 +62,48 @@ WHERE
 	a.idAntibiotico > 1
 );
 
-/******* 
 
-organizacion de InterpretacionGRAMEtapa3 por el orden asignado
 
-********/
+/**
+Cuando no hayan opciones y incluir Trimethoprim... siempre que no sea resistente
+**/
 DELETE FROM TMP_InterpretacionGRAMEtapa2;
 INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
 
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	9 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (30)
+			
+	) a2
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico = 9 AND operador IN ('=', '>='))
+;
 
 /**
 cuando no hayan opciones
 **/
+
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
 
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
 SELECT
@@ -95,19 +131,22 @@ FROM
 WHERE
 	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2);
 
+
+/******* 
+
+organizacion de InterpretacionGRAMEtapa3 por el orden asignado
+
+********/
+
 DELETE FROM TMP_InterpretacionGRAMEtapa2;
 INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
-
-
-
-
 
 DELETE FROM InterpretacionGRAMEtapa2;
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje,orden)
 SELECT DISTINCT
 	a.idParteDelCuerpo,
 	a.idBacteria,
-	a.idAntibiotico,
+	6 as idAntibiotico, /* a.idAntibiotico */
 	a.idAsignacion,
 	a.mensaje,
 	b.orden
@@ -883,6 +922,7 @@ WHERE
     -	CRRT: 1.5 gm cada 8 horas	
 */
 
+
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
     e2.idAsignacion,
@@ -900,7 +940,28 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (3,19);
+    e2.idAsignacion IN (3,19) AND
+    e2.idParteDelCuerpo NOT IN (0);
+	
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    (
+        CASE 
+            WHEN CRRT = 1 THEN '2 gm IV cada 12 horas'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN '2 gm IV al dia (dosis luego de Hemodialisis)'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN '1 gm IV al dia'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN '2 gm IV cada 6 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN '2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN '2 gm IV al día'
+        END
+    )
+FROM
+    DatosDelPaciente dp1,
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (3,19) AND
+    e2.idParteDelCuerpo IN (0);
         
 /*
     Ciprofloxacin:

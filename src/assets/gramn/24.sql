@@ -23,7 +23,7 @@ Ciprofloxacin
 imi
 mero
 **/
-
+/*
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
 SELECT
 	a2.idParteDelCuerpo, 
@@ -72,7 +72,7 @@ WHERE
 	(a2.idParteDelCuerpo = 8 OR 0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (9))) AND
 	(a2.idParteDelCuerpo NOT IN (1,3,7) OR 0 < (SELECT COUNT(1) FROM GRAM WHERE operador IN ('=', '>=') AND idAntibiotico IN (34)))
 ;
-
+*/
 
 /*
 	ETAPA 2

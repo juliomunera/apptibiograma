@@ -55,6 +55,8 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,33,45)) 
 			
 	) a2;
+	
+
 
 /*
 •	Cuando la sensibilidad a Piperacilina/tazobactam es un numero entero o es resistente (es decir > o =), entonces Piperacilina/tazobactam) desaparece de las opciones de tratamiento, siendo entonces el análisis igual al que si fueran alérgicos a Penicilina (no importa si no son alérgicos a Penicilina).
