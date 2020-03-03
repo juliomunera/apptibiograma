@@ -141,6 +141,6 @@ INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotic
 	WHERE
 		g.tipoGRAM = '+' AND
 		g.idPrueba = 1 AND
-		g.idAntibiotico NOT IN (6,10,2) AND 
+		g.idAntibiotico NOT IN (6,10,2,5,12) AND 
 		g.operador = '='
 ;

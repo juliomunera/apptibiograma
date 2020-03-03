@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, iif } from 'rxjs';
 
 @Component({
   selector: 'app-summary',
@@ -76,7 +76,7 @@ export class SummaryPage implements OnInit {
 
               this.database.executeSql(
               `
-              SELECT idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje from EtapaUnoyEtapaDos
+              SELECT idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje, 0 as "flag" from EtapaUnoyEtapaDos
               `, []).then(data => { 
                   if (data === undefined)
                     return;
@@ -87,11 +87,14 @@ export class SummaryPage implements OnInit {
                   if (data !== undefined && data !== null) {
                     for(let i=0; i<data.rows.length; i++){
                       this.lists.push(data.rows.item(i));
+
+                      if(data.rows.item(i).mensaje.indexOf('test') >= 0 || data.rows.item(i).mensaje.indexOf('descartar bacteriemia') >= 0)
+                        this.lists[i].flag = 1;
                     }
                   }
 
                   this.database.executeSql(`
-                    SELECT e3.id, e3.idAsignacion, e3.mensaje, a.comentariosTratamiento 
+                    SELECT e3.id, e3.idAsignacion, e3.mensaje, a.comentariosTratamiento
                     FROM InterpretacionGRAMEtapa3 e3 INNER JOIN Asignaciones a ON e3.idAsignacion = a.id`, [])
                   .then(dosis => {
                       if (dosis === undefined)

@@ -25,7 +25,14 @@
             </div>
 
             <ul>
-                <li *ngFor="let item of lists; let i=index;">{{ item.mensaje }}</li>
+                <li *ngFor="let item of lists; let i=index;">
+                    <div *ngIf="item.flag === 1" class="msgRed">
+                        <b>{{ item.mensaje }}</b>
+                    </div>
+                    <div *ngIf="item.flag === 0">
+                        {{ item.mensaje }}
+                    </div>
+                </li>
             </ul>
 
             <ion-grid>
@@ -43,6 +50,7 @@
                         </tr>
                         <tr>
                             <td>{{ item.mensaje }}</td>
+                            <td>{{ item.mensaje }} </td>
                         </tr>
                         <tr>
                             &nbsp;

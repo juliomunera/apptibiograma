@@ -170,6 +170,16 @@ CREATE TABLE InterpretacionGRAMEtapa1 (
 	FOREIGN KEY(idBacteria) REFERENCES Bacterias(id)
 );
 
+DROP TABLE IF EXISTS TMP_InterpretacionGRAMEtapa1;
+
+CREATE TABLE TMP_InterpretacionGRAMEtapa1 (
+    id INTEGER PRIMARY KEY,
+	idParteDelCuerpo INTEGER NOT NULL, 
+	idBacteria INTEGER NOT NULL, 
+	idAntibiotico INTEGER NOT NULL, 
+	mensaje VARCHAR2(250) NOT NULL
+);
+
 /*
 	Entidad donde se persiste los resultados generados en la 2da. etapa del análisis GRAM (asignación de medicamentos ARk).
 */
@@ -770,21 +780,21 @@ INSERT INTO CBxA(idBacteria,idAntibiotico,idPrueba,tipoControl,tipoGRAM) VALUES 
 
 DELETE FROM Asignaciones;
 
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 1, 'Oxacilina',8);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 1, 'Oxacilina',7);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 2, 'Ceftriaxona (si Albumina > 3.5)',21);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 3, 'Cefotaxime (si Albumina < 3.5)',21);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 4, 'Ampicilina / sulbactam',7);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 5, 'Ampicilina / sulbactam (si sospecha broncoaspiración)',8);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 6, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)',9);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 4, 'Ampicilina / sulbactam',12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 5, 'Ampicilina / sulbactam (si sospecha broncoaspiración)',12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 6, 'Ampicilina / sulbactam (si hay tejido necrótico o sospecha presencia de anaerobios)',12);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 7, 'Rifampicina o Minociclina (si hay material de osteosíntesis o prótesis)',100);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 8, 'Descartar bacteriemia o contaminación',3);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES ( 9, 'Cefazolina', 11);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (10, 'Daptomicina',15);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (11, 'Linezolide',14);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (12, 'Clindamicina', 5);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (10, 'Daptomicina',14);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (11, 'Linezolide',15);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (12, 'Clindamicina', 8);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (13, 'Vancomicina',13);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (14, 'Ceftaroline',16);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)',5);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamicina (si hay tejido necrótico o sospecha presencia de anaerobios)',8);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (16, 'Tigeciclina', 25);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (17, 'Ampicilina (dosis meníngeas)',6);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)',23);
@@ -812,7 +822,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (38, 'Colistin'
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (39, 'Imipenem', 27);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (40, 'Meropenem', 28);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (41, 'Doripenem',30);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (42, 'Piperacillin / Tazobactam', 12);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (42, 'Piperacillin / Tazobactam', 13);
 
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (43, 'Piperacillin / Tazobactam (si sospecha broncoaspiración)', 13);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (44, 'Piperacilina / tazobactam (si hay tejido necrótico o sospecha presencia de anaerobios)', 14);
@@ -829,6 +839,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (53, 'Tamizar C
 
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (54, 'Consultar con infectología el esquema de tratamiento, tamizar Moxifloxacin y Tigecycline',1);
 /*INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (55, 'Germen resistente a Trimethoprim/Sulfa, consultar con infectología el esquema de tratamiento y tamizar Moxifloxacin y Tigecycline');*/
+
 
 
 INSERT INTO asignacionAntibiotico (idAntibiotico, idAsignacion) VALUES (6,1);

@@ -299,12 +299,12 @@ FROM
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (1,2,3)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12,1)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (1,9,5)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12,1)) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (8,1)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6,15)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (8,1)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (1,9,6,15)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (1,9)) 
 			

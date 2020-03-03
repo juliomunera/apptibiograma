@@ -50,6 +50,25 @@ ORDER BY
 ;
  
 
+
+/******* 
+
+Eliminar repetidos de la etapa 1
+********/
+DELETE FROM TMP_InterpretacionGRAMEtapa1;
+INSERT INTO TMP_InterpretacionGRAMEtapa1 SELECT * FROM InterpretacionGRAMEtapa1;
+
+DELETE FROM InterpretacionGRAMEtapa1;
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo,idBacteria,idAntibiotico,mensaje)
+SELECT DISTINCT
+	a.idParteDelCuerpo,
+	a.idBacteria,
+	a.idAntibiotico,
+	a.mensaje
+FROM
+	TMP_InterpretacionGRAMEtapa1 a 
+;
+ 
 	
 	
 	
@@ -716,7 +735,7 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion = 36;
+    e2.idAsignacion IN (36,47,48);
     
 /*
     Ertapenem:
@@ -939,7 +958,7 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (8,19,26,27,46,48,52,53,54,18);
+    e2.idAsignacion IN (8,19,26,27,46,52,53,54,18);
 	
 
 /*

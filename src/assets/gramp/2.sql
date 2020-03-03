@@ -287,7 +287,7 @@ FROM
 		WHERE
 			g.tipoGRAM = '+' AND
 			g.idBacteria IN (2,3,4,5,6) AND 
-			((g.idAntibiotico = 6 AND g.operador = '<=') OR (g.idPrueba = 3 AND g.valor = 0))
+			((g.idAntibiotico = 6 AND g.operador = '<=') OR (g.idPrueba = 3 AND g.valor IN (0)))
 	) g1,
 	(
 		SELECT
@@ -302,13 +302,14 @@ FROM
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (1,9,5)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (8,1)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6,15)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (8,1)) OR
 			(dp1.idParteDelCuerpo = 7 AND a.id IN (1,9,6,15)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (1,9)) 
 			
 	) a2;
+
 	
 /*
 	Si  Oxacilina  es >=, y si la infección es en: [O si “Cefoxitin screen”= positivo]
@@ -376,14 +377,14 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11,30)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14,30)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13,15)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
 	) a2;
 
@@ -449,14 +450,14 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 1) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (2,3,10)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (2,3,10,30)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14,30)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (9,13,15)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (9,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (9,13)) 
 	) a2;
 	

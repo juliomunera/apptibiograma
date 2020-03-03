@@ -44,9 +44,6 @@ FROM
 /*
     Eliminar antibioticos de la respuesta cuando son =. >=	
 */
-INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-Etapa3', 'Eliminando los antibioticos de resultado que no aplican por =, >=.');
-
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
 SELECT 
@@ -60,6 +57,23 @@ FROM
 WHERE
 	g.operador IN ('>=', '=') AND
 	a.idAntibiotico > 1
+);
+
+/**
+Eliminar betalactamasas de espectro extendido
+**/
+
+
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
+SELECT 
+	a.idAsignacion
+FROM
+	asignacionAntibiotico a
+		
+WHERE
+	a.idAsignacion IN (33,50, 35, 3, 9, 42,43,44,45, 4,5,6,17,20, 32) AND
+	0 < (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador IN ('=', '>='))
+	
 );
 
 
@@ -96,6 +110,74 @@ FROM
 WHERE
 	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2) AND
 	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico = 9 AND operador IN ('=', '>='))
+;
+
+/**
+Cuando no hayan opciones y incluir imipenem... siempre que no sea resistente
+**/
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	9 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (39)
+			
+	) a2
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico = 30 AND operador IN ('=', '>='))
+;
+
+/**
+Cuando no hayan opciones y incluir mero... siempre que no sea resistente
+**/
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	9 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (40)
+			
+	) a2
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2) AND
+	0 >= (SELECT COUNT(1) FROM GRAM WHERE idAntibiotico = 31 AND operador IN ('=', '>='))
 ;
 
 /**
@@ -1220,7 +1302,7 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (8,19,26,27,46,48,52,53,54,18);
+    e2.idAsignacion IN (8,19,26,27,46,52,53,54,18);
 	
 
 
