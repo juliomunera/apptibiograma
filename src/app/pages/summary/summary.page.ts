@@ -88,7 +88,7 @@ export class SummaryPage implements OnInit {
                     for(let i=0; i<data.rows.length; i++){
                       this.lists.push(data.rows.item(i));
 
-                      if(data.rows.item(i).mensaje.indexOf('test') >= 0 || data.rows.item(i).mensaje.indexOf('descartar bacteriemia') >= 0)
+                      if(data.rows.item(i).mensaje.indexOf('test') >= 0 || data.rows.item(i).mensaje.indexOf('bacteriemia') >= 0)
                         this.lists[i].flag = 1;
                     }
                   }

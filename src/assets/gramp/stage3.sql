@@ -13,8 +13,22 @@ FROM
 		ON (a.idAntibiotico = g.idAntibiotico)
 		
 WHERE
-	g.operador IN ('>=', '=') AND
+	g.operador IN ('=') AND
 	a.idAntibiotico NOT IN (1,5,12)
+);
+
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion IN (
+SELECT 
+	a.idAsignacion
+FROM
+	GRAM g
+	
+	INNER JOIN asignacionAntibiotico a
+		ON (a.idAntibiotico = g.idAntibiotico)
+		
+WHERE
+	g.operador IN ('>=') AND
+	a.idAntibiotico NOT IN (1)
 );
 
 /* Eliminar cuando tiene mensaje de hacer test */
