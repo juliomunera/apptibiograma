@@ -584,6 +584,7 @@ WHERE
 		haya marcado en estos 3 antibioticos (Cefepime, Ceftazidima y Ceftriaxona)
 */
 
+
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
@@ -604,7 +605,7 @@ FROM
 			g.operador = '=' AND
 			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0)) AND
 			0 >= (SELECT count(1) FROM GRAM WHERE idAntibiotico IN (24,25,16) AND operador = '>=') AND
-			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34)
+			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34,23)
 		GROUP BY
 			g.idBacteria
 	) g2
@@ -630,7 +631,7 @@ FROM
 			g.idAntibiotico IN (24,25,16) AND
 			g.operador = '>=' AND
 			0 < (SELECT count(1) FROM GRAM WHERE idPrueba = 4 AND valor NOT IN (1,0)) AND
-			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34) 
+			g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34,23) 
 		GROUP BY
 			g.idBacteria
 	) g2
@@ -677,7 +678,22 @@ WHERE
 	g.tipoGRAM = '-' AND 
 	g.idPrueba = 4 AND
 	g.valor = 1 AND
-	g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34)
+	g.idBacteria NOT IN (21,22,24,25,26,30,31,28,34,23)
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+SELECT
+	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+	g.idBacteria, 
+	g.idAntibiotico,
+	'Germen productor de AMP-C (resistente a todos los beta-lactámicos excepto Carbapenems)'
+FROM
+	GRAM g
+WHERE
+	g.tipoGRAM = '-' AND 
+	g.idPrueba = 4 AND
+	g.valor = 1 AND
+	g.idBacteria IN (23)
 ;
 
 
@@ -1310,18 +1326,18 @@ WHERE
 /*
 	*	Si es un numero entero o resistente, y además Meropenem y/o Imipenem y/o Doripenem son números enteros o resistentes;
 		debe salir un mensaje que diga “Germen con sensibilidad disminuida (o resistente según el caso), mediado por 
-		mecanismos de permeabilidad o KPC.
+		mecanismos de permeabilidad o Carbapenemasas.
 */
 /*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Ertapenem, mediado por mecanismos de permeabilidad o KPC.');
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen tiene sensibilidad disminuida a Ertapenem, mediado por mecanismos de permeabilidad o Carbapenemasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen con sensibilidad disminuida a Ertapenem, mediado por mecanismos de permeabilidad o KPC'
+	'Germen con sensibilidad disminuida a Ertapenem, mediado por mecanismos de permeabilidad o Carbapenemasas'
 FROM
 	GRAM g
 WHERE
@@ -1363,14 +1379,14 @@ WHERE
 	*/
 /*
 INSERT INTO BitacoraEventos (TipoEvento, DetalleEvento) 
-VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por mecanismos de permeabilidad o KPC.');
+VALUES ('GRAMNegativo-General', 'Ingresando el mensaje que indica que el germen es resistente a Ertapenem, mediado por mecanismos de permeabilidad o Carbapenemasas.');
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	g.idAntibiotico,
-	'Germen resistente a Ertapenem, mediado por mecanismos de permeabilidad o KPC'
+	'Germen resistente a Ertapenem, mediado por mecanismos de permeabilidad o Carbapenemasas'
 FROM
 	GRAM g
 WHERE
@@ -1423,7 +1439,7 @@ WHERE
 	*	Pero en estos antibióticos hay que hacer un análisis adicional para añadir a las reglas:
 		-	Si los 3 antibióticos son resistentes (es decir ?) o los 3 antibióticos tienen exactamente el mismo número 
 			entero, debe salir un mensaje que diga “Germen con sensibilidad disminuida (o resistente según el caso), a 
-			Imipenem, Meropenem y Doripenem, mediado por KPC, corroborar con un laboratorio de referencia”
+			Imipenem, Meropenem y Doripenem, mediado por Carbapenemasas, corroborar con un laboratorio de referencia”
 */
 
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
@@ -1431,7 +1447,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	31 AS idAntibiotico,
-	'Germen con sensibilidad disminuida a Carbapenems mediado por KPC, corroborar con laboratorio de referencia'
+	'Germen con sensibilidad disminuida a Carbapenems mediado por Carbapenemasas, corroborar con laboratorio de referencia'
 FROM
 	(
 		SELECT
@@ -1461,7 +1477,7 @@ SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
 	g.idBacteria, 
 	31 AS idAntibiotico,
-	'Germen resistente a Carbapenems mediado por KPC, corroborar con laboratorio de referencia'
+	'Germen resistente a Carbapenems mediado por Carbapenemasas, corroborar con laboratorio de referencia'
 FROM
 	(
 		SELECT

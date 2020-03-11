@@ -133,7 +133,7 @@ FROM
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (33,40)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (32,33,42)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,43)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (33,42,47)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (50,42,47)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,33,42)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,33)) OR
@@ -212,7 +212,7 @@ FROM
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (32,33,40)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (32,33,36)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,36)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (33,47)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (50,47)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,33,36)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,36)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,33,36)) OR

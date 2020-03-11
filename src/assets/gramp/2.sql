@@ -2,6 +2,40 @@
 	ETAPA 1
 */	
 
+
+/*** trimetrophin ***/
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen resistente a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática' as mensaje
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idPrueba = 1 AND
+		g.idAntibiotico IN (9) AND  
+		g.operador = '>='
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen con sensibilidad disminuida a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática' as mensaje
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idPrueba = 1 AND
+		g.idAntibiotico IN (9) AND 
+		g.operador = '='
+;
+
+
 /*
 Se evalua que sea sensible a todo el panel de antibioticos
 */
@@ -541,6 +575,7 @@ FROM
 	(es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a ese <Aj>”. 
 */
 
+/*
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
@@ -555,6 +590,6 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idAntibiotico NOT IN (5,12,6,10) AND 
 	g.operador = '=';
-	
+*/	
 	
 	

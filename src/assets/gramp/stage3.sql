@@ -31,9 +31,45 @@ WHERE
 	a.idAntibiotico NOT IN (1)
 );
 
+
+/**
+cuando no hayan opciones
+**/
+
+DELETE FROM TMP_InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+
+INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje)
+SELECT
+	a2.idParteDelCuerpo, 
+	a2.idBacteria, 
+	6 as idAntibiotico,
+	a2.id,
+	a2.comentariosTratamiento
+FROM
+	(
+		SELECT
+			dp1.idParteDelCuerpo,
+			a.id,
+			a.comentariosTratamiento,
+			g.idBacteria
+			
+		FROM
+			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
+			Asignaciones a,
+			(SELECT DISTINCT idBacteria FROM GRAM) g
+		WHERE
+			a.id IN (52)
+			
+	) a2
+WHERE
+	0 >= (SELECT COUNT(1) FROM TMP_InterpretacionGRAMEtapa2);
+
+
 /* Eliminar cuando tiene mensaje de hacer test */
 
 DELETE FROM InterpretacionGRAMEtapa2 WHERE 0 < (select total from validarTestMsg);
+
 
 
 	
@@ -101,7 +137,7 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion = 12;
+    e2.idAsignacion IN (12,15);
     
 /*
     Gentamicin: 
@@ -653,7 +689,7 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (35,2,19) AND
+    e2.idAsignacion IN (35,2) AND
     e2.idParteDelCuerpo NOT IN (0,6);
 
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -664,7 +700,7 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (35,2,19) AND
+    e2.idAsignacion IN (35,2) AND
     e2.idParteDelCuerpo IN (0,6);
  
 /*
@@ -695,7 +731,7 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (3,19) AND
+    e2.idAsignacion IN (3) AND
     e2.idParteDelCuerpo NOT IN (0);
 	
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
@@ -715,7 +751,7 @@ FROM
     DatosDelPaciente dp1,
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (3,19) AND
+    e2.idAsignacion IN (3) AND
     e2.idParteDelCuerpo IN (0);
         
 /*
@@ -964,6 +1000,34 @@ WHERE
     e2.idAsignacion = 16;
 	
 	
+
+/*	
+    endocarditis: 
+    -	Dosis de carga de 100 mg y luego 50 mg cada 12 horas
+*/
+
+INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
+SELECT
+    e2.idAsignacion,
+    (
+        CASE 
+            WHEN CRRT = 1 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 2 gm IV cada 12 horas'
+			WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 1 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 2 gm IV al dia (dosis luego de Hemodialisis)'
+			WHEN CRRT = 0 AND CAPD = 1 AND requiereHemodialisis = 0 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 1 gm IV al dia'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 50 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 2 gm IV cada 8 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina >= 10 AND depuracionCreatinina < 50 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 2 gm IV cada 12 horas'
+            WHEN CRRT = 0 AND CAPD = 0 AND requiereHemodialisis = 0 AND depuracionCreatinina < 10 THEN 'Ceftriaxona: 2 gm cada 12 horas; Cefotaxima: 2 gm IV al día'
+        END
+    )
+FROM
+    DatosDelPaciente dp1,
+    InterpretacionGRAMEtapa2 e2
+WHERE	
+    e2.idAsignacion IN (19) AND
+    e2.idParteDelCuerpo NOT IN (0);
+
+	
+/** cuando no existe dosis para el mensaje **/
 	
 INSERT INTO InterpretacionGRAMEtapa3 (idAsignacion, mensaje)	
 SELECT
@@ -972,7 +1036,7 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion IN (8,19,26,27,46,52,53,54,18);
+    e2.idAsignacion IN (8,26,27,46,52,53,54,18);
 	
 
 /*

@@ -430,7 +430,7 @@ SELECT
 FROM
     InterpretacionGRAMEtapa2 e2
 WHERE	
-    e2.idAsignacion = 12;
+    e2.idAsignacion IN (12,15);
     
 /*
     Gentamicin: 

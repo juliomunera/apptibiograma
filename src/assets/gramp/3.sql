@@ -2,6 +2,40 @@
 	ETAPA 1
 */	
 
+
+/*** trimetrophin ***/
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen resistente a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática' as mensaje
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idPrueba = 1 AND
+		g.idAntibiotico IN (9) AND  
+		g.operador = '>='
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen con sensibilidad disminuida a Trimetoprim-sulfa, mediado por disminución en la afinidad enzimática' as mensaje
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idPrueba = 1 AND
+		g.idAntibiotico IN (9) AND 
+		g.operador = '='
+;
+
+
 /*
 Se evalua que sea sensible a todo el panel de antibioticos
 */
@@ -287,7 +321,7 @@ FROM
 		WHERE
 			g.tipoGRAM = '+' AND
 			g.idBacteria IN (2,3,4,5,6) AND 
-			((g.idAntibiotico = 6 AND g.operador = '<=') OR (g.idPrueba = 3 AND g.valor = 0))
+			((g.idAntibiotico = 6 AND g.operador = '<=') OR (g.idPrueba = 3 AND g.valor IN (0)))
 	) g1,
 	(
 		SELECT
@@ -299,9 +333,9 @@ FROM
 			Asignaciones a
 		WHERE
 			(dp1.idParteDelCuerpo = 0 AND a.id IN (1,2,3)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12,1)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (4,12)) OR
 			(dp1.idParteDelCuerpo = 2 AND a.id IN (1,9,5)) OR
-			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12,1)) OR
+			(dp1.idParteDelCuerpo = 3 AND a.id IN (4,12)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id IN (8,1)) OR
 			(dp1.idParteDelCuerpo = 5 AND a.id IN (1,9,6,15)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id IN (8,1)) OR
@@ -309,6 +343,7 @@ FROM
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (1,9)) 
 			
 	) a2;
+
 	
 /*
 	Si  Oxacilina  es >=, y si la infección es en: [O si “Cefoxitin screen”= positivo]
@@ -376,14 +411,14 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (10,11,30)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14,30)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (10,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13,15)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (11,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (10,13)) 
 	) a2;
 
@@ -449,14 +484,14 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 1) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (2,3,10)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (2,3,10,30)) OR
 			(dp1.idParteDelCuerpo = 1 AND a.id IN (12,13,11)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (11,13,14,30)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (12,16)) OR
 			(dp1.idParteDelCuerpo = 4 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (9,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 6 AND a.id = 8) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (9,13,15)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (9,13,15,30)) OR
 			(dp1.idParteDelCuerpo = 8 AND a.id IN (9,13)) 
 	) a2;
 	
@@ -540,6 +575,7 @@ FROM
 	(es decir =), debe salir un mensaje que dice “Germen con sensibilidad disminuida a ese <Aj>”. 
 */
 
+/*
 INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
 SELECT
 	(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
@@ -554,6 +590,6 @@ WHERE
 	g.idPrueba = 1 AND
 	g.idAntibiotico NOT IN (5,12,6,10) AND 
 	g.operador = '=';
-	
+*/	
 	
 	

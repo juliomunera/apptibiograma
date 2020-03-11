@@ -26,6 +26,11 @@ export class AppComponent {
       url: '/about',
       icon: 'person'
     }
+    ,{
+      title: 'Contáctenos',
+      url: '/contact',
+      icon: 'mail'
+    }
     // ,{
     //   title: 'Test',
     //   url: '/test',

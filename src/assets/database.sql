@@ -798,7 +798,7 @@ INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (15, 'Clindamic
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (16, 'Tigeciclina', 25);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (17, 'Ampicilina (dosis meníngeas)',6);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (18, 'Fosfomycin (pielonefritis: 3gm cada 3 dias por 7 dosis y cistitis 3 gm dosis unica)',23);
-INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (19, 'En caso de endocarditis: Ceftriaxona 2 gm cada 12 horas (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)',21);
+INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (19, 'En caso de endocarditis adicionar: Ceftriaxona (si Albumina > 3.5) o Cefotaxima (si Albumina < 3.5)',21);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (20, 'Ampicilina',5);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (21, 'Nitrofurantoin (solo cistitis)', 1);
 INSERT INTO Asignaciones(id,comentariosTratamiento,orden) VALUES (22, 'Fosfomycin', 23);
