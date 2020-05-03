@@ -221,7 +221,13 @@ organizacion de InterpretacionGRAMEtapa3 por el orden asignado
 ********/
 
 DELETE FROM TMP_InterpretacionGRAMEtapa2;
-INSERT INTO TMP_InterpretacionGRAMEtapa2 SELECT * FROM InterpretacionGRAMEtapa2;
+INSERT INTO TMP_InterpretacionGRAMEtapa2
+	SELECT a.* 
+	FROM 
+		InterpretacionGRAMEtapa2 a
+	WHERE 
+		a.id <=  (select min(id) as minId from InterpretacionGRAMEtapa2 ) + 3
+;
 
 DELETE FROM InterpretacionGRAMEtapa2;
 INSERT INTO InterpretacionGRAMEtapa2 (idParteDelCuerpo, idBacteria, idAntibiotico, idAsignacion, mensaje,orden)

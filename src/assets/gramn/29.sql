@@ -74,7 +74,7 @@ FROM
 			
 	) a2;
 	
-DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion in (42,43,44,45) AND 0 < (SELECT COUNT(1) FROM InterpretacionGRAMEtapa1 WHERE mensaje like 'Germen sensible a todo el panel de%');
+DELETE FROM InterpretacionGRAMEtapa2 WHERE idAsignacion in (33,50, 42,43,44,45) AND 0 < (SELECT COUNT(1) FROM InterpretacionGRAMEtapa1 WHERE mensaje like 'Germen sensible a todo el panel de%');
 
 /*
 •	Cuando la sensibilidad a Ampicilina/sulbactam es un numero entero o es resistente (es decir > o =), pero Cefazolina sigue siendo sensible (es decir < o =) 

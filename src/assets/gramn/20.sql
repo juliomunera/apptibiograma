@@ -44,15 +44,15 @@ FROM
 			(SELECT idParteDelCuerpo FROM DatosDelPaciente WHERE esAlergicoAPenicilina = 0) dp1,
 			Asignaciones a
 		WHERE
-			(dp1.idParteDelCuerpo = 0 AND a.id IN (32,2,3)) OR
-			(dp1.idParteDelCuerpo = 1 AND a.id IN (42,32,33)) OR
-			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,43)) OR
+			(dp1.idParteDelCuerpo = 0 AND a.id IN (32,2,3,36)) OR
+			(dp1.idParteDelCuerpo = 1 AND a.id IN (42,32,33,47)) OR
+			(dp1.idParteDelCuerpo = 2 AND a.id IN (32,33,43,36)) OR
 			(dp1.idParteDelCuerpo = 3 AND a.id IN (42,50,47)) OR
-			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,42,33,36,18,37)) OR
-			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44)) OR
-			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3,37)) OR
-			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,33,44)) OR
-			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,33,45)) 
+			(dp1.idParteDelCuerpo = 4 AND a.id IN (32,42,33,36,18,37,21)) OR
+			(dp1.idParteDelCuerpo = 5 AND a.id IN (32,33,44,36)) OR
+			(dp1.idParteDelCuerpo = 6 AND a.id IN (32,2,3,37,36)) OR
+			(dp1.idParteDelCuerpo = 7 AND a.id IN (32,33,44,36)) OR
+			(dp1.idParteDelCuerpo = 8 AND a.id IN (32,33,45,48)) 
 			
 	) a2;
 	

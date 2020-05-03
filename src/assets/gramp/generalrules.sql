@@ -126,7 +126,7 @@ INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotic
 	WHERE
 		g.tipoGRAM = '+' AND
 		g.idPrueba = 1 AND
-		g.idAntibiotico NOT IN (6,10,2,9) AND 
+		g.idAntibiotico NOT IN (6,10,2,9,4) AND 
 		g.operador = '>='
 ;
 
@@ -141,7 +141,36 @@ INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotic
 	WHERE
 		g.tipoGRAM = '+' AND
 		g.idPrueba = 1 AND
-		g.idAntibiotico NOT IN (6,10,2,5,12,9) AND 
+		g.idAntibiotico NOT IN (6,10,2,5,12,9,4) AND 
 		g.operador = '='
 ;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen resistente a Gentamicin, mediado por enzimas especificas'
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idAntibiotico IN (4) AND 
+		g.operador = '>='
+;
+
+INSERT INTO InterpretacionGRAMEtapa1 (idParteDelCuerpo, idBacteria, idAntibiotico, mensaje)
+	SELECT
+		(SELECT dp.idParteDelCuerpo FROM DatosDelPaciente dp), 
+		g.idBacteria, 
+		g.idAntibiotico,
+		'Germen con sensibilidad disminuida a Gentamicin, mediado por enzimas especificas'
+	FROM
+		GRAM g
+	WHERE
+		g.tipoGRAM = '+' AND
+		g.idAntibiotico IN (4) AND 
+		g.operador = '='
+;
+
 
